@@ -1,5 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+
 import java.net.Socket;
 
 /**
