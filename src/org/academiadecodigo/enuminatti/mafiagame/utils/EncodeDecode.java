@@ -37,7 +37,7 @@ public enum EncodeDecode {
     /**
      * Decode one string with with the ENUM tags
      * @param message to decode
-     * @return the decoded string
+     * @return the decoded string or null if cant be decoded
      */
     public String decode(String message) {
         if (canDecode(message)){
