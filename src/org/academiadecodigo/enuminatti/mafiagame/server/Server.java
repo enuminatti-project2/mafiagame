@@ -44,6 +44,7 @@ public class Server {
             server = new ServerSocket(13337);
             while (true) {
                 Socket client = server.accept();
+                System.out.println("New Connection was accept.Socket number: " + client.getPort());
                 acceptConnection(client);
             }
 
@@ -110,6 +111,7 @@ public class Server {
                 String message = "";
                 while ((message = in.readLine()) != null) {
                     receiveMessage(message);
+                    System.out.println(message);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
