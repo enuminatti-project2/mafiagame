@@ -1,0 +1,74 @@
+package org.academiadecodigo.enuminatti.mafiagame.client;
+
+import javafx.event.EventHandler;
+import javafx.stage.WindowEvent;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+/**
+ * MIT License
+ * (c) 2017 Ricardo Constantino
+ */
+
+// brain
+public class Client {
+
+    private Socket socket;
+    private PrintWriter writer;
+    private BufferedReader reader;
+    private ChatController chatController;
+    private Thread readerThread;
+
+    public Client(ChatController chatController) {
+        this.chatController = chatController;
+        init();
+    }
+
+    private void init() {
+        try {
+            socket = new Socket("localhost", 13337);
+            writer = new PrintWriter(socket.getOutputStream(), true);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ServerListener serverListener = new ServerListener();
+            readerThread = new Thread(serverListener);
+            readerThread.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void encodeAndSend(String type, String message) {
+        writer.println(message);
+    }
+
+    public void shutdown() {
+        readerThread.interrupt();
+    }
+
+
+    private class ServerListener implements Runnable {
+
+
+        private void receiveAndDecode() {
+            String message;
+            try {
+                while ((message = reader.readLine()) != null) {
+                    chatController.getMessage(message);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void run() {
+            receiveAndDecode();
+        }
+    }
+
+}

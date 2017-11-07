@@ -23,7 +23,7 @@
         </tabs>
       </TabPane>
       <ListView fx:id="usersList" focusTraversable="false" layoutX="678.0" layoutY="78.0" prefHeight="432.0" prefWidth="200.0" />
-      <Button fx:id="sendButton" defaultButton="true" layoutX="678.0" layoutY="526.0" mnemonicParsing="false" onAction="#cenas" prefHeight="45.0" prefWidth="94.0" text="Send" />
+      <Button fx:id="sendButton" defaultButton="true" layoutX="678.0" layoutY="526.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
       <Button fx:id="voteButton" layoutX="785.0" layoutY="529.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
       <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="678.0" layoutY="44.0" prefHeight="31.0" prefWidth="200.0" text="Users">
          <font>
