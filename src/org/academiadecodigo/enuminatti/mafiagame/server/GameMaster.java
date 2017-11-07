@@ -35,7 +35,7 @@ public class GameMaster {
 
     }
 
-    private void receiveAndDecode(String message) {
+    public void receiveAndDecode(String message) {
         // Map<String, Integer> votes = new HashMap<>();
     }
 
