@@ -76,7 +76,10 @@ public class LoginController implements Controller {
 
             if (EncodeDecode.getStartTag(message).equals(EncodeDecode.START.getStartTag())) {
 
-                Platform.runLater(() -> SceneNavigator.getInstance().loadScreen("ClientView"));
+                Platform.runLater(() -> {
+                    SceneNavigator.getInstance().loadScreen("ClientView");
+                    SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
+                });
 
                 return;
             }
