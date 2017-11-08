@@ -1,11 +1,13 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.io.IOException;
@@ -68,6 +70,17 @@ public class LoginController implements Controller {
 
     @Override
     public void getMessage(String message) {
+        System.out.println(message + " on Login controller");
+
+        if (message.startsWith("<")) {
+
+            if (EncodeDecode.getStartTag(message).equals(EncodeDecode.START.getStartTag())) {
+
+                Platform.runLater(() -> SceneNavigator.getInstance().loadScreen("ClientView"));
+
+                return;
+            }
+        }
         serverMessageArea.appendText(message + "\n");
     }
 

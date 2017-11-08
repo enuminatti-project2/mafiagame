@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
@@ -34,6 +35,7 @@ public class ClientUI extends Application {
         LoginController loginController = SceneNavigator.getInstance().getController("LoginView");
 
         primaryStage.setOnCloseRequest(event -> loginController.shutdown());
+
 
     }
 }
