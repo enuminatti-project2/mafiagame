@@ -9,7 +9,7 @@ public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
     NICK("<NICK>", "</NICK>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
-    NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>");
+    NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"); //Tags that begin with _ are group tags
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
@@ -134,11 +134,21 @@ public enum EncodeDecode {
         return mapToReturn;
     }
 
+    /**
+     * check if a given string is a group of strings
+     * @param message the message to analyze
+     * @return true or false
+     */
     private boolean isGroupString(String message){
         String tag = getStartTag(message);
         return (tag != null && tag.startsWith("<_"));
     }
 
+    /**
+     * Return the enum value that have the given tag
+     * @param tag the tag to check in the enum
+     * @return  the enum value
+     */
     public static EncodeDecode getEnum(String tag) {
         if (!isInEnum(tag)){
             return null;
