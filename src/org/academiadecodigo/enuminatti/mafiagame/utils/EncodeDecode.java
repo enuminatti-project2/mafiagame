@@ -55,11 +55,28 @@ public enum EncodeDecode {
     }
 
     /**
-     * check if a given starting tag is supported by this enum (EncodeDecode.isInEnum("<TAG>"))
+     * Check if a given starting tag is supported by this enum (EncodeDecode.isInEnum("<TAG>"))
      * @param tag to check
      * @return true or false
      */
     public static boolean isInEnum(String tag){
         return listEnum.contains(tag);
+    }
+
+    /**
+     * Get the start Tag of the given string
+     * @param message the string to analise
+     * @return a valid tag <TAG> or null
+     */
+    public static String getStartTag(String message) {
+        if(!message.startsWith("<")){
+            return null;
+        }
+        String tempTag = message.replaceAll("(?<=>)(.*)","");
+
+        if (tempTag.matches("(<\\w+>)*")){
+            return tempTag;
+        }
+        return null;
     }
 }
