@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.io.*;
@@ -26,7 +27,7 @@ public class Server {
 
     public Server() {
         this.gameMaster = new GameMaster();
-        executorService = Executors.newFixedThreadPool(100);
+        executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
     }
 
     private void closeServer() {
@@ -43,7 +44,7 @@ public class Server {
         // while to acceptConnections
 
         try {
-            server = new ServerSocket(13338);
+            server = new ServerSocket(Constants.PORT);
             System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();

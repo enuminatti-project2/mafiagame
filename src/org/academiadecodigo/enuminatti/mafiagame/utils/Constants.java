@@ -7,4 +7,5 @@ package org.academiadecodigo.enuminatti.mafiagame.utils;
 
 public class Constants {
     public static final int PORT = 13338;
+    public static final int MAX_PLAYERS = 22;
 }
