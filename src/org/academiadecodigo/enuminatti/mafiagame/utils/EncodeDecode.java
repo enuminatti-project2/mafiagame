@@ -88,14 +88,30 @@ public enum EncodeDecode {
         return null;
     }
 
-    /*
-      TODO: multi string encode / decode
+    /**
+     * Wrap the values of a given Map inside a tag
+     * @param mapToSend the map with the values to send
+     * @return the Encoded String
      */
+    public String encode(Map<EncodeDecode, String> mapToSend) {
+        String encodedString = "";
 
-    public void encode(Map<EncodeDecode, String> mapToSend) {
+        for (Map.Entry<EncodeDecode, String> entry : mapToSend.entrySet()) {
+            EncodeDecode key = entry.getKey();
+            String value = entry.getValue();
 
+            encodedString += key.encode(value);
+        }
+        encodedString = encode(encodedString);
+
+        return encodedString;
     }
 
+    /**
+     * Decode a multiple tags string to a Map<EncodeDecode, String>
+     * @param message the message to decode
+     * @return the map with the multiple values
+     */
     public Map<EncodeDecode, String> decodeStringMap(String message) {
         if(!isGroupString(message)){
             return null;
@@ -111,8 +127,8 @@ public enum EncodeDecode {
         Map<EncodeDecode, String> mapToReturn = new HashMap<>();
 
         for (String stringToDecode: splitted) {
-            EncodeDecode enumtype = getEnum(getStartTag(stringToDecode));
-            mapToReturn.put(enumtype,enumtype.decode(stringToDecode));
+            EncodeDecode enumType = getEnum(getStartTag(stringToDecode));
+            mapToReturn.put(enumType,enumType.decode(stringToDecode));
         }
 
         return mapToReturn;

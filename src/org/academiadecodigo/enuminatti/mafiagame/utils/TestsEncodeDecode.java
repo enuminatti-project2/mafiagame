@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -14,6 +15,7 @@ public class TestsEncodeDecode {
         test.test3();
         test.test4();
         test.test5();
+        test.test6();
     }
 
     private void test1() {
@@ -151,5 +153,14 @@ public class TestsEncodeDecode {
 
             System.out.println("The user: " + mapEnum.get(EncodeDecode.NICK) + " said: " + mapEnum.get(EncodeDecode.MESSAGE));
         }
+    }
+
+    private void test6(){
+        Map<EncodeDecode, String> mapToSend = new HashMap<>();
+
+        mapToSend.put(EncodeDecode.NICK, "Samuel");
+        mapToSend.put(EncodeDecode.MESSAGE, "Ola ola");
+
+        System.out.println(EncodeDecode.NICKMESSAGE.encode(mapToSend));
     }
 }
