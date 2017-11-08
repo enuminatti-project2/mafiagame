@@ -1,7 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
-import javafx.event.EventHandler;
-import javafx.stage.WindowEvent;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
 
 import java.io.BufferedReader;
@@ -47,7 +45,11 @@ public class Client {
     }
 
     public void shutdown() {
-        readerThread.interrupt();
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -61,7 +63,7 @@ public class Client {
                     chatController.getMessage(message);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Socket was closed.");
             }
         }
 

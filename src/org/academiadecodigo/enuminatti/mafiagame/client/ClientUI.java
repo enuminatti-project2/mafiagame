@@ -1,14 +1,10 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
 
 import java.io.IOException;
 
@@ -18,19 +14,30 @@ import java.io.IOException;
  */
 
 public class ClientUI extends Application {
+    private FXMLLoader loader;
+    private ChatController chatController;
+
     public static void main(String[] args) {
         Application.launch(args);
     }
 
     @Override
+    public void init() throws Exception {
+        loader = new FXMLLoader(getClass().getResource("view/ClientView.fxml"));
+        loader.load();
+
+        chatController = loader.getController();
+
+    }
+
+    @Override
     public void start(Stage primaryStage) throws IOException{
 
-        Parent root = FXMLLoader.load(getClass().getResource("view/ClientView.fxml"));
-
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(loader.getRoot()));
         primaryStage.setTitle("Mafia: The Game");
         primaryStage.show();
 
+        primaryStage.setOnCloseRequest(event -> chatController.shutdown());
 
     }
 }

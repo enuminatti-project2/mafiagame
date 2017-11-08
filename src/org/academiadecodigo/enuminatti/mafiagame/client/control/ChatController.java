@@ -3,15 +3,11 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 
 public class ChatController {
@@ -62,7 +58,6 @@ public class ChatController {
         assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
         client = new Client(this);
         usersList.setItems(names);
-        chatWindow.getScene().getWindow().setOnCloseRequest(event -> client.shutdown());
         //clientPrompt.requestFocus();
     }
 
@@ -71,5 +66,8 @@ public class ChatController {
     }
 
 
+    public void shutdown() {
+        client.shutdown();
+    }
 }
 

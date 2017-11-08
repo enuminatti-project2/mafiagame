@@ -121,6 +121,7 @@ public class Server {
         }
 
         private void disconnectPlayer() {
+            System.out.println("disconnected player");
             try {
                 if (in != null) {
                     in.close();
