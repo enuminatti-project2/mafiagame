@@ -44,6 +44,7 @@ public class Server {
 
         try {
             server = new ServerSocket(13337);
+            System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();
                 System.out.println("New Connection was accept.Socket number: " + client.getPort());

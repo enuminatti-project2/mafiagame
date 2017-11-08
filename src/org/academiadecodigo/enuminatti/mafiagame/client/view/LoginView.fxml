@@ -61,7 +61,7 @@
                   </Label>
                   <TextField fx:id="ipAddressTextField" GridPane.columnIndex="1" />
                   <TextField fx:id="usernameTextField" prefHeight="27.0" prefWidth="107.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Button mnemonicParsing="false" onAction="#connectoServer" prefHeight="30.0" prefWidth="106.0" text="Connect" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Button fx:id="mainButton" mnemonicParsing="false" onAction="#connectToServer" prefHeight="30.0" prefWidth="106.0" text="Connect" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                </children>
             </GridPane>
             <ImageView fitHeight="374.0" fitWidth="430.0" layoutX="51.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true">
