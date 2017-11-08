@@ -1,5 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class GameMaster implements Runnable{
-    //private static final int TIMETOSTART = ;
+    private static final int TIMETOSTART = 10;
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -28,7 +30,7 @@ public class GameMaster implements Runnable{
 
     }
 
-    private void broadcastToPlayers(String type, String message) {
+    private void broadcastToPlayers(String message) {
         for (String playerNick : listOfPlayers.keySet()) {
             listOfPlayers.get(playerNick).sendMessage(message);
         }
@@ -64,7 +66,8 @@ public class GameMaster implements Runnable{
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this, 10, TimeUnit.SECONDS); //substituir this por uma runnable task
+            schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
+            broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
         }
         return true;
     }
