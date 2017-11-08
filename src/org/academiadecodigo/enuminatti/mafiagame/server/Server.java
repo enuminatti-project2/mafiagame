@@ -1,10 +1,12 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * MIT License
@@ -17,6 +19,7 @@ public class Server {
     private ServerSocket server;
     private ExecutorService executorService;
 
+
     public static void main(String[] args) {
         Server server = new Server();
         server.start();
@@ -24,7 +27,7 @@ public class Server {
 
     public Server() {
         this.gameMaster = new GameMaster();
-        executorService = Executors.newCachedThreadPool();
+        executorService = Executors.newFixedThreadPool(100);
     }
 
     private void closeServer() {
@@ -97,10 +100,6 @@ public class Server {
             this.role = role;
         }
 
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
-        }
-
         public String getNickname() {
             return nickname;
         }
@@ -110,8 +109,13 @@ public class Server {
             try {
                 String message = "";
                 while ((message = in.readLine()) != null) {
-                    receiveMessage(message);
-                    System.out.println(message);
+                    if (nickname == null) {
+                        if (!tryRegister(message)) {
+                            sendMessage(EncodeDecode.NICKOK.encode("false"));
+                            this.nickname = EncodeDecode.NICK.decode(message);
+                            continue;
+                        }
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -130,6 +134,14 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        private boolean tryRegister(String message) {
+            if (!Objects.equals(EncodeDecode.getStartTag(message), EncodeDecode.NICK.getStartTag())) {
+                return false;
+            }
+
+            return gameMaster.addNick(EncodeDecode.NICK.decode(message), this);
         }
     }
 }

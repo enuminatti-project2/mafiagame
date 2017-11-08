@@ -28,6 +28,10 @@ public enum EncodeDecode {
         this.endTag = s1;
     }
 
+    public String getStartTag() {
+        return startTag;
+    }
+
     /**
      * Encode the string with the ENUM tags
      *
