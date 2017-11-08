@@ -6,5 +6,5 @@ package org.academiadecodigo.enuminatti.mafiagame.utils;
  */
 
 public class Constants {
-    public static final int PORT = 13337;
+    public static final int PORT = 13338;
 }

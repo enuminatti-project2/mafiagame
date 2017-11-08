@@ -43,7 +43,7 @@ public class Server {
         // while to acceptConnections
 
         try {
-            server = new ServerSocket(13337);
+            server = new ServerSocket(13338);
             System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();
@@ -112,9 +112,9 @@ public class Server {
                     if (nickname == null) {
                         if (!tryRegister(message)) {
                             sendMessage(EncodeDecode.NICKOK.encode("false"));
-                            this.nickname = EncodeDecode.NICK.decode(message);
                             continue;
                         }
+                        this.nickname = EncodeDecode.NICK.decode(message);
                     } else {
                         receiveMessage(message);
                     }
@@ -132,6 +132,10 @@ public class Server {
                 if (in != null) {
                     in.close();
                 }
+                System.out.println("SizeBefore: " + gameMaster.listOfPlayers.size() + " " + gameMaster.listOfPlayers.containsKey(nickname));
+                System.out.println(nickname);
+                System.out.println(gameMaster.kickPlayer(nickname));
+                System.out.println("SizeAfter: " + gameMaster.listOfPlayers.size());
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();

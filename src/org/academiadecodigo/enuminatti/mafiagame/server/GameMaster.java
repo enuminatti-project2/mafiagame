@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster implements Runnable{
     private static final int TIMETOSTART = 10;
-    private Map<String, Server.PlayerHandler> listOfPlayers;
+    public Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
     private ScheduledExecutorService startGame;
@@ -111,7 +111,7 @@ public class GameMaster implements Runnable{
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
 
-        if (!gameHasStarted) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= 3) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
@@ -128,5 +128,10 @@ public class GameMaster implements Runnable{
         System.out.println("Let the game Begin");
         gameHasStarted = true;
 
+    }
+
+    public boolean kickPlayer(String nickname ) {
+        // After is needed to kick player from mafia list or vilager list
+        return listOfPlayers.remove(nickname) != null;
     }
 }
