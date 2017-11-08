@@ -8,8 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 
 public class ChatController {
+
+    Client client;
+
 
     @FXML
     private TextArea chatWindow;
@@ -30,30 +34,40 @@ public class ChatController {
     private ListView<String> usersList;
 
     @FXML
-    void cenas(ActionEvent event) {
+    void sendMessageToClient(ActionEvent event) {
 
-        if (clientPrompt.getText().matches(".*\\S.*"))
-            chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
-        clientPrompt.setText("");
-        clientPrompt.requestFocus();
+        if (clientPrompt.getText().matches(".*\\S.*")) {
+            //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
+            String message = clientPrompt.getText();
+            client.encodeAndSend("merda",message);
+            clientPrompt.setText("");
+            clientPrompt.requestFocus();
+        }
+
     }
 
 
     @FXML
     void vote(ActionEvent event) {
 
-        System.out.println(usersList.getSelectionModel().getSelectedItem());
+
     }
 
     @FXML
     void initialize() {
         assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
-
+        client = new Client(this);
         usersList.setItems(names);
         //clientPrompt.requestFocus();
     }
 
+    public void getMessage(String message) {
+        chatWindow.appendText(message + "\n");
+    }
 
 
+    public void shutdown() {
+        client.shutdown();
+    }
 }
 

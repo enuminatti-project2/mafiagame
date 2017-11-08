@@ -22,10 +22,10 @@
             </Tab>
         </tabs>
       </TabPane>
-      <ListView fx:id="usersList" focusTraversable="false" layoutX="679.0" layoutY="78.0" prefHeight="500.0" prefWidth="243.0" />
-      <Button fx:id="sendButton" defaultButton="true" layoutX="680.0" layoutY="607.0" mnemonicParsing="false" onAction="#send" prefHeight="45.0" prefWidth="94.0" text="Send" />
-      <Button fx:id="voteButton" layoutX="824.0" layoutY="607.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
-      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="678.0" layoutY="44.0" prefHeight="34.0" prefWidth="243.0" text="Users">
+      <ListView fx:id="usersList" focusTraversable="false" layoutX="678.0" layoutY="78.0" prefHeight="432.0" prefWidth="200.0" />
+      <Button fx:id="sendButton" defaultButton="true" layoutX="678.0" layoutY="526.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
+      <Button fx:id="voteButton" layoutX="785.0" layoutY="529.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
+      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="678.0" layoutY="44.0" prefHeight="31.0" prefWidth="200.0" text="Users">
          <font>
             <Font size="28.0" />
          </font>
