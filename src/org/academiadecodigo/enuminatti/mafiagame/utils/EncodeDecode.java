@@ -9,7 +9,8 @@ public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
     NICK("<NICK>", "</NICK>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
-    NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"),
+    TIMER("<TIMER>", "<TIMER>"),
+    NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
     VOTE("<VOTE>", "<VOTE>"); //Tags that begin with _ are group tags
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
@@ -27,6 +28,10 @@ public enum EncodeDecode {
     EncodeDecode(String s, String s1) {
         this.startTag = s;
         this.endTag = s1;
+    }
+
+    public String getStartTag() {
+        return startTag;
     }
 
     /**

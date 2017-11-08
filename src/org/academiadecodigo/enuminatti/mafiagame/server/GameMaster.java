@@ -2,25 +2,38 @@ package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * MIT License
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster {
+public class GameMaster implements Runnable{
+    private static final int TIMETOSTART = 10;
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
+    private ScheduledExecutorService startGame;
+    private ScheduledFuture<?> schedule;
+    private boolean gameHasStarted;
     private Map<String, Integer> votesCount;
 
     public GameMaster() {
         listOfPlayers = new HashMap<>();
+        startGame = Executors.newSingleThreadScheduledExecutor();
+
         votesCount = new HashMap<>();
     }
 
-    private void broadcastToPlayers(String type, String message) {
+    private void broadcastToPlayers(String message) {
         for (String playerNick : listOfPlayers.keySet()) {
             listOfPlayers.get(playerNick).sendMessage(message);
         }
@@ -73,7 +86,7 @@ public class GameMaster {
                 addVote(EncodeDecode.VOTE.decode(message));
                 break;
             case "<MSG>":
-                broadcastToPlayers(tag, EncodeDecode.MESSAGE.decode(message));
+                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
                 break;
         }
     }
@@ -85,11 +98,35 @@ public class GameMaster {
 
     private void killPlayer(String nickname){
 
-        broadcastToPlayers("cenas", "Player " + nickname + " was sentenced to death. The role was: "
+        broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
                             + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
         sendNickList();
     }
 
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
+        if (listOfPlayers.get(nick) != null){
+            return false;
+        }
+        listOfPlayers.put(nick, playerHandler);
+        System.out.println("Player added");
 
+        if (!gameHasStarted) { // Se o jogo ainda não começou, reset ao timer
+            if (schedule != null) {
+                schedule.cancel(true);
+            }
+            schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
+            broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+        }
+        return true;
+    }
+
+
+    @Override
+    public void run() {
+
+        System.out.println("Let the game Begin");
+        gameHasStarted = true;
+
+    }
 }
