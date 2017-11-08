@@ -131,5 +131,9 @@ public class Server {
                 e.printStackTrace();
             }
         }
+
+        public Role getRole() {
+            return role;
+        }
     }
 }
