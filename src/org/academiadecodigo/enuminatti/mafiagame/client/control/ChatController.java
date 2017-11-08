@@ -9,6 +9,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class ChatController {
 
@@ -39,7 +40,7 @@ public class ChatController {
         if (clientPrompt.getText().matches(".*\\S.*")) {
             //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
-            client.encodeAndSend("merda",message);
+            client.encodeAndSend(EncodeDecode.MESSAGE,message);
             clientPrompt.setText("");
             clientPrompt.requestFocus();
         }
@@ -50,7 +51,10 @@ public class ChatController {
     @FXML
     void vote(ActionEvent event) {
 
+        String votedUser = usersList.getSelectionModel().getSelectedItem();
 
+        client.encodeAndSend(EncodeDecode.VOTE, votedUser);
+        usersList.getSelectionModel().clearSelection();
     }
 
     @FXML

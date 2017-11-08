@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,8 +41,8 @@ public class Client {
         }
     }
 
-    public void encodeAndSend(String type, String message) {
-        writer.println(message);
+    public void encodeAndSend(EncodeDecode tag, String message) {
+        writer.println(tag.encode(message));
     }
 
     public void shutdown() {

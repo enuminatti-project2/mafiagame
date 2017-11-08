@@ -1,6 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
