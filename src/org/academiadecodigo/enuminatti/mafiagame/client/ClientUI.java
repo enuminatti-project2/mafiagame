@@ -1,9 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
-import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.LoginController;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 

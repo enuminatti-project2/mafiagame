@@ -93,7 +93,10 @@ public class GameMaster implements Runnable{
 
     private void sendNickList() {
 
-        //send list of players
+        String nickList = String.join(" ", listOfPlayers.keySet());
+
+        broadcastToPlayers(EncodeDecode.NICKLIST.encode(nickList));
+
     }
 
     private void killPlayer(String nickname){
@@ -101,7 +104,7 @@ public class GameMaster implements Runnable{
         broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
                             + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
-        sendNickList();
+        broadcastToPlayers(nickname + " has disconnected from the game.");
     }
 
     public boolean addNick(String nick, Server.PlayerHandler playerHandler){
@@ -110,6 +113,7 @@ public class GameMaster implements Runnable{
         }
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
+        broadcastToPlayers(nick + " has entered to the game.");
 
         if (!gameHasStarted && listOfPlayers.size() >= 3) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
