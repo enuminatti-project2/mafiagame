@@ -24,6 +24,7 @@ public class GameMaster implements Runnable{
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
     private boolean gameHasStarted;
+    private boolean night;
     private Map<String, Integer> votesCount;
 
     public GameMaster() {
@@ -40,6 +41,8 @@ public class GameMaster implements Runnable{
     }
 
     private void setDayAndNight() {
+        night = !night;
+        broadcastToPlayers(EncodeDecode.NIGHT.encode(Boolean.toString(night)));
     }
 
     private void setPlayerRole() {
@@ -88,7 +91,35 @@ public class GameMaster implements Runnable{
             case "<MSG>":
                 broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
                 break;
+            case "<NIGHT>":
+                setDayAndNight();
+                break;
         }
+
+        /* Suggestion of implementation
+        EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+        switch (enumTag){
+
+            case MESSAGE:
+                break;
+            case NICK:
+                break;
+            case NICKOK:
+                break;
+            case TIMER:
+                break;
+            case NICKMESSAGE:
+                break;
+            case VOTE:
+                break;
+            default: all the cases to ignore
+                break;
+        }
+
+        */
+
+
     }
 
     private void sendNickList() {

@@ -10,6 +10,7 @@ public enum EncodeDecode {
     NICK("<NICK>", "</NICK>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
     TIMER("<TIMER>", "<TIMER>"),
+    NIGHT("<NIGHT>", "</NIGHT>"),
     NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
     VOTE("<VOTE>", "<VOTE>"); //Tags that begin with _ are group tags
 
