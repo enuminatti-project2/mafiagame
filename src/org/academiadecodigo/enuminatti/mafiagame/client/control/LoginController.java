@@ -9,7 +9,7 @@ import javafx.scene.control.TextField;
 /**
  * Created by codecadet on 08/11/17.
  */
-public class LoginController {
+public class LoginController implements Controller {
 
     @FXML
     private TextField ipAddressTextField;
@@ -23,6 +23,11 @@ public class LoginController {
     @FXML
     void connectoServer(ActionEvent event) {
 
+    }
+
+    @Override
+    public void shutdown() {
+//        client.shutdown();
     }
 
 }

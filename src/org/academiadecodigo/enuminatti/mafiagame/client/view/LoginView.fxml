@@ -14,7 +14,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="516.0" style="-fx-background-color: Black;" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.LoginController">
    <children>
-      <ImageView fitHeight="45.0" fitWidth="163.0" layoutX="17.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true" rotate="-18.4" style="-fx-blend-mode: RED;">
+      <ImageView fitHeight="45.0" fitWidth="163.0" layoutX="17.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true" rotate="-18.4">
          <image>
             <Image url="@/TommyGunTransparent.png" />
          </image>

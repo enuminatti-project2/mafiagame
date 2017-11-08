@@ -6,4 +6,5 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
  */
 
 public interface Controller {
+    void shutdown();
 }

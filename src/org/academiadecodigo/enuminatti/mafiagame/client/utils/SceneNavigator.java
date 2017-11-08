@@ -17,7 +17,7 @@ import java.util.Map;
  */
 
 public class SceneNavigator {
-    private static final String VIEW_PATH = "/org/academiadecodigo/enuminatti/mafiagame/view";
+    private static final String VIEW_PATH = "/org/academiadecodigo/enuminatti/mafiagame/client/view";
     private final int MIN_WIDTH = 1024; // window width
     private final int MIN_HEIGHT = 768; // window height
 
@@ -49,8 +49,6 @@ public class SceneNavigator {
             FXMLLoader fxmlLoader;
             fxmlLoader = new FXMLLoader(getClass().getResource(VIEW_PATH + "/" + view + ".fxml"));
             Parent root = fxmlLoader.load();
-            fxmlLoader.getController();
-
 
             //Store the controller
             controllers.put(view, fxmlLoader.getController());

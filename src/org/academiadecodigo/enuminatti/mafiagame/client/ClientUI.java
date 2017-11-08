@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.LoginController;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 
 import java.io.IOException;
@@ -29,10 +30,10 @@ public class ClientUI extends Application {
         SceneNavigator.getInstance().setStage(primaryStage);
         primaryStage.setTitle("Mafia: The Game");
 
-        SceneNavigator.getInstance().loadScreen("ClientView"); // TODO: trocar pelo LoginUI
-        ChatController chatController = SceneNavigator.getInstance().getController("ClientView");
+        SceneNavigator.getInstance().loadScreen("LoginView");
+        LoginController loginController = SceneNavigator.getInstance().getController("LoginView");
 
-        primaryStage.setOnCloseRequest(event -> chatController.shutdown());
+        primaryStage.setOnCloseRequest(event -> loginController.shutdown());
 
     }
 }

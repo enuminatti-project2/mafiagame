@@ -69,7 +69,7 @@ public class ChatController implements Controller {
         chatWindow.appendText(message + "\n");
     }
 
-
+    @Override
     public void shutdown() {
         client.shutdown();
     }
