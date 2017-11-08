@@ -2,9 +2,9 @@ package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 
 import java.io.IOException;
 
@@ -14,28 +14,23 @@ import java.io.IOException;
  */
 
 public class ClientUI extends Application {
-    private FXMLLoader loader;
-    private ChatController chatController;
-
     public static void main(String[] args) {
         Application.launch(args);
     }
 
     @Override
     public void init() throws Exception {
-        loader = new FXMLLoader(getClass().getResource("view/ClientView.fxml"));
-        loader.load();
-
-        chatController = loader.getController();
 
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException{
 
-        primaryStage.setScene(new Scene(loader.getRoot()));
+        SceneNavigator.getInstance().setStage(primaryStage);
         primaryStage.setTitle("Mafia: The Game");
-        primaryStage.show();
+
+        SceneNavigator.getInstance().loadScreen("ClientView"); // TODO: trocar pelo LoginUI
+        ChatController chatController = SceneNavigator.getInstance().getController("ClientView");
 
         primaryStage.setOnCloseRequest(event -> chatController.shutdown());
 

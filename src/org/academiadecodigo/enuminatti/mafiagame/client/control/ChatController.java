@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
-public class ChatController {
+public class ChatController implements Controller {
 
     Client client;
 
