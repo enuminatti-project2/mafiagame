@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.utils;
 
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -12,6 +13,7 @@ public class TestsEncodeDecode {
         test.test2();
         test.test3();
         test.test4();
+        test.test5();
     }
 
     private void test1() {
@@ -137,5 +139,17 @@ public class TestsEncodeDecode {
 
         System.out.println("Passed test of get the startTag");
 
+    }
+
+    private void test5(){
+        String message = "<_NICKMESSAGE><NICK>Samuel</NICK><MSG>ola mundo</MSG></_NICKMESSAGE>";
+        String tag = EncodeDecode.getStartTag(message);
+        EncodeDecode enumType = EncodeDecode.getEnum(tag);
+
+        if (enumType != null) {
+            Map<EncodeDecode, String> mapEnum = enumType.decodeStringMap(message);
+
+            System.out.println("The user: " + mapEnum.get(EncodeDecode.NICK) + " said: " + mapEnum.get(EncodeDecode.MESSAGE));
+        }
     }
 }
