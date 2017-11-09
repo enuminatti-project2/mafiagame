@@ -27,11 +27,15 @@ public class SceneNavigator {
 
     private Stage stage; // reference to the application window
 
-    private static SceneNavigator sceneNavigator = new SceneNavigator();
+    private static SceneNavigator sceneNavigator;
 
-    public static synchronized SceneNavigator getInstance() {
+    public static SceneNavigator getInstance() {
         if (sceneNavigator == null) {
-            sceneNavigator = new SceneNavigator();
+            synchronized (SceneNavigator.class) {
+                if (sceneNavigator == null) {
+                    sceneNavigator = new SceneNavigator();
+                }
+            }
         }
 
         return sceneNavigator;
