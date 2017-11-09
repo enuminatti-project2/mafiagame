@@ -13,7 +13,7 @@ public enum EncodeDecode {
     NIGHT("<NIGHT>", "</NIGHT>"),
     NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
     VOTE("<VOTE>", "<VOTE>"),
-    NICKLIST("<NICKLIST>", "</NICKLIST"),
+    NICKLIST("<NICKLIST>", "</NICKLIST>"),
     START("<START>", "</START>"); //Tags that begin with _ are group tags
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
@@ -99,6 +99,7 @@ public enum EncodeDecode {
 
     /**
      * Wrap the values of a given Map inside a tag
+     *
      * @param mapToSend the map with the values to send
      * @return the Encoded String
      */
@@ -118,16 +119,17 @@ public enum EncodeDecode {
 
     /**
      * Decode a multiple tags string to a Map<EncodeDecode, String>
+     *
      * @param message the message to decode
      * @return the map with the multiple values
      */
     public Map<EncodeDecode, String> decodeStringMap(String message) {
-        if(!isGroupString(message)){
+        if (!isGroupString(message)) {
             return null;
         }
 
         String decodedString = decode(message);
-        if (decodedString == null){
+        if (decodedString == null) {
             return null;
         }
 
@@ -135,9 +137,9 @@ public enum EncodeDecode {
 
         Map<EncodeDecode, String> mapToReturn = new HashMap<>();
 
-        for (String stringToDecode: splitted) {
+        for (String stringToDecode : splitted) {
             EncodeDecode enumType = getEnum(getStartTag(stringToDecode));
-            mapToReturn.put(enumType,enumType.decode(stringToDecode));
+            mapToReturn.put(enumType, enumType.decode(stringToDecode));
         }
 
         return mapToReturn;
@@ -145,21 +147,23 @@ public enum EncodeDecode {
 
     /**
      * check if a given string is a group of strings
+     *
      * @param message the message to analyze
      * @return true or false
      */
-    private boolean isGroupString(String message){
+    private boolean isGroupString(String message) {
         String tag = getStartTag(message);
         return (tag != null && tag.startsWith("<_"));
     }
 
     /**
      * Return the enum value that have the given tag
+     *
      * @param tag the tag to check in the enum
-     * @return  the enum value
+     * @return the enum value
      */
     public static EncodeDecode getEnum(String tag) {
-        if (!isInEnum(tag)){
+        if (!isInEnum(tag)) {
             return null;
         }
         return mapEnum.get(tag);

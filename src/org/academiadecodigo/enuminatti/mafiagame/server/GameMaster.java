@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable{
+public class GameMaster implements Runnable {
     private static final int TIMETOSTART = 10;
     public Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
@@ -70,7 +70,7 @@ public class GameMaster implements Runnable{
 
         for (String player : votedPlayers) {
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)){
+            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
                 mostVotedPlayer = player;
             }
         }
@@ -94,6 +94,8 @@ public class GameMaster implements Runnable{
             case "<NIGHT>":
                 setDayAndNight();
                 break;
+            case "<NICKLIST>" :
+                sendNickList();
         }
 
         /* Suggestion of implementation
@@ -130,29 +132,33 @@ public class GameMaster implements Runnable{
 
     }
 
-    private void killPlayer(String nickname){
+    private void killPlayer(String nickname) {
 
         broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
-                            + listOfPlayers.get(nickname).getRole().toString());
+                + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
         broadcastToPlayers(nickname + " has disconnected from the game.");
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
-        if (listOfPlayers.get(nick) != null){
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+        if (listOfPlayers.get(nick) != null) {
             return false;
         }
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= 3) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= 1) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+
+        }else {
+            broadcastToPlayers(EncodeDecode.START.encode("begin"));
         }
+
         return true;
     }
 
@@ -171,7 +177,7 @@ public class GameMaster implements Runnable{
 
     }*/
 
-    public boolean kickPlayer(String nickname ) {
+    public boolean kickPlayer(String nickname) {
         // After is needed to kick player from mafia list or vilager list
         return listOfPlayers.remove(nickname) != null;
     }
