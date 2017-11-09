@@ -1,10 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
-import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,47 +16,50 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable{
-    private static final int TIMETOSTART = 10;
-    public Map<String, Server.PlayerHandler> listOfPlayers;
+public class GameMaster implements Runnable {
+
+    private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
-    private ScheduledExecutorService startGame;
-    private ScheduledFuture<?> schedule;
+
     private boolean gameHasStarted;
     private boolean night;
     private Map<String, Integer> votesCount;
 
+    private ScheduledExecutorService startGame;
+    private ScheduledFuture<?> schedule;
+    private static final int TIMETOSTART = 10;
+
     public GameMaster() {
+
         listOfPlayers = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-
         votesCount = new HashMap<>();
     }
 
     private void broadcastToPlayers(String message) {
+
         for (String playerNick : listOfPlayers.keySet()) {
             listOfPlayers.get(playerNick).sendMessage(message);
         }
     }
 
     private void setDayAndNight() {
+
         night = !night;
         broadcastToPlayers(EncodeDecode.NIGHT.encode(Boolean.toString(night)));
-    }
-
-    private void setPlayerRole() {
-
     }
 
     private void addVote(String nickname) {
 
         if (votesCount.size() != listOfPlayers.size()) {
+
             if (votesCount.containsKey(nickname)) {
                 votesCount.replace(nickname, votesCount.get(nickname) + 1);
                 return;
             }
             votesCount.put(nickname, 1);
+
         } else {
             calculateVotes();
         }
@@ -73,37 +73,24 @@ public class GameMaster implements Runnable{
 
         for (String player : votedPlayers) {
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)){
+            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
                 mostVotedPlayer = player;
             }
         }
+
         votesCount.clear();
         killPlayer(mostVotedPlayer);
-
     }
 
     public void receiveAndDecode(String message) {
 
-        String tag = EncodeDecode.getStartTag(message);
-
-        switch (tag) {
-            case "<VOTE>":
-                addVote(EncodeDecode.VOTE.decode(message));
-                break;
-            case "<MSG>":
-                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
-                break;
-            case "<NIGHT>":
-                setDayAndNight();
-                break;
-        }
-
-        /* Suggestion of implementation
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        System.out.println(message);
 
-        switch (enumTag){
+        switch (enumTag) {
 
             case MESSAGE:
+                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
                 break;
@@ -114,14 +101,14 @@ public class GameMaster implements Runnable{
             case NICKMESSAGE:
                 break;
             case VOTE:
+                addVote(EncodeDecode.VOTE.decode(message));
                 break;
-            default: all the cases to ignore
+            case NIGHT:
+                setDayAndNight();
+                break;
+            default:
                 break;
         }
-
-        */
-
-
     }
 
     private void sendNickList() {
@@ -132,19 +119,24 @@ public class GameMaster implements Runnable{
 
     }
 
-    private void killPlayer(String nickname){
+    private void killPlayer(String nickname) {
+
+        listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
         broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
-                            + listOfPlayers.get(nickname).getRole().toString());
+                + listOfPlayers.get(nickname).getRole().toString());
+
         listOfPlayers.remove(nickname);
         broadcastToPlayers(nickname + " has disconnected from the game.");
         sendNickList();
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
-        if (listOfPlayers.get(nick) != null){
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+
+        if (listOfPlayers.get(nick) != null) {
             return false;
         }
+
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
@@ -161,17 +153,23 @@ public class GameMaster implements Runnable{
         return true;
     }
 
-    private void setRolesToPlayers(){
+    private void setRolesToPlayers() {
 
         Set<String> playerHandlerSet = listOfPlayers.keySet();
 
         for (String playerNick : playerHandlerSet) {
+
             Server.PlayerHandler player = listOfPlayers.get(playerNick);
             player.setRole(Role.setRoleToPlayer());
             listOfPlayers.replace(playerNick, player);
+
+            if (player.getRole() == Role.MAFIA) {
+                mafiosiNicks.add(playerNick);
+                continue;
+            }
+            villagersNicks.add(playerNick);
         }
     }
-
 
     @Override
     public void run() {
@@ -179,12 +177,16 @@ public class GameMaster implements Runnable{
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         broadcastToPlayers(EncodeDecode.START.encode("begin"));
-        //initGame();
-
     }
 
-    boolean kickPlayer(String nickname ) {
-        // After is needed to kick player from mafia list or vilager list
+    boolean kickPlayer(String nickname) {
+
+        if (mafiosiNicks.contains(nickname)){
+            mafiosiNicks.remove(nickname);
+        } else {
+            villagersNicks.remove(nickname);
+        }
+
         return listOfPlayers.remove(nickname) != null;
     }
 }

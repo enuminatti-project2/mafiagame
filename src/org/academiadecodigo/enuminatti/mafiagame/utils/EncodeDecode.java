@@ -14,7 +14,8 @@ public enum EncodeDecode {
     NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
     VOTE("<VOTE>", "<VOTE>"),
     NICKLIST("<NICKLIST>", "</NICKLIST"),
-    START("<START>", "</START>"); //Tags that begin with _ are group tags
+    START("<START>", "</START>"),
+    KILL("<KILL>", "</KILL>"); //Tags that begin with _ are group tags
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
