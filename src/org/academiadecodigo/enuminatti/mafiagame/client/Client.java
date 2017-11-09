@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
-import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.Controller;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.io.BufferedReader;
@@ -20,25 +21,20 @@ public class Client {
     private Socket socket;
     private PrintWriter writer;
     private BufferedReader reader;
-    private ChatController chatController;
+    private Controller controller;
     private Thread readerThread;
 
-    public Client(ChatController chatController) {
-        this.chatController = chatController;
-        init();
+    public Client(Controller controller) {
+        this.controller = controller;
     }
 
-    private void init() {
-        try {
-            socket = new Socket("localhost", 13337);
-            writer = new PrintWriter(socket.getOutputStream(), true);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            ServerListener serverListener = new ServerListener();
-            readerThread = new Thread(serverListener);
-            readerThread.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void connect(String host) throws IOException {
+        socket = new Socket(host, Constants.PORT);
+        writer = new PrintWriter(socket.getOutputStream(), true);
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        ServerListener serverListener = new ServerListener();
+        readerThread = new Thread(serverListener);
+        readerThread.start();
     }
 
     public void encodeAndSend(EncodeDecode tag, String message) {
@@ -61,7 +57,7 @@ public class Client {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
-                    chatController.getMessage(message);
+                    controller.getMessage(message);
                 }
             } catch (IOException e) {
                 System.out.println("Socket was closed.");

@@ -44,7 +44,7 @@ public class Server {
 
         try {
             server = new ServerSocket(13337);
-            System.out.println("waiting clients");
+            System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();
                 System.out.println("New Connection was accept.Socket number: " + client.getPort());
@@ -115,8 +115,9 @@ public class Server {
                             this.nickname = EncodeDecode.NICK.decode(message);
                             continue;
                         }
+                    } else {
+                        receiveMessage(message);
                     }
-                    receiveMessage(message);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
