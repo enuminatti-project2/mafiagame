@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class GameMaster implements Runnable{
-    private static final int TIMETOSTART = 10;
+    private static final int TIMETOSTART = 1;
+    private static final int MINPLAYERS = 1;
     public Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -80,28 +81,14 @@ public class GameMaster implements Runnable{
     }
 
     public void receiveAndDecode(String message) {
-        // Map<String, Integer> votes = new HashMap<>();
 
-        String tag = EncodeDecode.getStartTag(message);
-
-        switch (tag) {
-            case "<VOTE>":
-                addVote(EncodeDecode.VOTE.decode(message));
-                break;
-            case "<MSG>":
-                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
-                break;
-            case "<NIGHT>":
-                setDayAndNight();
-                break;
-        }
-
-        /* Suggestion of implementation
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        System.out.println(message);
 
         switch (enumTag){
 
             case MESSAGE:
+                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
                 break;
@@ -112,14 +99,14 @@ public class GameMaster implements Runnable{
             case NICKMESSAGE:
                 break;
             case VOTE:
+                addVote(EncodeDecode.VOTE.decode(message));
                 break;
-            default: all the cases to ignore
+            case NIGHT:
+                setDayAndNight();
+                break;
+            default:
                 break;
         }
-
-        */
-
-
     }
 
     private void sendNickList() {
@@ -146,7 +133,7 @@ public class GameMaster implements Runnable{
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= 3) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }

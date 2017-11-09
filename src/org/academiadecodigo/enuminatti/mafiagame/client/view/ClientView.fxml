@@ -10,22 +10,22 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController">
+<Pane fx:id="Pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../control/css/day.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController">
    <children>
-      <TextField fx:id="clientPrompt" layoutX="44.0" layoutY="607.0" prefHeight="45.0" prefWidth="604.0" />
-      <TabPane focusTraversable="false" layoutX="44.0" layoutY="44.0" prefHeight="535.0" prefWidth="604.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
+      <TextField fx:id="clientPrompt" layoutX="142.0" layoutY="609.0" prefHeight="45.0" prefWidth="604.0" />
+      <TabPane focusTraversable="false" layoutX="142.0" layoutY="46.0" prefHeight="535.0" prefWidth="604.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Untitled Tab 1">
+          <Tab text="Villagers">
                <content>
                   <TextArea fx:id="chatWindow" editable="false" focusTraversable="false" prefHeight="495.0" prefWidth="602.0" wrapText="true" />
                </content>
             </Tab>
         </tabs>
       </TabPane>
-      <ListView fx:id="usersList" focusTraversable="false" layoutX="678.0" layoutY="78.0" prefHeight="432.0" prefWidth="200.0" />
-      <Button fx:id="sendButton" defaultButton="true" layoutX="678.0" layoutY="526.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
-      <Button fx:id="voteButton" layoutX="785.0" layoutY="529.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
-      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="678.0" layoutY="44.0" prefHeight="31.0" prefWidth="200.0" text="Users">
+      <ListView fx:id="usersList" focusTraversable="false" layoutX="771.0" layoutY="80.0" prefHeight="502.0" prefWidth="200.0" />
+      <Button fx:id="sendButton" defaultButton="true" layoutX="771.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
+      <Button fx:id="voteButton" layoutX="877.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
+      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="771.0" layoutY="46.0" prefHeight="31.0" prefWidth="200.0" text="Users">
          <font>
             <Font size="28.0" />
          </font>
