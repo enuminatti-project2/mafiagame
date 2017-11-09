@@ -2,10 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -28,13 +25,15 @@ public class GameMaster implements Runnable {
 
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
-    private static final int TIMETOSTART = 10;
+    private static final int TIMETOSTART = 1;
 
     public GameMaster() {
 
         listOfPlayers = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
         votesCount = new HashMap<>();
+        mafiosiNicks = new LinkedList<>();
+        villagersNicks = new LinkedList<>();
     }
 
     private void broadcastToPlayers(String message) {
@@ -164,6 +163,7 @@ public class GameMaster implements Runnable {
             Server.PlayerHandler player = listOfPlayers.get(playerNick);
             player.setRole(Role.setRoleToPlayer());
             listOfPlayers.replace(playerNick, player);
+
 
             if (player.getRole() == Role.MAFIA) {
                 mafiosiNicks.add(playerNick);
