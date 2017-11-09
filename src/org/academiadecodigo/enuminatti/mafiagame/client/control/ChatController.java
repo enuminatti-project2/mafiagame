@@ -29,8 +29,6 @@ public class ChatController implements Controller {
     @FXML
     private Button voteButton;
 
-    ObservableList<String> names = FXCollections.observableArrayList(
-            "Julia", "Ian", "Sue", "Matthew", "Hannah", "Stephan", "Denise");
     @FXML
     private ListView<String> usersList;
 
@@ -60,13 +58,13 @@ public class ChatController implements Controller {
     @FXML
     void initialize() {
         assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
+
         //client = new Client(this);
-        usersList.setItems(names);
         //clientPrompt.requestFocus();
     }
 
     public void getMessage(String message) {
-        chatWindow.appendText(message + "\n");
+        messagTag(message);
     }
 
     @Override
@@ -79,6 +77,53 @@ public class ChatController implements Controller {
     public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
+        client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
     }
+
+
+    public void updatenicklist(String message) {
+        String allnick[] = message.split(" ");
+        ObservableList<String> names = FXCollections.observableArrayList(allnick);
+//        usersList.getItems().clear();
+        usersList.setItems(names);
+    }
+
+    public void messagTag(String message) {
+
+        System.out.println("Enum : " + message);
+        EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+        if (tag == null) {
+            chatWindow.appendText(message + "\n");
+            return;
+        }
+        switch (tag) {
+
+            case MESSAGE:
+                chatWindow.appendText(message + "\n");
+                break;
+            case NICKOK:
+                break;
+            case TIMER:
+                System.out.println("Timer message");
+                break;
+            case NIGHT:
+                break;
+            case NICKLIST:
+                message = EncodeDecode.NICKLIST.decode(message);
+                updatenicklist(message);
+                break;
+            case START:
+                client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+                break;
+            default:
+                chatWindow.appendText(message + "\n");
+                System.out.println("Deu merda");
+
+        }
+
+    }
+
+
 }
 

@@ -156,6 +156,7 @@ public enum EncodeDecode {
 
     /**
      * Return the enum value that have the given tag
+     *
      * @param tag the tag to check in the enum
      * @return  the enum value
      */

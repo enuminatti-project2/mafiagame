@@ -73,7 +73,7 @@ public class GameMaster implements Runnable {
 
         for (String player : votedPlayers) {
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
+            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)){
                 mostVotedPlayer = player;
             }
         }
@@ -85,7 +85,6 @@ public class GameMaster implements Runnable {
     public void receiveAndDecode(String message) {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
-        System.out.println(message);
 
         switch (enumTag) {
 
@@ -106,6 +105,8 @@ public class GameMaster implements Runnable {
             case NIGHT:
                 setDayAndNight();
                 break;
+            case NICKLIST:
+                sendNickList();
             default:
                 break;
         }
@@ -124,16 +125,14 @@ public class GameMaster implements Runnable {
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
         broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
-                + listOfPlayers.get(nickname).getRole().toString());
-
+                            + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
         broadcastToPlayers(nickname + " has disconnected from the game.");
         sendNickList();
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
-
-        if (listOfPlayers.get(nick) != null) {
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
+        if (listOfPlayers.get(nick) != null){
             return false;
         }
 
@@ -148,8 +147,11 @@ public class GameMaster implements Runnable {
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
 
-            setRolesToPlayers();
+        }else {
+            broadcastToPlayers(EncodeDecode.START.encode("begin"));
+
         }
+
         return true;
     }
 
@@ -176,6 +178,7 @@ public class GameMaster implements Runnable {
 
         System.out.println("Let the game Begin");
         gameHasStarted = true;
+        setRolesToPlayers();
         broadcastToPlayers(EncodeDecode.START.encode("begin"));
     }
 

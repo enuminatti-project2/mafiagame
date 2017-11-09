@@ -9,4 +9,7 @@ public interface Controller {
     void shutdown();
 
     void getMessage(String message);
+
+
+
 }
