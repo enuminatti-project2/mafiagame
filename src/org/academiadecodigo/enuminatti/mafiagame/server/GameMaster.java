@@ -131,8 +131,14 @@ public class GameMaster implements Runnable{
 
         System.out.println("Let the game Begin");
         gameHasStarted = true;
+        broadcastToPlayers(EncodeDecode.START.encode("begin"));
+        //initGame();
 
     }
+
+    /*private void initGame() {
+
+    }*/
 
     public boolean kickPlayer(String nickname ) {
         // After is needed to kick player from mafia list or vilager list

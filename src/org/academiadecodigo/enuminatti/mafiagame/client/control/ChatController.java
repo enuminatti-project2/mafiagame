@@ -60,7 +60,7 @@ public class ChatController implements Controller {
     @FXML
     void initialize() {
         assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
-        client = new Client(this);
+        //client = new Client(this);
         usersList.setItems(names);
         //clientPrompt.requestFocus();
     }
@@ -71,7 +71,14 @@ public class ChatController implements Controller {
 
     @Override
     public void shutdown() {
-        client.shutdown();
+        if (client != null) {
+            client.shutdown();
+        }
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+        this.client.setController(this);
     }
 }
 

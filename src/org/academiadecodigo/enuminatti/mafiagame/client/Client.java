@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
+import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.Controller;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -47,6 +48,10 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 
 
