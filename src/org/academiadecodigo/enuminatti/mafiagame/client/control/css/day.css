@@ -1,6 +1,8 @@
-.pane {
-    -fx-background-image: url(Day.png);
+#pane {
+    -fx-background-image: url(/Day.png);
     -fx-background-repeat: stretch;
-    -fx-background-color: hotpink;
+}
 
+#chatWindow {
+    fx-font-color: black;
 }

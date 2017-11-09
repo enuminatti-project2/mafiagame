@@ -1,0 +1,8 @@
+#pane {
+    -fx-background-image: url(/NightMafia.jpg);
+    -fx-background-repeat: stretch;
+}
+
+#chatWindow {
+    fx-font-color: white;
+}

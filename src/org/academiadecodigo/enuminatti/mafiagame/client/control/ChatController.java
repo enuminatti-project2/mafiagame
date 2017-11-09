@@ -15,10 +15,8 @@ public class ChatController implements Controller {
 
     Client client;
 
-
     @FXML
     private TextArea chatWindow;
-
 
     @FXML
     private TextField clientPrompt;
@@ -79,6 +77,10 @@ public class ChatController implements Controller {
     public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
+    }
+
+    public void toggleCss(){
+
     }
 }
 
