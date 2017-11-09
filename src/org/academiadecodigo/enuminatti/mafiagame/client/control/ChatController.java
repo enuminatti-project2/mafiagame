@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -85,7 +86,7 @@ public class ChatController implements Controller {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
 //        usersList.getItems().clear();
-        usersList.setItems(names);
+        Platform.runLater(() ->usersList.setItems(names));
     }
 
     public void messagTag(String message) {

@@ -10,7 +10,7 @@ public enum Role {
     MAFIA,
     VILLAGER;
 
-    private static int playerRolesAssigned;
+    private static int playerRolesAssigned=0;
     private static final int MAFIA_RATIO = 3;
 
     public static Role setRoleToPlayer(){
