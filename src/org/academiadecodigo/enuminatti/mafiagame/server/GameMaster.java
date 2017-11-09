@@ -1,7 +1,10 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +83,6 @@ public class GameMaster implements Runnable{
     }
 
     public void receiveAndDecode(String message) {
-        // Map<String, Integer> votes = new HashMap<>();
 
         String tag = EncodeDecode.getStartTag(message);
 
@@ -136,6 +138,7 @@ public class GameMaster implements Runnable{
                             + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
         broadcastToPlayers(nickname + " has disconnected from the game.");
+        sendNickList();
     }
 
     public boolean addNick(String nick, Server.PlayerHandler playerHandler){
@@ -146,14 +149,27 @@ public class GameMaster implements Runnable{
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= 3) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= 1) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+
+            setRolesToPlayers();
         }
         return true;
+    }
+
+    private void setRolesToPlayers(){
+
+        Set<String> playerHandlerSet = listOfPlayers.keySet();
+
+        for (String playerNick : playerHandlerSet) {
+            Server.PlayerHandler player = listOfPlayers.get(playerNick);
+            player.setRole(Role.setRoleToPlayer());
+            listOfPlayers.replace(playerNick, player);
+        }
     }
 
 
@@ -167,11 +183,7 @@ public class GameMaster implements Runnable{
 
     }
 
-    /*private void initGame() {
-
-    }*/
-
-    public boolean kickPlayer(String nickname ) {
+    boolean kickPlayer(String nickname ) {
         // After is needed to kick player from mafia list or vilager list
         return listOfPlayers.remove(nickname) != null;
     }
