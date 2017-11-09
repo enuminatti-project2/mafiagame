@@ -119,7 +119,6 @@ public class ChatController implements Controller {
             default:
                 chatWindow.appendText(message + "\n");
                 System.out.println("Deu merda");
-
         }
 
     }

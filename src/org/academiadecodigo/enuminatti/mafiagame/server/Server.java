@@ -134,10 +134,8 @@ public class Server {
                 if (in != null) {
                     in.close();
                 }
-                System.out.println("SizeBefore: " + gameMaster.listOfPlayers.size() + " " + gameMaster.listOfPlayers.containsKey(nickname));
                 System.out.println(nickname);
                 System.out.println(gameMaster.kickPlayer(nickname));
-                System.out.println("SizeAfter: " + gameMaster.listOfPlayers.size());
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
