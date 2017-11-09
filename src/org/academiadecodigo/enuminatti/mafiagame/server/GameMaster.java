@@ -39,7 +39,9 @@ public class GameMaster implements Runnable {
     private void broadcastToPlayers(String message) {
 
         for (String playerNick : listOfPlayers.keySet()) {
+            Role role = listOfPlayers.get(playerNick).getRole();
             listOfPlayers.get(playerNick).sendMessage(message);
+
         }
     }
 
@@ -148,7 +150,8 @@ public class GameMaster implements Runnable {
 
         }else {
             broadcastToPlayers(EncodeDecode.START.encode("begin"));
-
+            playerHandler.setRole(Role.setRoleToPlayer());
+            broadcastToPlayers(playerHandler.getRole().name());
         }
 
         return true;
@@ -163,7 +166,7 @@ public class GameMaster implements Runnable {
             Server.PlayerHandler player = listOfPlayers.get(playerNick);
             player.setRole(Role.setRoleToPlayer());
             listOfPlayers.replace(playerNick, player);
-
+            broadcastToPlayers(playerNick + " " + player.getRole());
 
             if (player.getRole() == Role.MAFIA) {
                 mafiosiNicks.add(playerNick);
