@@ -9,17 +9,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class ChatController implements Controller {
 
-    Client client;
+    private Client client;
+    private boolean night;
+
+    private String nightCSS;
+    private String dayCSS;
 
 
     @FXML
     private TextArea chatWindow;
-
 
     @FXML
     private TextField clientPrompt;
@@ -31,11 +36,16 @@ public class ChatController implements Controller {
     private Button voteButton;
 
     @FXML
+    private Pane pane;
+
+    @FXML
     private ListView<String> usersList;
 
     @FXML
     void sendMessageToClient(ActionEvent event) {
 
+
+        toggleCss();
         if (clientPrompt.getText().matches(".*\\S.*")) {
             //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
@@ -91,13 +101,16 @@ public class ChatController implements Controller {
 
     public void messagTag(String message) {
 
-        System.out.println("Enum : " + message);
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+
 
         if (tag == null) {
             chatWindow.appendText(message + "\n");
             return;
         }
+
+        System.out.println("dddfs");
         switch (tag) {
 
             case MESSAGE:
@@ -109,6 +122,7 @@ public class ChatController implements Controller {
                 System.out.println("Timer message");
                 break;
             case NIGHT:
+                toggleCss();
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
@@ -124,6 +138,22 @@ public class ChatController implements Controller {
 
     }
 
+    public void toggleCss(){
+        night = !night;
 
+        if (dayCSS == null){
+            nightCSS = getClass().getResource("css/night.css").toExternalForm();
+            dayCSS = getClass().getResource("css/day.css").toExternalForm();
+        }
+
+        pane.getScene().getStylesheets().clear();
+
+        if (night) {
+            pane.getScene().getStylesheets().add(nightCSS);
+            return;
+        }
+        pane.getScene().getStylesheets().add(dayCSS);
+
+    }
 }
 

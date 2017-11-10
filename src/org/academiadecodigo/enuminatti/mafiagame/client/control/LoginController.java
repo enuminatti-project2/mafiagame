@@ -50,7 +50,6 @@ public class LoginController implements Controller {
                 client.connect(host);
                 ipAddressTextField.setDisable(true);
                 mainButton.setText("Change nick");
-                getMessage("Successfully connected to host " + host);
                 changeNick(null);
             } catch (IOException e) {
                 getMessage("Failed to connect to host " + host);

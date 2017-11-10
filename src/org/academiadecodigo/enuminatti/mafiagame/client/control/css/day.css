@@ -1,0 +1,12 @@
+#pane {
+    -fx-background-image: url(/Day.png);
+    -fx-background-repeat: stretch;
+}
+
+#chatWindow {
+    fx-font-color: black;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}

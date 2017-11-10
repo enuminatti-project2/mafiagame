@@ -2,7 +2,10 @@ package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -13,8 +16,9 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable {
-
+public class GameMaster implements Runnable{
+    private static final int TIMETOSTART = 1;
+    private static final int MINPLAYERS = 0; //1 PLAYER
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -25,7 +29,6 @@ public class GameMaster implements Runnable {
 
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
-    private static final int TIMETOSTART = 1;
 
     public GameMaster() {
 
@@ -141,7 +144,7 @@ public class GameMaster implements Runnable {
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= 1) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
