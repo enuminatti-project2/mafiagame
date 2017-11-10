@@ -11,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
-import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class ChatController implements Controller {
@@ -44,8 +43,6 @@ public class ChatController implements Controller {
     @FXML
     void sendMessageToClient(ActionEvent event) {
 
-
-        toggleCss();
         if (clientPrompt.getText().matches(".*\\S.*")) {
             //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
@@ -88,14 +85,14 @@ public class ChatController implements Controller {
     public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.NICKLIST," ");
+        toggleCss("false");
     }
 
 
-    public void updatenicklist(String message) {
+    public void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
-//        usersList.getItems().clear();
         Platform.runLater(() ->usersList.setItems(names));
     }
 
@@ -103,14 +100,11 @@ public class ChatController implements Controller {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
-
-
         if (tag == null) {
             chatWindow.appendText(message + "\n");
             return;
         }
 
-        System.out.println("dddfs");
         switch (tag) {
 
             case MESSAGE:
@@ -122,14 +116,14 @@ public class ChatController implements Controller {
                 System.out.println("Timer message");
                 break;
             case NIGHT:
-                toggleCss();
+                toggleCss(EncodeDecode.NIGHT.decode(message));
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
-                updatenicklist(message);
+                updateNickList(message);
                 break;
             case START:
-                client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+                client.encodeAndSend(EncodeDecode.NICKLIST," ");
                 break;
             default:
                 chatWindow.appendText(message + "\n");
@@ -138,8 +132,13 @@ public class ChatController implements Controller {
 
     }
 
-    public void toggleCss(){
-        night = !night;
+    public void toggleCss(String message){
+
+        night = Boolean.parseBoolean(message);
+
+        System.out.println("Night: " + night);
+
+        //night = !night;
 
         if (dayCSS == null){
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
@@ -147,13 +146,13 @@ public class ChatController implements Controller {
         }
 
         pane.getScene().getStylesheets().clear();
+        pane.getScene().getStylesheets().removeAll();
 
         if (night) {
             pane.getScene().getStylesheets().add(nightCSS);
             return;
         }
         pane.getScene().getStylesheets().add(dayCSS);
-
     }
 }
 

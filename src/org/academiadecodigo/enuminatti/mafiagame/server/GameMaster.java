@@ -45,7 +45,10 @@ public class GameMaster implements Runnable{
         }
     }
 
-    private void setDayAndNight() {
+    /**
+     * Toggle day and night, when called they switch...
+     */
+    private void toggleDayAndNight() {
 
         night = !night;
         broadcastToPlayers(EncodeDecode.NIGHT.encode(Boolean.toString(night)));
@@ -102,9 +105,6 @@ public class GameMaster implements Runnable{
                 break;
             case VOTE:
                 addVote(EncodeDecode.VOTE.decode(message));
-                break;
-            case NIGHT:
-                setDayAndNight();
                 break;
             case NICKLIST:
                 sendNickList();
@@ -183,6 +183,8 @@ public class GameMaster implements Runnable{
         gameHasStarted = true;
         setRolesToPlayers();
         broadcastToPlayers(EncodeDecode.START.encode("begin"));
+        broadcastToPlayers(EncodeDecode.NIGHT.encode("false"));
+
     }
 
     boolean kickPlayer(String nickname) {

@@ -4,13 +4,13 @@
 }
 
 #chatWindow {
-    fx-font-color: white;
+    -fx-text-fill: white;
     -fx-opacity: 20%;
 }
 
 .list-view .list-cell {
     -fx-opacity: 50%;
-    -fx-text-fill: white;
+    -fx-text-fill: red;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
