@@ -4,6 +4,11 @@ import java.util.*;
 
 /**
  * Created by Samuel Laço on 07/11/17.
+ *
+ * This class will be responsible for listing, encoding and decoding
+ * messages to/from server/client.
+ * Each message should have an encoding, otherwise it should be
+ * ignored by both server and client.
  */
 public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
@@ -15,16 +20,14 @@ public enum EncodeDecode {
     VOTE("<VOTE>", "<VOTE>"),
     NICKLIST("<NICKLIST>", "</NICKLIST"),
     START("<START>", "</START>"),
-    KILL("<KILL>", "</KILL>"); //Tags that begin with _ are group tags
+    KILL("<KILL>", "</KILL>");
 
-    //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
     private String startTag;
     private String endTag;
 
     static {
         for (int i = 0; i < values().length; i++) {
-            //listEnum.add(values()[i].getStart());
             mapEnum.put(values()[i].getStart(), values()[i]);
         }
     }
@@ -39,7 +42,7 @@ public enum EncodeDecode {
     }
 
     /**
-     * Encode the string with the ENUM tags
+     * Encode the string with the corresponding tags
      *
      * @param message string to encode
      * @return the encoded string
@@ -155,7 +158,7 @@ public enum EncodeDecode {
     }
 
     /**
-     * Return the enum value that have the given tag
+     * Return the enum value that has the given tag
      *
      * @param tag the tag to check in the enum
      * @return  the enum value
