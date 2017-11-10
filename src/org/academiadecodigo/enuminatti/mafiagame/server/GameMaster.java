@@ -108,7 +108,7 @@ public class GameMaster implements Runnable {
 
             case MESSAGE:
                 Broadcaster.broadcastToPlayers(listOfPlayers,
-                        String.format("<%s> %s", sender,
+                        String.format("<%s> %s", nickname,
                         EncodeDecode.MESSAGE.decode(message)));
                 break;
             case NICK:
