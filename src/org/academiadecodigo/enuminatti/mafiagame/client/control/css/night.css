@@ -10,7 +10,7 @@
 
 .list-view .list-cell {
     -fx-opacity: 50%;
-    -fx-text-fill: red;
+    -fx-text-fill: white;
 }
 
 .tab-pane .tab-header-area .tab-header-background {

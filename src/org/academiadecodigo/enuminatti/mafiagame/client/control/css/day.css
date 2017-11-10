@@ -4,7 +4,7 @@
 }
 
 #chatWindow {
-    fx-font-color: black;
+    -fx-text-fill: black;
 }
 
 .tab-pane .tab-header-area .tab-header-background {
