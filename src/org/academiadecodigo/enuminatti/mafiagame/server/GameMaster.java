@@ -107,7 +107,9 @@ public class GameMaster implements Runnable {
         switch (enumTag) {
 
             case MESSAGE:
-                Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.decode(message));
+                Broadcaster.broadcastToPlayers(listOfPlayers,
+                        String.format("<%s> %s", sender,
+                        EncodeDecode.MESSAGE.decode(message)));
                 break;
             case NICK:
                 sender.sendMessage(EncodeDecode.NICK.encode(nickname));
