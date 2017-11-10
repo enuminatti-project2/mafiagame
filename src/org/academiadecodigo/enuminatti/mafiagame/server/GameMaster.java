@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.*;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster implements Runnable{
     private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 0; //1 PLAYER
+    private static final int MINPLAYERS = 3; //1 PLAYER
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -36,7 +37,7 @@ public class GameMaster implements Runnable{
         villagersNicks = new LinkedList<>();
     }
 
-    private void broadcastToPlayers(String message) {
+   /* private void broadcastToPlayers(String message) {
 
         for (String playerNick : listOfPlayers.keySet()) {
             Role role = listOfPlayers.get(playerNick).getRole();
@@ -44,11 +45,11 @@ public class GameMaster implements Runnable{
 
         }
     }
-
+*/
     private void setDayAndNight() {
 
         night = !night;
-        broadcastToPlayers(EncodeDecode.NIGHT.encode(Boolean.toString(night)));
+        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.NIGHT.encode(Boolean.toString(night)));
     }
 
     private void addVote(String nickname) {
@@ -90,7 +91,7 @@ public class GameMaster implements Runnable{
         switch (enumTag) {
 
             case MESSAGE:
-                broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
+                Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
                 break;
@@ -117,7 +118,7 @@ public class GameMaster implements Runnable{
 
         String nickList = String.join(" ", listOfPlayers.keySet());
 
-        broadcastToPlayers(EncodeDecode.NICKLIST.encode(nickList));
+        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.NICKLIST.encode(nickList));
 
     }
 
@@ -125,10 +126,10 @@ public class GameMaster implements Runnable{
 
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
-        broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
+        Broadcaster.broadcastToPlayers(listOfPlayers,"Player " + nickname + " was sentenced to death. The role was: "
                             + listOfPlayers.get(nickname).getRole().toString());
         listOfPlayers.remove(nickname);
-        broadcastToPlayers(nickname + " has disconnected from the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers,nickname + " has disconnected from the game.");
         sendNickList();
     }
 
@@ -139,19 +140,18 @@ public class GameMaster implements Runnable{
 
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
-        broadcastToPlayers(nick + " has entered to the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers,nick + " has entered to the game.");
 
         if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
-            broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+            Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
 
         }else {
-            broadcastToPlayers(EncodeDecode.START.encode("begin"));
+            Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.START.encode("begin"));
             playerHandler.setRole(Role.setRoleToPlayer());
-            broadcastToPlayers(playerHandler.getRole().name());
         }
 
         return true;
@@ -166,7 +166,7 @@ public class GameMaster implements Runnable{
             Server.PlayerHandler player = listOfPlayers.get(playerNick);
             player.setRole(Role.setRoleToPlayer());
             listOfPlayers.replace(playerNick, player);
-            broadcastToPlayers(playerNick + " " + player.getRole());
+            Broadcaster.broadcastToPlayers(listOfPlayers,playerNick + " " + player.getRole());
 
             if (player.getRole() == Role.MAFIA) {
                 mafiosiNicks.add(playerNick);
@@ -182,7 +182,7 @@ public class GameMaster implements Runnable{
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         setRolesToPlayers();
-        broadcastToPlayers(EncodeDecode.START.encode("begin"));
+        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.START.encode("begin"));
     }
 
     boolean kickPlayer(String nickname) {

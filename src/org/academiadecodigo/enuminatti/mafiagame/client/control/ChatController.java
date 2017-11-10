@@ -110,7 +110,6 @@ public class ChatController implements Controller {
             return;
         }
 
-        System.out.println("dddfs");
         switch (tag) {
 
             case MESSAGE:
