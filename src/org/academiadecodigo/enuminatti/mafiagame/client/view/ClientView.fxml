@@ -17,7 +17,7 @@
         <tabs>
           <Tab text="Villagers">
                <content>
-                  <TextArea id="chatWindow" fx:id="chatWindow" editable="false" focusTraversable="false" opacity="1.0" prefHeight="495.0" prefWidth="602.0" wrapText="true" />
+                  <TextArea id="chatWindow" fx:id="chatWindow" editable="false" focusTraversable="false" prefHeight="495.0" prefWidth="602.0" wrapText="true" />
                </content>
             </Tab>
         </tabs>

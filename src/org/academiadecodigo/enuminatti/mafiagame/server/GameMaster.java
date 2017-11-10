@@ -14,15 +14,18 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable{
+public class GameMaster implements Runnable {
+
     private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 0; //1 PLAYER
+    private static final int MINPLAYERS = 3; //1 PLAYER
+
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
 
     private boolean gameHasStarted;
     private boolean night;
+
     private Map<String, Integer> votesCount;
 
     private ScheduledExecutorService startGame;
@@ -71,7 +74,7 @@ public class GameMaster implements Runnable{
 
         for (String player : votedPlayers) {
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)){
+            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
                 mostVotedPlayer = player;
             }
         }
@@ -80,16 +83,18 @@ public class GameMaster implements Runnable{
         killPlayer(mostVotedPlayer);
     }
 
-    public void receiveAndDecode(String message) {
+    public void receiveAndDecode(String message, String nickname) {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        Server.PlayerHandler sender = listOfPlayers.get(nickname);
 
         switch (enumTag) {
 
             case MESSAGE:
-                Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.MESSAGE.decode(message));
+                Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
+                sender.sendMessage(EncodeDecode.NICK.encode(nickname));
                 break;
             case NICKOK:
                 break;
@@ -101,18 +106,18 @@ public class GameMaster implements Runnable{
                 addVote(EncodeDecode.VOTE.decode(message));
                 break;
             case NICKLIST:
-                sendNickList();
+                sender.sendMessage(EncodeDecode.NICKLIST.encode(getNickList()));
+                break;
+            case ROLE:
+                sender.sendMessage(EncodeDecode.ROLE.encode(sender.getRole().name()));
+                break;
             default:
                 break;
         }
     }
 
-    private void sendNickList() {
-
-        String nickList = String.join(" ", listOfPlayers.keySet());
-
-        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.NICKLIST.encode(nickList));
-
+    private String getNickList() {
+        return String.join(" ", listOfPlayers.keySet());
     }
 
     private void killPlayer(String nickname) {
@@ -121,13 +126,14 @@ public class GameMaster implements Runnable{
 
         Broadcaster.broadcastToPlayers(listOfPlayers,"Player " + nickname + " was sentenced to death. The role was: "
                             + listOfPlayers.get(nickname).getRole().toString());
-        listOfPlayers.remove(nickname);
         Broadcaster.broadcastToPlayers(listOfPlayers,nickname + " has disconnected from the game.");
-        sendNickList();
+        kickPlayer(nickname);
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
-        if (listOfPlayers.get(nick) != null){
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+
+        if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
@@ -141,32 +147,19 @@ public class GameMaster implements Runnable{
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
-
-        }else {
-            Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.START.encode("begin"));
-            playerHandler.setRole(Role.setRoleToPlayer());
         }
-
         return true;
     }
 
-    private void setRolesToPlayers() {
+    boolean kickPlayer(String nickname) {
 
-        Set<String> playerHandlerSet = listOfPlayers.keySet();
-
-        for (String playerNick : playerHandlerSet) {
-
-            Server.PlayerHandler player = listOfPlayers.get(playerNick);
-            player.setRole(Role.setRoleToPlayer());
-            listOfPlayers.replace(playerNick, player);
-            Broadcaster.broadcastToPlayers(listOfPlayers,playerNick + " " + player.getRole());
-
-            if (player.getRole() == Role.MAFIA) {
-                mafiosiNicks.add(playerNick);
-                continue;
-            }
-            villagersNicks.add(playerNick);
+        if (mafiosiNicks.contains(nickname)) {
+            mafiosiNicks.remove(nickname);
+        } else {
+            villagersNicks.remove(nickname);
         }
+        listOfPlayers.get(nickname).disconnectPlayer();
+        return listOfPlayers.remove(nickname) != null;
     }
 
     @Override
@@ -174,18 +167,7 @@ public class GameMaster implements Runnable{
 
         System.out.println("Let the game Begin");
         gameHasStarted = true;
-        setRolesToPlayers();
-        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.START.encode("begin"));
-    }
-
-    boolean kickPlayer(String nickname) {
-
-        if (mafiosiNicks.contains(nickname)){
-            mafiosiNicks.remove(nickname);
-        } else {
-            villagersNicks.remove(nickname);
-        }
-
-        return listOfPlayers.remove(nickname) != null;
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
+        Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
 }

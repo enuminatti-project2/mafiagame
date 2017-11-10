@@ -76,7 +76,6 @@ public class Server {
         private Socket clientSocket;
 
         private String nickname;
-        private boolean alive;
         private Role role;
         private BufferedReader in;
         private PrintWriter out;
@@ -91,7 +90,7 @@ public class Server {
         }
 
         private void receiveMessage(String message) {
-            gameMaster.receiveAndDecode(message);
+            gameMaster.receiveAndDecode(message, nickname);
         }
 
         public void sendMessage(String message) {
@@ -100,10 +99,6 @@ public class Server {
 
         public void setRole(Role role) {
             this.role = role;
-        }
-
-        public String getNickname() {
-            return nickname;
         }
 
         @Override
@@ -128,7 +123,7 @@ public class Server {
             }
         }
 
-        private void disconnectPlayer() {
+        void disconnectPlayer() {
             System.out.println("disconnected player");
             try {
                 if (in != null) {

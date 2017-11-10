@@ -13,9 +13,10 @@ public enum EncodeDecode {
     NIGHT("<NIGHT>", "</NIGHT>"),
     NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
     VOTE("<VOTE>", "<VOTE>"),
-    NICKLIST("<NICKLIST>", "</NICKLIST"),
+    NICKLIST("<NICKLIST>", "</NICKLIST>"),
     START("<START>", "</START>"),
-    KILL("<KILL>", "</KILL>"); //Tags that begin with _ are group tags
+    KILL("<KILL>", "</KILL>"),
+    ROLE("<ROLE>", "</ROLE>");
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();

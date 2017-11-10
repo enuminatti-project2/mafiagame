@@ -73,18 +73,16 @@ public class LoginController implements Controller {
     public void getMessage(String message) {
         System.out.println(message + " on Login controller");
 
-        if (message.startsWith("<")) {
+        if (EncodeDecode.getStartTag(message).equals(EncodeDecode.START.getStartTag())) {
 
-            if (EncodeDecode.getStartTag(message).equals(EncodeDecode.START.getStartTag())) {
+            Platform.runLater(() -> {
+                SceneNavigator.getInstance().loadScreen("ClientView");
+                SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
+            });
 
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
-                });
-
-                return;
-            }
+            return;
         }
+
         serverMessageArea.appendText(message + "\n");
     }
 
