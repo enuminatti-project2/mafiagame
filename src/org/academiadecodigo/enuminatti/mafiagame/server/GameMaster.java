@@ -41,14 +41,13 @@ public class GameMaster implements Runnable {
     }
 
 
-
     /**
      * Toggle day and night, when called they switch...
      */
     private void toggleDayAndNight() {
 
         night = !night;
-        Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.NIGHT.encode(Boolean.toString(night)));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT.encode(Boolean.toString(night)));
     }
 
     private void addVote(String nickname) {
@@ -124,9 +123,8 @@ public class GameMaster implements Runnable {
 
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
-        Broadcaster.broadcastToPlayers(listOfPlayers,"Player " + nickname + " was sentenced to death. The role was: "
-                            + listOfPlayers.get(nickname).getRole().toString());
-        Broadcaster.broadcastToPlayers(listOfPlayers,nickname + " has disconnected from the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode("Player " + nickname + " was sentenced to death. The role was: "
+                + listOfPlayers.get(nickname).getRole().toString()));
         kickPlayer(nickname);
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
     }
@@ -139,14 +137,14 @@ public class GameMaster implements Runnable {
 
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers,nick + " has entered to the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(nick + " has entered the game."));
 
         if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers,EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
         }
         return true;
     }

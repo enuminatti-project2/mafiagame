@@ -59,6 +59,7 @@ public enum EncodeDecode {
         if (canDecode(message)) {
             return message.substring(message.indexOf(startTag) + startTag.length(), message.lastIndexOf(endTag));
         }
+
         return null;
     }
 

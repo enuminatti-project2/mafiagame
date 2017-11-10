@@ -53,6 +53,7 @@ public class LoginController implements Controller {
                 changeNick(null);
             } catch (IOException e) {
                 getMessage("Failed to connect to host " + host);
+                client = null;
             }
         }
     }
@@ -71,19 +72,30 @@ public class LoginController implements Controller {
 
     @Override
     public void getMessage(String message) {
+
         System.out.println(message + " on Login controller");
 
-        if (EncodeDecode.getStartTag(message).equals(EncodeDecode.START.getStartTag())) {
+        String tempTag = EncodeDecode.getStartTag(message);
 
-            Platform.runLater(() -> {
-                SceneNavigator.getInstance().loadScreen("ClientView");
-                SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
-            });
-
+        if (tempTag == null) {
+            System.out.println("invalid message: " + message);
             return;
         }
 
-        serverMessageArea.appendText(message + "\n");
-    }
+        EncodeDecode tag = EncodeDecode.getEnum(tempTag);
 
+        switch (tag) {
+            case START:
+                Platform.runLater(() -> {
+                    SceneNavigator.getInstance().loadScreen("ClientView");
+                    SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
+                });
+                break;
+            case TIMER:
+                serverMessageArea.appendText("Game will start in " + tag.decode(message) + " seconds.\n");
+                break;
+            default:
+                serverMessageArea.appendText(tag.decode(message) + "\n");
+        }
+    }
 }
