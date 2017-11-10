@@ -119,18 +119,14 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                disconnectPlayer();
+                gameMaster.kickPlayer(nickname);
             }
         }
 
         void disconnectPlayer() {
             System.out.println("disconnected player");
             try {
-                if (in != null) {
-                    in.close();
-                }
                 System.out.println(nickname);
-                System.out.println(gameMaster.kickPlayer(nickname));
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();

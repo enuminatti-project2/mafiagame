@@ -101,6 +101,9 @@ public class ChatController implements Controller {
             case MESSAGE:
                 chatWindow.appendText(message + "\n");
                 break;
+            case KILL:
+                chatWindow.appendText("Foste com o c******o\n");
+                break;
             case NICKOK:
                 break;
             case TIMER:

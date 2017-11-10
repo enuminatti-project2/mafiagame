@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster implements Runnable {
 
-    private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 3; //1 PLAYER
+    private static final int TIMETOSTART = 10;
+    private static final int MINPLAYERS = 4; //1 PLAYER
 
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
@@ -27,6 +27,7 @@ public class GameMaster implements Runnable {
     private boolean night;
 
     private Map<String, Integer> votesCount;
+    private int numberOfVotes;
 
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
@@ -40,7 +41,6 @@ public class GameMaster implements Runnable {
         villagersNicks = new LinkedList<>();
     }
 
-
     /**
      * Toggle day and night, when called they switch...
      */
@@ -50,36 +50,53 @@ public class GameMaster implements Runnable {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT.encode(Boolean.toString(night)));
     }
 
+    /**
+     * This adds a vote to votesCount for the player specified in nickname parameter.
+     *
+     * If the nickname isn't a valid player, it doesn't do anything.
+     *
+     * @param nickname player to add a vote to
+     */
     private void addVote(String nickname) {
 
-        if (votesCount.size() != listOfPlayers.size()) {
-
-            if (votesCount.containsKey(nickname)) {
-                votesCount.replace(nickname, votesCount.get(nickname) + 1);
-                return;
-            }
-            votesCount.put(nickname, 1);
-
-        } else {
-            calculateVotes();
+        if(nickname == null || !listOfPlayers.containsKey(nickname)) {
+            return;
         }
+
+        numberOfVotes++;
+        votesCount.merge(nickname, 1, Integer::sum);
+
+        System.out.println("Votes N = " + numberOfVotes + " List of Players: " + listOfPlayers.size());
+
+        if (numberOfVotes >= listOfPlayers.size()) {
+            calculateVotes(Collections.max(votesCount.values()));
+        }
+
     }
 
-    private void calculateVotes() {
 
-        String mostVotedPlayer = mafiosiNicks.get(0);
+    /**
+     * This grabs the votesCount map and finds the player which
+     * had the same votes as mostVotes and kills them.
+     *
+     * In case of a draw, this will grab the first player.
+     *
+     * @param mostVotes the most votes that are in the map
+     */
+    private void calculateVotes(Integer mostVotes) {
 
-        Set<String> votedPlayers = votesCount.keySet();
+        for (String player: votesCount.keySet()) {
 
-        for (String player : votedPlayers) {
+            if(votesCount.get(player).equals(mostVotes)){
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
-                mostVotedPlayer = player;
+                votesCount.clear();
+                numberOfVotes = 0;
+                killPlayer(player);
+
+                break;
             }
         }
 
-        votesCount.clear();
-        killPlayer(mostVotedPlayer);
     }
 
     public void receiveAndDecode(String message, String nickname) {
@@ -126,7 +143,6 @@ public class GameMaster implements Runnable {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode("Player " + nickname + " was sentenced to death. The role was: "
                 + listOfPlayers.get(nickname).getRole().toString()));
         kickPlayer(nickname);
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
     }
 
     public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
@@ -149,15 +165,31 @@ public class GameMaster implements Runnable {
         return true;
     }
 
-    boolean kickPlayer(String nickname) {
+    /**
+     * Remove the player with this nickname from all lists and maps
+     * and disconnect them.
+     *
+     * At the end, it updates everyone's nicklist to reflect this change.
+     *
+     * @param nickname player to be kicked from the game
+     */
+    public void kickPlayer(String nickname) {
 
-        if (mafiosiNicks.contains(nickname)) {
-            mafiosiNicks.remove(nickname);
-        } else {
-            villagersNicks.remove(nickname);
+        if (nickname == null) {
+            return;
         }
-        listOfPlayers.get(nickname).disconnectPlayer();
-        return listOfPlayers.remove(nickname) != null;
+
+        mafiosiNicks.remove(nickname);
+        villagersNicks.remove(nickname);
+
+        Server.PlayerHandler playerRemoved = listOfPlayers.remove(nickname);
+
+        if (playerRemoved != null) {
+            playerRemoved.disconnectPlayer();
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
+
+        }
+
     }
 
     @Override
