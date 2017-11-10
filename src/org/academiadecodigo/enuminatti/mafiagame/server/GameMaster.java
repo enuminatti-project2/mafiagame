@@ -18,10 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster implements Runnable{
     private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 1;
-    public Map<String, Server.PlayerHandler> listOfPlayers;
-public class GameMaster implements Runnable {
-
+    private static final int MINPLAYERS = 0; //1 PLAYER
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -31,7 +28,6 @@ public class GameMaster implements Runnable {
 
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
-    private static final int TIMETOSTART = 10;
 
     public GameMaster() {
 
@@ -143,17 +139,16 @@ public class GameMaster implements Runnable {
         System.out.println("Player added");
         broadcastToPlayers(nick + " has entered to the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= 1) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
-
-        }else {
-            broadcastToPlayers(EncodeDecode.START.encode("begin"));
-
+            return true;
         }
+
+        broadcastToPlayers(EncodeDecode.START.encode("begin"));
 
         return true;
     }

@@ -24,7 +24,6 @@ public class SceneNavigator {
     private LinkedList<Scene> scenes;
     private Map<String, Controller> controllers;
 
-
     private Stage stage; // reference to the application window
 
     private static SceneNavigator sceneNavigator;
@@ -90,7 +89,6 @@ public class SceneNavigator {
         stage.setScene(scene);
         stage.show();
     }
-
 
     @SuppressWarnings("unchecked")
     public <T> T getController(String view) {
