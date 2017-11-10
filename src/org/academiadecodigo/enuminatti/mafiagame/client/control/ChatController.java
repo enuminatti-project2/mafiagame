@@ -56,8 +56,12 @@ public class ChatController implements Controller {
 
         String votedUser = usersList.getSelectionModel().getSelectedItem();
 
-        client.encodeAndSend(EncodeDecode.VOTE, votedUser);
-        usersList.getSelectionModel().clearSelection();
+        if (votedUser != null) {
+            System.out.println("I voted in " + votedUser);
+            client.encodeAndSend(EncodeDecode.VOTE, votedUser);
+            usersList.getSelectionModel().clearSelection();
+            voteButton.setDisable(true);
+        }
     }
 
     public void getMessage(String message) {
@@ -102,6 +106,7 @@ public class ChatController implements Controller {
                 chatWindow.appendText(message + "\n");
                 break;
             case KILL:
+                voteButton.setDisable(true);
                 chatWindow.appendText("Foste com o c******o\n");
                 break;
             case NICKOK:
@@ -126,7 +131,6 @@ public class ChatController implements Controller {
                 chatWindow.appendText(message + "\n");
                 System.out.println("Deu merda");
         }
-
     }
 
     public void toggleCss(String message){
@@ -141,6 +145,7 @@ public class ChatController implements Controller {
             dayCSS = getClass().getResource("css/day.css").toExternalForm();
         }
 
+        voteButton.setDisable(false);
         pane.getScene().getStylesheets().clear();
         pane.getScene().getStylesheets().removeAll();
 
