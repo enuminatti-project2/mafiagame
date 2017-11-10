@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class GameMaster implements Runnable {
 
     private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 0; //1 PLAYER
+    private static final int MINPLAYERS = 3; //1 PLAYER
 
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
@@ -86,9 +86,10 @@ public class GameMaster implements Runnable {
         killPlayer(mostVotedPlayer);
     }
 
-    public void receiveAndDecode(String message) {
+    public void receiveAndDecode(String message, String nickname) {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        Server.PlayerHandler sender = listOfPlayers.get(nickname);
 
         switch (enumTag) {
 
@@ -96,6 +97,7 @@ public class GameMaster implements Runnable {
                 broadcastToPlayers(EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
+                sender.sendMessage(EncodeDecode.NICK.encode(nickname));
                 break;
             case NICKOK:
                 break;
@@ -110,18 +112,18 @@ public class GameMaster implements Runnable {
                 setDayAndNight();
                 break;
             case NICKLIST:
-                sendNickList();
+                sender.sendMessage(EncodeDecode.NICKLIST.encode(getNickList()));
+                break;
+            case ROLE:
+                sender.sendMessage(EncodeDecode.ROLE.encode(sender.getRole().name()));
+                break;
             default:
                 break;
         }
     }
 
-    private void sendNickList() {
-
-        String nickList = String.join(" ", listOfPlayers.keySet());
-
-        broadcastToPlayers(EncodeDecode.NICKLIST.encode(nickList));
-
+    private String getNickList() {
+        return String.join(" ", listOfPlayers.keySet());
     }
 
     private void killPlayer(String nickname) {
@@ -133,7 +135,7 @@ public class GameMaster implements Runnable {
 
         kickPlayer(nickname);
 
-        sendNickList();
+        broadcastToPlayers(EncodeDecode.NICKLIST.encode(getNickList()));
     }
 
     public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
@@ -152,36 +154,9 @@ public class GameMaster implements Runnable {
             }
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
-
-        } else {
-            broadcastToPlayers(EncodeDecode.START.encode("begin"));
-            playerHandler.setRole(Role.setRoleToPlayer());
-            broadcastToPlayers(playerHandler.getRole().name());
         }
 
         return true;
-    }
-
-    private void setRolesToPlayers() {
-
-        for (String playerNickname : listOfPlayers.keySet()) {
-            listOfPlayers.get(playerNickname).setRole(Role.setRoleToPlayer());
-
-            if (listOfPlayers.get(playerNickname).getRole() == Role.MAFIA) {
-                mafiosiNicks.add(playerNickname);
-                continue;
-            }
-            villagersNicks.add(playerNickname);
-        }
-    }
-
-    @Override
-    public void run() {
-
-        System.out.println("Let the game Begin");
-        gameHasStarted = true;
-        setRolesToPlayers();
-        broadcastToPlayers(EncodeDecode.START.encode("begin"));
     }
 
     boolean kickPlayer(String nickname) {
@@ -192,7 +167,15 @@ public class GameMaster implements Runnable {
             villagersNicks.remove(nickname);
         }
         listOfPlayers.get(nickname).disconnectPlayer();
-
         return listOfPlayers.remove(nickname) != null;
+    }
+
+    @Override
+    public void run() {
+
+        System.out.println("Let the game Begin");
+        gameHasStarted = true;
+        broadcastToPlayers(EncodeDecode.START.encode("begin"));
+        Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
 }

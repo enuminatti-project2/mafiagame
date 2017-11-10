@@ -11,7 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
-import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class ChatController implements Controller {
@@ -42,6 +41,12 @@ public class ChatController implements Controller {
     private ListView<String> usersList;
 
     @FXML
+    void initialize(){
+
+
+    }
+
+    @FXML
     void sendMessageToClient(ActionEvent event) {
 
 
@@ -66,14 +71,6 @@ public class ChatController implements Controller {
         usersList.getSelectionModel().clearSelection();
     }
 
-    @FXML
-    void initialize() {
-        assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
-
-        //client = new Client(this);
-        //clientPrompt.requestFocus();
-    }
-
     public void getMessage(String message) {
         messagTag(message);
     }
@@ -89,13 +86,14 @@ public class ChatController implements Controller {
         this.client = client;
         this.client.setController(this);
         client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.NICK, "asking for my nick");
+        client.encodeAndSend(EncodeDecode.ROLE, "asking for my role");
     }
 
 
     public void updatenicklist(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
-//        usersList.getItems().clear();
         Platform.runLater(() ->usersList.setItems(names));
     }
 
@@ -110,7 +108,6 @@ public class ChatController implements Controller {
             return;
         }
 
-        System.out.println("dddfs");
         switch (tag) {
 
             case MESSAGE:
@@ -130,6 +127,12 @@ public class ChatController implements Controller {
                 break;
             case START:
                 client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+                break;
+            case NICK:
+                chatWindow.appendText("You are " + EncodeDecode.NICK.decode(message) + "\n");
+                break;
+            case ROLE:
+                chatWindow.appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
                 break;
             default:
                 chatWindow.appendText(message + "\n");

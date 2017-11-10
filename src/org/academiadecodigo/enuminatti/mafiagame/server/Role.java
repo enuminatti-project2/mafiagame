@@ -1,5 +1,11 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * MIT License
  * (c) 2017 Ricardo Constantino
@@ -10,16 +16,27 @@ public enum Role {
     MAFIA,
     VILLAGER;
 
-    private static int playerRolesAssigned=0;
-    private static final int MAFIA_RATIO = 3;
 
-    public static Role setRoleToPlayer(){
+    public static void setRolesToAllPlayers(Map<String, Server.PlayerHandler> listOfPlayers,
+                                            List<String> mafiaListOfPlayers, List<String> villagerListOfPlayers) {
 
-        playerRolesAssigned++;
+        int numberOfMafia = (int) Math.ceil(listOfPlayers.size() / 5.0); // always at least one mafia
 
-        if (playerRolesAssigned % MAFIA_RATIO == 0){
-            return MAFIA;
+        System.out.println("Number of mafia is: " + numberOfMafia);
+        List<String> players = new LinkedList<>(listOfPlayers.keySet());
+
+        for (int i = 0; i < numberOfMafia; i++) {
+
+            int roll = (int) (Math.random() * players.size());
+            String selected = players.remove(roll);
+            listOfPlayers.get(selected).setRole(MAFIA);
+
+            mafiaListOfPlayers.add(selected);
         }
-        return VILLAGER;
+
+        for (String player : players) {
+            listOfPlayers.get(player).setRole(VILLAGER);
+            villagerListOfPlayers.add(player);
+        }
     }
 }

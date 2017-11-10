@@ -90,7 +90,7 @@ public class Server {
         }
 
         private void receiveMessage(String message) {
-            gameMaster.receiveAndDecode(message);
+            gameMaster.receiveAndDecode(message, nickname);
         }
 
         public void sendMessage(String message) {
