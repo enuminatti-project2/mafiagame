@@ -5,4 +5,14 @@
 
 #chatWindow {
     fx-font-color: white;
+    -fx-opacity: 20%;
+}
+
+.list-view .list-cell {
+    -fx-opacity: 50%;
+    -fx-text-fill: red;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
 }

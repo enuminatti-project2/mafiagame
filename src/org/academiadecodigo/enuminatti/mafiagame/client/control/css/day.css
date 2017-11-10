@@ -6,3 +6,7 @@
 #chatWindow {
     fx-font-color: black;
 }
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
