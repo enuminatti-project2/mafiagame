@@ -76,7 +76,6 @@ public class Server {
         private Socket clientSocket;
 
         private String nickname;
-        private boolean alive;
         private Role role;
         private BufferedReader in;
         private PrintWriter out;
@@ -102,10 +101,6 @@ public class Server {
             this.role = role;
         }
 
-        public String getNickname() {
-            return nickname;
-        }
-
         @Override
         public void run() {
             try {
@@ -128,7 +123,7 @@ public class Server {
             }
         }
 
-        private void disconnectPlayer() {
+        void disconnectPlayer() {
             System.out.println("disconnected player");
             try {
                 if (in != null) {

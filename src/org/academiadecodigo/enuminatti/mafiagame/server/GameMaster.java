@@ -13,15 +13,18 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable{
+public class GameMaster implements Runnable {
+
     private static final int TIMETOSTART = 1;
     private static final int MINPLAYERS = 0; //1 PLAYER
+
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
 
     private boolean gameHasStarted;
     private boolean night;
+
     private Map<String, Integer> votesCount;
 
     private ScheduledExecutorService startGame;
@@ -74,7 +77,7 @@ public class GameMaster implements Runnable{
 
         for (String player : votedPlayers) {
 
-            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)){
+            if (votesCount.get(mostVotedPlayer) > votesCount.get(player)) {
                 mostVotedPlayer = player;
             }
         }
@@ -125,21 +128,23 @@ public class GameMaster implements Runnable{
 
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
-        broadcastToPlayers("Player " + nickname + " was sentenced to death. The role was: "
-                            + listOfPlayers.get(nickname).getRole().toString());
-        listOfPlayers.remove(nickname);
-        broadcastToPlayers(nickname + " has disconnected from the game.");
+        broadcastToPlayers(EncodeDecode.MESSAGE.encode("Player " + nickname + " was sentenced to death. The role was: "
+                + listOfPlayers.get(nickname).getRole().toString()));
+
+        kickPlayer(nickname);
+
         sendNickList();
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler){
-        if (listOfPlayers.get(nick) != null){
+    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+
+        if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
-        broadcastToPlayers(nick + " has entered to the game.");
+        broadcastToPlayers(EncodeDecode.MESSAGE.encode(nick + " has entered to the game."));
 
         if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
@@ -148,7 +153,7 @@ public class GameMaster implements Runnable{
             schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             broadcastToPlayers(EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
 
-        }else {
+        } else {
             broadcastToPlayers(EncodeDecode.START.encode("begin"));
             playerHandler.setRole(Role.setRoleToPlayer());
             broadcastToPlayers(playerHandler.getRole().name());
@@ -159,20 +164,14 @@ public class GameMaster implements Runnable{
 
     private void setRolesToPlayers() {
 
-        Set<String> playerHandlerSet = listOfPlayers.keySet();
+        for (String playerNickname : listOfPlayers.keySet()) {
+            listOfPlayers.get(playerNickname).setRole(Role.setRoleToPlayer());
 
-        for (String playerNick : playerHandlerSet) {
-
-            Server.PlayerHandler player = listOfPlayers.get(playerNick);
-            player.setRole(Role.setRoleToPlayer());
-            listOfPlayers.replace(playerNick, player);
-            broadcastToPlayers(playerNick + " " + player.getRole());
-
-            if (player.getRole() == Role.MAFIA) {
-                mafiosiNicks.add(playerNick);
+            if (listOfPlayers.get(playerNickname).getRole() == Role.MAFIA) {
+                mafiosiNicks.add(playerNickname);
                 continue;
             }
-            villagersNicks.add(playerNick);
+            villagersNicks.add(playerNickname);
         }
     }
 
@@ -187,11 +186,12 @@ public class GameMaster implements Runnable{
 
     boolean kickPlayer(String nickname) {
 
-        if (mafiosiNicks.contains(nickname)){
+        if (mafiosiNicks.contains(nickname)) {
             mafiosiNicks.remove(nickname);
         } else {
             villagersNicks.remove(nickname);
         }
+        listOfPlayers.get(nickname).disconnectPlayer();
 
         return listOfPlayers.remove(nickname) != null;
     }
