@@ -18,11 +18,6 @@ public class ClientUI extends Application {
     }
 
     @Override
-    public void init() throws Exception {
-
-    }
-
-    @Override
     public void start(Stage primaryStage) throws IOException{
 
         SceneNavigator.getInstance().setStage(primaryStage);
