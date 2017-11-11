@@ -34,8 +34,9 @@ public class GameMasterDecoder {
         switch (enumTag) {
             //Implement EncodeDecode.SERVER to be sent in a different color
             case MESSAGE:
-                Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), "<" + nickname + "> " +
-                        EncodeDecode.MESSAGE.decode(message));
+                String messageDecoded = EncodeDecode.MESSAGE.decode(message);
+                Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(),
+                        EncodeDecode.MESSAGE.encode("<" + nickname + "> " + messageDecoded));
                 break;
             case NICK:
                 System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));

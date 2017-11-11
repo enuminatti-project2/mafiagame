@@ -23,9 +23,9 @@ public class Broadcaster {
     public static void broadcastToPlayers(
             Map<String, Server.PlayerHandler> playerslist, List<String> messageTargets, String message) {
 
-        for (String nick : playerslist.keySet()){
+        for (String nick : playerslist.keySet()) {
 
-            if(!messageTargets.contains(nick)){
+            if (!messageTargets.contains(nick)) {
                 continue;
             }
             playerslist.get(nick).sendMessage(message);

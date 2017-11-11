@@ -130,12 +130,12 @@ public class ChatController implements Controller {
 
     }
 
-    private void writeNewLine(String message, Color color) {
+    void writeNewLine(String message, Color color) {
 
-        final String finalMessage = (message == null ? "": message);
+        final String finalMessage = (message == null ? "" : message);
         final Color textColor;
 
-        if (night && color == Color.BLACK){
+        if (night && color == Color.BLACK) {
             textColor = Color.WHITE;
         } else {
             textColor = color;
@@ -147,18 +147,22 @@ public class ChatController implements Controller {
                     Text newText = new Text();
                     newText.setFill(textColor);
                     newText.setText(finalMessage + "\n");
-                    flowChat.getChildren().add(newText);                }
+                    flowChat.getChildren().add(newText);
+                }
         );
 
-    TextArea getChatWindow() {
-        return chatWindow;
+
     }
 
-    Button getVoteButton() {
-        return voteButton;
+    TextFlow getFlowChat() {
+        return flowChat;
     }
 
-    Button getSendButton() {
+    public Button getSendButton() {
         return sendButton;
+    }
+
+    public Button getVoteButton() {
+        return voteButton;
     }
 }

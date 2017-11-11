@@ -18,11 +18,11 @@ import java.util.concurrent.TimeUnit;
 public class GameMaster {
 
     private static final int TIMETOSTART = 10;
-    private static final int MINPLAYERS = 4; //1 PLAYER
+    private static final int MINPLAYERS = 1; //1 PLAYER
 
-    private Map <String, Server.PlayerHandler> listOfPlayers;
-    private List <String> mafiosiNicks;
-    private List <String> villagersNicks;
+    private Map<String, Server.PlayerHandler> listOfPlayers;
+    private List<String> mafiosiNicks;
+    private List<String> villagersNicks;
 
     private boolean gameHasStarted;
     private boolean night;
@@ -31,15 +31,15 @@ public class GameMaster {
     private int numberOfVotes;
 
     private ScheduledExecutorService startGame;
-    private ScheduledFuture <?> schedule;
+    private ScheduledFuture<?> schedule;
 
     public GameMaster() {
 
-        listOfPlayers = new HashMap <>();
+        listOfPlayers = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-        votesCount = new HashMap <>();
-        mafiosiNicks = new LinkedList <>();
-        villagersNicks = new LinkedList <>();
+        votesCount = new HashMap<>();
+        mafiosiNicks = new LinkedList<>();
+        villagersNicks = new LinkedList<>();
     }
 
     /**
@@ -53,14 +53,14 @@ public class GameMaster {
 
     /**
      * This adds a vote to votesCount for the player specified in nickname parameter.
-     *
+     * <p>
      * If the nickname isn't a valid player, it doesn't do anything.
      *
      * @param nickname player to add a vote to
      */
     void addVote(String nickname) {
 
-        if(nickname == null || !listOfPlayers.containsKey(nickname)) {
+        if (nickname == null || !listOfPlayers.containsKey(nickname)) {
             return;
         }
 
@@ -80,16 +80,16 @@ public class GameMaster {
     /**
      * This grabs the votesCount map and finds the player which
      * had the same votes as mostVotes and kills them.
-     *
+     * <p>
      * In case of a draw, this will grab the first player.
      *
      * @param mostVotes the most votes that are in the map
      */
     private void calculateVotes(Integer mostVotes) {
 
-        for (String player: votesCount.keySet()) {
+        for (String player : votesCount.keySet()) {
 
-            if(votesCount.get(player).equals(mostVotes)){
+            if (votesCount.get(player).equals(mostVotes)) {
 
                 votesCount.clear();
                 numberOfVotes = 0;
@@ -144,7 +144,7 @@ public class GameMaster {
     /**
      * Remove the player with this nickname from all lists and maps
      * and disconnect them.
-     *
+     * <p>
      * At the end, it updates everyone's nicklist to reflect this change.
      *
      * @param nickname player to be kicked from the game
@@ -169,15 +169,15 @@ public class GameMaster {
 
     }
 
-    private boolean gameover(){
+    private boolean gameover() {
 
         String message = null;
 
-        if (mafiosiNicks.size() == 0){
+        if (mafiosiNicks.size() == 0) {
             message = "The villagers won, all the mobsters are dead!";
         }
 
-        if (villagersNicks.size() < mafiosiNicks.size()){
+        if (villagersNicks.size() < mafiosiNicks.size()) {
             message = "The mobsters won!";
         }
 
@@ -198,7 +198,7 @@ public class GameMaster {
     }
 
 
-    public Map <String, Server.PlayerHandler> getListOfPlayers() {
+    public Map<String, Server.PlayerHandler> getListOfPlayers() {
         return listOfPlayers;
     }
 }

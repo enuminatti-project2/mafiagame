@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import javafx.application.Platform;
+import javafx.scene.paint.Color;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -19,10 +20,11 @@ class ControllerDecoder {
     /**
      * Decodes messages sent to a LoginController instance.
      * Will perform the changes on the UI's elements associated with the LoginController scene.
+     *
      * @param loginController The instance of LoginController
-     * @param message The tagged message to be decoded
+     * @param message         The tagged message to be decoded
      */
-    static void loginControllerDecoder(LoginController loginController, String message){
+    static void loginControllerDecoder(LoginController loginController, String message) {
 
         System.out.println(message + " on Login controller");
 
@@ -54,27 +56,29 @@ class ControllerDecoder {
     /**
      * Decodes messages sent to a ChatController instance.
      * Will perform the changes on the UI's elements associated with the ChatController scene.
+     *
      * @param chatController The instance of ChatController
-     * @param message The tagged message to be decoded
+     * @param message        The tagged message to be decoded
      */
 
-    static void chatControllerDecoder(ChatController chatController, String message){
+    static void chatControllerDecoder(ChatController chatController, String message) {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
         if (tag == null) {
 
-            chatController.getChatWindow().appendText(message + "\n");
+            chatController.writeNewLine(message, Color.DEEPPINK);
+            System.out.println(message);
             return;
         }
 
         switch (tag) {
 
             case MESSAGE:
-                chatController.getChatWindow().appendText(EncodeDecode.MESSAGE.decode(message) + "\n");
+                chatController.writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
-                chatController.getChatWindow().appendText("You have been killed.");
+                chatController.writeNewLine("You have been killed.", Color.RED);
                 chatController.getVoteButton().setDisable(true);
                 chatController.getSendButton().setDisable(true);
             case NICKOK:
@@ -91,10 +95,10 @@ class ControllerDecoder {
                 chatController.updateNickList(message);
                 break;
             case NICK:
-                chatController.getChatWindow().appendText("You are " + EncodeDecode.NICK.decode(message) + "\n");
+                chatController.writeNewLine("You are " + EncodeDecode.NICK.decode(message), Color.HOTPINK);
                 break;
             case ROLE:
-                chatController.getChatWindow().appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
+                chatController.writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
                 Platform.runLater(() -> SceneNavigator.getInstance().back());
@@ -107,7 +111,7 @@ class ControllerDecoder {
                 chatController.getVoteButton().setDisable(false);
                 break;
             default:
-                chatController.getChatWindow().appendText(message + "\n");
+                chatController.writeNewLine(message, Color.BLUE);
                 System.out.println("Deu merda");
         }
     }
