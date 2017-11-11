@@ -70,6 +70,7 @@ public class GameMaster implements Runnable {
 
         if (numberOfVotes >= listOfPlayers.size()) {
             calculateVotes(Collections.max(votesCount.values()));
+            toggleDayAndNight();
         }
 
     }
@@ -92,6 +93,8 @@ public class GameMaster implements Runnable {
                 votesCount.clear();
                 numberOfVotes = 0;
                 killPlayer(player);
+
+                gameover();
 
                 break;
             }
@@ -193,6 +196,26 @@ public class GameMaster implements Runnable {
         }
 
     }
+
+    private boolean gameover(){
+
+        String message = null;
+
+        if (mafiosiNicks.size() == 0){
+            message = "The villagers won, all the mobsters are dead!";
+        }
+
+        if (villagersNicks.size() == 0){
+            message = "The mobsters killed everyone!";
+        }
+
+        if (message != null) {
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(message));
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void run() {
