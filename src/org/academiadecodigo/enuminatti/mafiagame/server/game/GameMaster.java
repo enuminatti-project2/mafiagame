@@ -17,8 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster {
 
-    private static final int TIMETOSTART = 10;
-    private static final int MINPLAYERS = 1; //1 PLAYER
+    private static final int MIN_PLAYERS = 1; //1 PLAYER
+
+    private static final int SECONDS_TO_START_GAME = 10;
+    private static final int SECONDS_TO_TALK = 60;
+    private static final int SECONDS_TO_VOTE = 30;
 
     private Map <String, Server.PlayerHandler> listOfPlayers;
     private List <String> mafiosiNicks;
@@ -131,12 +134,12 @@ public class GameMaster {
         System.out.println("Player added");
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(nick + " has entered the game."));
 
-        if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= MIN_PLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this::startGame, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+            schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(SECONDS_TO_START_GAME))); //Send boadcast to reset the timer
         }
         return true;
     }
