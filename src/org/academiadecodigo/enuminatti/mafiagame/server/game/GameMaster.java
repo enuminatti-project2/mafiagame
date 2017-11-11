@@ -51,7 +51,7 @@ public class GameMaster {
     private void toggleDayAndNight() {
 
         night = !night;
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT.encode(Boolean.toString(night)));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT, Boolean.toString(night));
     }
 
     /**
@@ -119,8 +119,9 @@ public class GameMaster {
 
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode("Player " + nickname + " was sentenced to death. The role was: "
-                + listOfPlayers.get(nickname).getRole().toString()));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
+                String.format("Player %s was sentenced to death. The role was: %s",
+                        nickname, listOfPlayers.get(nickname).getRole()));
         kickPlayer(nickname);
     }
 
@@ -132,14 +133,14 @@ public class GameMaster {
 
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(nick + " has entered the game."));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
 
         if (!gameHasStarted && listOfPlayers.size() >= MIN_PLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
             schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(SECONDS_TO_START_GAME))); //Send boadcast to reset the timer
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
         }
         return true;
     }
@@ -166,13 +167,13 @@ public class GameMaster {
         if (playerRemoved != null) {
 
             playerRemoved.disconnectPlayer();
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
         }
 
     }
 
-    private boolean gameover(){
+    private void gameover(){
 
         String message = null;
 
@@ -185,18 +186,16 @@ public class GameMaster {
         }
 
         if (message != null) {
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(message));
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER.encode("GAME OVER"));
-            return true;
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, message);
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER, "GAME OVER");
         }
-        return false;
     }
 
 
     private void startGame() {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
 
