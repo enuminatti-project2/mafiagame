@@ -1,5 +1,6 @@
-package org.academiadecodigo.enuminatti.mafiagame.server;
+package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.LinkedList;

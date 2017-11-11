@@ -65,7 +65,8 @@ public class ChatController implements Controller {
     }
 
     public void getMessage(String message) {
-        messagTag(message);
+
+        ControllerDecoder.chatControllerDecoder(this, message);
     }
 
     @Override
@@ -91,54 +92,12 @@ public class ChatController implements Controller {
         Platform.runLater(() ->usersList.setItems(names));
     }
 
-    public void messagTag(String message) {
-
-        EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
-
-        if (tag == null) {
-            chatWindow.appendText(message + "\n");
-            return;
-        }
-
-        switch (tag) {
-
-            case MESSAGE:
-                chatWindow.appendText(message + "\n");
-                break;
-            case KILL:
-                voteButton.setDisable(true);
-                chatWindow.appendText("Foste com o c******o\n");
-                break;
-            case NICKOK:
-                break;
-            case TIMER:
-                System.out.println("Timer message");
-                break;
-            case NIGHT:
-                toggleCss(EncodeDecode.NIGHT.decode(message));
-                break;
-            case NICKLIST:
-                message = EncodeDecode.NICKLIST.decode(message);
-                updateNickList(message);
-                break;
-            case NICK:
-                chatWindow.appendText("You are " + EncodeDecode.NICK.decode(message) + "\n");
-                break;
-            case ROLE:
-                chatWindow.appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
-                break;
-            default:
-                chatWindow.appendText(message + "\n");
-                System.out.println("Deu merda");
-        }
-    }
 
     public void toggleCss(String message){
 
         boolean night = Boolean.parseBoolean(message);
 
         System.out.println("Night: " + night);
-
 
         if (dayCSS == null){
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
@@ -155,5 +114,12 @@ public class ChatController implements Controller {
         }
         pane.getScene().getStylesheets().add(dayCSS);
     }
-}
 
+    public TextArea getChatWindow() {
+        return chatWindow;
+    }
+
+    public Button getVoteButton() {
+        return voteButton;
+    }
+}

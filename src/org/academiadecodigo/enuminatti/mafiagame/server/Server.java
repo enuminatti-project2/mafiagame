@@ -1,5 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
+import org.academiadecodigo.enuminatti.mafiagame.server.game.Role;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -90,7 +92,7 @@ public class Server {
         }
 
         private void receiveMessage(String message) {
-            gameMaster.receiveAndDecode(message, nickname);
+            gameMaster.receiveMessage(message, nickname);
         }
 
         public void sendMessage(String message) {
@@ -119,14 +121,17 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                gameMaster.kickPlayer(nickname);
+                disconnectPlayer();
             }
         }
 
-        void disconnectPlayer() {
+        public void disconnectPlayer() {
             System.out.println("disconnected player");
             try {
                 System.out.println(nickname);
+                if (!gameMaster.getListOfPlayers().containsKey(nickname)) {
+                    gameMaster.kickPlayer(nickname);
+                }
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();

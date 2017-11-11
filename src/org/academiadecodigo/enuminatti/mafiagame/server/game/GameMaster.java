@@ -1,5 +1,6 @@
-package org.academiadecodigo.enuminatti.mafiagame.server;
+package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -17,11 +18,11 @@ import java.util.concurrent.TimeUnit;
 public class GameMaster implements Runnable {
 
     private static final int TIMETOSTART = 10;
-    private static final int MINPLAYERS = 4; //1 PLAYER
+    private static final int MINPLAYERS = 1; //1 PLAYER
 
-    private Map<String, Server.PlayerHandler> listOfPlayers;
-    private List<String> mafiosiNicks;
-    private List<String> villagersNicks;
+    private Map <String, Server.PlayerHandler> listOfPlayers;
+    private List <String> mafiosiNicks;
+    private List <String> villagersNicks;
 
     private boolean gameHasStarted;
     private boolean night;
@@ -30,15 +31,15 @@ public class GameMaster implements Runnable {
     private int numberOfVotes;
 
     private ScheduledExecutorService startGame;
-    private ScheduledFuture<?> schedule;
+    private ScheduledFuture <?> schedule;
 
     public GameMaster() {
 
-        listOfPlayers = new HashMap<>();
+        listOfPlayers = new HashMap <>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-        votesCount = new HashMap<>();
-        mafiosiNicks = new LinkedList<>();
-        villagersNicks = new LinkedList<>();
+        votesCount = new HashMap <>();
+        mafiosiNicks = new LinkedList <>();
+        villagersNicks = new LinkedList <>();
     }
 
     /**
@@ -57,7 +58,7 @@ public class GameMaster implements Runnable {
      *
      * @param nickname player to add a vote to
      */
-    private void addVote(String nickname) {
+    void addVote(String nickname) {
 
         if(nickname == null || !listOfPlayers.containsKey(nickname)) {
             return;
@@ -99,42 +100,12 @@ public class GameMaster implements Runnable {
 
     }
 
-    public void receiveAndDecode(String message, String nickname) {
+    public void receiveMessage(String message, String nickname) {
 
-        EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
-        Server.PlayerHandler sender = listOfPlayers.get(nickname);
-
-        switch (enumTag) {
-
-            case MESSAGE:
-                Broadcaster.broadcastToPlayers(listOfPlayers,
-                        String.format("<%s> %s", nickname,
-                        EncodeDecode.MESSAGE.decode(message)));
-                break;
-            case NICK:
-                sender.sendMessage(EncodeDecode.NICK.encode(nickname));
-                break;
-            case NICKOK:
-                break;
-            case TIMER:
-                break;
-            case NICKMESSAGE:
-                break;
-            case VOTE:
-                addVote(EncodeDecode.VOTE.decode(message));
-                break;
-            case NICKLIST:
-                sender.sendMessage(EncodeDecode.NICKLIST.encode(getNickList()));
-                break;
-            case ROLE:
-                sender.sendMessage(EncodeDecode.ROLE.encode(sender.getRole().name()));
-                break;
-            default:
-                break;
-        }
+        GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
 
-    private String getNickList() {
+    String getNickList() {
         return String.join(" ", listOfPlayers.keySet());
     }
 
@@ -201,5 +172,9 @@ public class GameMaster implements Runnable {
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+    }
+
+    public Map <String, Server.PlayerHandler> getListOfPlayers() {
+        return listOfPlayers;
     }
 }
