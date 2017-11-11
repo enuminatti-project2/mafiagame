@@ -9,3 +9,6 @@
 #rootChat .tab-header-area .tab-header-background {
     -fx-background-color: transparent;
 }
+#flowChat {
+    -fx-background-color: white;
+}

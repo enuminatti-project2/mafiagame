@@ -6,11 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -23,6 +23,9 @@ public class ChatController implements Controller {
 
     @FXML
     private TextArea chatWindow;
+
+    @FXML
+    private TextFlow flowChat;
 
     @FXML
     private TextField clientPrompt;
@@ -40,17 +43,33 @@ public class ChatController implements Controller {
     private ListView<String> usersList;
 
     @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    void initialize() {
+        assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert clientPrompt != null : "fx:id=\"clientPrompt\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert chatWindow != null : "fx:id=\"chatWindow\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert flowChat != null : "fx:id=\"flowChat\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert sendButton != null : "fx:id=\"sendButton\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert voteButton != null : "fx:id=\"voteButton\" was not injected: check your FXML file 'ClientView.fxml'.";
+
+        scrollPane.vvalueProperty().bind(flowChat.heightProperty());
+
+    }
+
+    @FXML
     void sendMessageToClient(ActionEvent event) {
 
         if (clientPrompt.getText().matches(".*\\S.*")) {
             //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
-            client.encodeAndSend(EncodeDecode.MESSAGE,message);
+            client.encodeAndSend(EncodeDecode.MESSAGE, message);
             clientPrompt.setText("");
             clientPrompt.requestFocus();
         }
     }
-
 
     @FXML
     void vote(ActionEvent event) {
@@ -79,17 +98,17 @@ public class ChatController implements Controller {
     void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICKLIST,"");
+        client.encodeAndSend(EncodeDecode.NICKLIST, "");
         client.encodeAndSend(EncodeDecode.NICK, "asking for my nick");
         client.encodeAndSend(EncodeDecode.ROLE, "asking for my role");
-        toggleCss("false");
+        toggleCss("true");
     }
 
 
     private void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
-        Platform.runLater(() ->usersList.setItems(names));
+        Platform.runLater(() -> usersList.setItems(names));
     }
 
     public void messagTag(String message) {
@@ -98,16 +117,19 @@ public class ChatController implements Controller {
 
         if (tag == null) {
             chatWindow.appendText(message + "\n");
+            writeNewLine(message, Color.BLACK);
             return;
         }
 
         switch (tag) {
 
             case MESSAGE:
-                chatWindow.appendText(message + "\n");
+                chatWindow.appendText(EncodeDecode.MESSAGE.decode(message) + "\n");
+                writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
                 voteButton.setDisable(true);
+                writeNewLine("Foste com o C******", Color.RED);
                 chatWindow.appendText("Foste com o c******o\n");
                 break;
             case NICKOK:
@@ -124,9 +146,11 @@ public class ChatController implements Controller {
                 break;
             case NICK:
                 chatWindow.appendText("You are " + EncodeDecode.NICK.decode(message) + "\n");
+                writeNewLine("You are " + EncodeDecode.NICK.decode(message), Color.HOTPINK);
                 break;
             case ROLE:
                 chatWindow.appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
+                writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.RED);
                 break;
             default:
                 chatWindow.appendText(message + "\n");
@@ -134,14 +158,14 @@ public class ChatController implements Controller {
         }
     }
 
-    public void toggleCss(String message){
+    public void toggleCss(String message) {
 
         boolean night = Boolean.parseBoolean(message);
 
         System.out.println("Night: " + night);
 
 
-        if (dayCSS == null){
+        if (dayCSS == null) {
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
             dayCSS = getClass().getResource("css/day.css").toExternalForm();
         }
@@ -154,6 +178,21 @@ public class ChatController implements Controller {
         }
         StyleManager.getInstance().removeUserAgentStylesheet(nightCSS);
         StyleManager.getInstance().addUserAgentStylesheet(dayCSS);
+
+    }
+
+    private void writeNewLine(String message, Color color) {
+
+        final String finalMessage = (message == null ? "": message);
+
+        Platform.runLater(
+                () -> {
+
+                    Text newText = new Text();
+                    newText.setFill(color);
+                    newText.setText(finalMessage + "\n");
+                    flowChat.getChildren().add(newText);                }
+        );
 
     }
 }
