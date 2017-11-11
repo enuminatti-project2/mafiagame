@@ -1,18 +1,29 @@
 #pane {
     -fx-background-image: url(/NightMafia.jpg);
-    -fx-background-repeat: stretch;
 }
 
 #chatWindow {
-    -fx-text-fill: white;
-    -fx-opacity: 20%;
+    -fx-text-fill: yellow;
+    -fx-background-color: rgba(0,0,0,0.2);
 }
 
-.list-view .list-cell {
+#chatWindow .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+#chatWindow .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+#chatWindow .scroll-pane .content{
+    -fx-background-color: transparent;
+}
+
+#usersList .list-cell {
     -fx-opacity: 50%;
     -fx-text-fill: red;
 }
 
-.tab-pane .tab-header-area .tab-header-background {
+#rootChat .tab-header-area .tab-header-background {
     -fx-background-color: transparent;
 }
