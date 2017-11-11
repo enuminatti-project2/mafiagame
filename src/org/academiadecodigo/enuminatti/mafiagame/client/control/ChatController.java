@@ -19,6 +19,7 @@ public class ChatController implements Controller {
     private Client client;
     private String nightCSS;
     private String dayCSS;
+    private boolean night;
 
 
     @FXML
@@ -150,7 +151,7 @@ public class ChatController implements Controller {
                 break;
             case ROLE:
                 chatWindow.appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
-                writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.RED);
+                writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.YELLOW);
                 break;
             default:
                 chatWindow.appendText(message + "\n");
@@ -160,7 +161,7 @@ public class ChatController implements Controller {
 
     public void toggleCss(String message) {
 
-        boolean night = Boolean.parseBoolean(message);
+        night = Boolean.parseBoolean(message);
 
         System.out.println("Night: " + night);
 
@@ -184,12 +185,19 @@ public class ChatController implements Controller {
     private void writeNewLine(String message, Color color) {
 
         final String finalMessage = (message == null ? "": message);
+        final Color textColor;
+
+        if (night && color == Color.BLACK){
+            textColor = Color.WHITE;
+        } else {
+            textColor = color;
+        }
 
         Platform.runLater(
                 () -> {
 
                     Text newText = new Text();
-                    newText.setFill(color);
+                    newText.setFill(textColor);
                     newText.setText(finalMessage + "\n");
                     flowChat.getChildren().add(newText);                }
         );

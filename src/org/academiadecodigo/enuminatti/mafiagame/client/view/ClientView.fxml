@@ -27,7 +27,7 @@
                <content>
                   <ScrollPane id="scrollPane" fx:id="scrollPane" hbarPolicy="NEVER" hmax="0.0" style="-fx-background: transparent;" vvalue="0.0">
                      <content>
-                        <TextFlow id="flowChat" fx:id="flowChat" lineSpacing="0.8" prefHeight="502.0" prefWidth="604.0">
+                        <TextFlow id="flowChat" fx:id="flowChat" lineSpacing="0.8" prefHeight="500.0" prefWidth="604.0">
                            <padding>
                               <Insets left="10.0" top="10.0" />
                            </padding>
