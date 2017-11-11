@@ -110,7 +110,7 @@ public class Server {
                 while ((message = in.readLine()) != null) {
                     if (nickname == null) {
                         if (!tryRegister(message)) {
-                            sendMessage(EncodeDecode.NICKOK.encode("false"));
+                            sendMessage(EncodeDecode.MESSAGE.encode("The nickname you chose is already in use."));
                             continue;
                         }
                         this.nickname = EncodeDecode.NICK.decode(message);
@@ -129,7 +129,7 @@ public class Server {
             System.out.println("disconnected player");
             try {
                 System.out.println(nickname);
-                if (!gameMaster.getListOfPlayers().containsKey(nickname)) {
+                if (gameMaster.getListOfPlayers().containsKey(nickname)) {
                     gameMaster.kickPlayer(nickname);
                 }
                 clientSocket.close();
@@ -149,5 +149,10 @@ public class Server {
         public Role getRole() {
             return role;
         }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
     }
+
 }

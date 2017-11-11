@@ -9,7 +9,6 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
  */
 
 
-
 /**
  * A support utilitary class for GameMaster to have messages decoded.
  */
@@ -20,10 +19,10 @@ public class GameMasterDecoder {
      * Decodes messages for GameMaster from a user, in order to perform the necessary operations.
      *
      * @param gameMaster The instance of GameMaster
-     * @param message The message to be decoded
-     * @param nickname The sender's nickname
+     * @param message    The message to be decoded
+     * @param nickname   The sender's nickname
      */
-    static void gameMasterDecoder(GameMaster gameMaster, String message, String nickname){
+    static void gameMasterDecoder(GameMaster gameMaster, String message, String nickname) {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
@@ -39,7 +38,16 @@ public class GameMasterDecoder {
                         EncodeDecode.MESSAGE.decode(message));
                 break;
             case NICK:
-                sender.sendMessage(EncodeDecode.NICK.encode(nickname));
+                System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));
+                String newNickname = EncodeDecode.NICK.decode(message);
+
+                if (gameMaster.getListOfPlayers().containsKey(newNickname)) {
+                    sender.sendMessage(EncodeDecode.MESSAGE.encode("The name you chose is already in use"));
+                    return;
+                }
+                sender.setNickname(newNickname);
+                gameMaster.getListOfPlayers().put(newNickname, sender);
+                gameMaster.getListOfPlayers().remove(nickname);
                 break;
             case NICKOK:
                 break;
@@ -51,6 +59,7 @@ public class GameMasterDecoder {
                 gameMaster.addVote(EncodeDecode.VOTE.decode(message));
                 break;
             case NICKLIST:
+                System.out.println("Asking for a nicklist. The current list is: " + gameMaster.getNickList());
                 sender.sendMessage(EncodeDecode.NICKLIST.encode(gameMaster.getNickList()));
                 break;
             case ROLE:

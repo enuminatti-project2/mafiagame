@@ -1,6 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
-import com.sun.javafx.css.StyleManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -80,8 +79,7 @@ public class ChatController implements Controller {
     void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICKLIST,"");
-        client.encodeAndSend(EncodeDecode.NICK, "asking for my nick");
+        client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
         client.encodeAndSend(EncodeDecode.ROLE, "asking for my role");
         toggleCss("false");
     }
@@ -104,16 +102,16 @@ public class ChatController implements Controller {
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
             dayCSS = getClass().getResource("css/day.css").toExternalForm();
         }
+
         voteButton.setDisable(false);
+        pane.getScene().getStylesheets().clear();
+        pane.getScene().getStylesheets().removeAll();
 
         if (night) {
-            StyleManager.getInstance().removeUserAgentStylesheet(dayCSS);
-            StyleManager.getInstance().addUserAgentStylesheet(nightCSS);
+            pane.getScene().getStylesheets().add(nightCSS);
             return;
         }
-        StyleManager.getInstance().removeUserAgentStylesheet(nightCSS);
-        StyleManager.getInstance().addUserAgentStylesheet(dayCSS);
-
+        pane.getScene().getStylesheets().add(dayCSS);
     }
 
     public TextArea getChatWindow() {

@@ -86,6 +86,7 @@ class ControllerDecoder {
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
+                System.out.println("Recieved a nicklist: " + message);
                 chatController.updateNickList(message);
                 break;
             case NICK:
