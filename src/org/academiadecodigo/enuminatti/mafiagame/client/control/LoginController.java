@@ -1,13 +1,11 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
-import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.io.IOException;
@@ -73,29 +71,14 @@ public class LoginController implements Controller {
     @Override
     public void getMessage(String message) {
 
-        System.out.println(message + " on Login controller");
+        ControllerDecoder.loginControllerDecoder(this, message);
+    }
 
-        String tempTag = EncodeDecode.getStartTag(message);
+    public Client getClient() {
+        return client;
+    }
 
-        if (tempTag == null) {
-            System.out.println("invalid message: " + message);
-            return;
-        }
-
-        EncodeDecode tag = EncodeDecode.getEnum(tempTag);
-
-        switch (tag) {
-            case START:
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView").setClient(client);
-                });
-                break;
-            case TIMER:
-                serverMessageArea.appendText("Game will start in " + tag.decode(message) + " seconds.\n");
-                break;
-            default:
-                serverMessageArea.appendText(tag.decode(message) + "\n");
-        }
+    public TextArea getServerMessageArea() {
+        return serverMessageArea;
     }
 }

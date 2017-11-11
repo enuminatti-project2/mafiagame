@@ -1,5 +1,6 @@
-package org.academiadecodigo.enuminatti.mafiagame.server;
+package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -17,27 +18,27 @@ import java.util.concurrent.TimeUnit;
 public class GameMaster implements Runnable {
 
     private static final int TIMETOSTART = 1;
-    private static final int MINPLAYERS = 3; //1 PLAYER
+    private static final int MINPLAYERS = 1; //1 PLAYER
 
-    private Map<String, Server.PlayerHandler> listOfPlayers;
-    private List<String> mafiosiNicks;
-    private List<String> villagersNicks;
+    private Map <String, Server.PlayerHandler> listOfPlayers;
+    private List <String> mafiosiNicks;
+    private List <String> villagersNicks;
 
     private boolean gameHasStarted;
     private boolean night;
 
-    private Map<String, Integer> votesCount;
+    private Map <String, Integer> votesCount;
 
     private ScheduledExecutorService startGame;
-    private ScheduledFuture<?> schedule;
+    private ScheduledFuture <?> schedule;
 
     public GameMaster() {
 
-        listOfPlayers = new HashMap<>();
+        listOfPlayers = new HashMap <>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-        votesCount = new HashMap<>();
-        mafiosiNicks = new LinkedList<>();
-        villagersNicks = new LinkedList<>();
+        votesCount = new HashMap <>();
+        mafiosiNicks = new LinkedList <>();
+        villagersNicks = new LinkedList <>();
     }
 
 
@@ -50,7 +51,7 @@ public class GameMaster implements Runnable {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT.encode(Boolean.toString(night)));
     }
 
-    private void addVote(String nickname) {
+    void addVote(String nickname) {
 
         if (votesCount.size() != listOfPlayers.size()) {
 
@@ -69,7 +70,7 @@ public class GameMaster implements Runnable {
 
         String mostVotedPlayer = mafiosiNicks.get(0);
 
-        Set<String> votedPlayers = votesCount.keySet();
+        Set <String> votedPlayers = votesCount.keySet();
 
         for (String player : votedPlayers) {
 
@@ -82,40 +83,12 @@ public class GameMaster implements Runnable {
         killPlayer(mostVotedPlayer);
     }
 
-    public void receiveAndDecode(String message, String nickname) {
+    public void receiveMessage(String message, String nickname) {
 
-        EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
-        Server.PlayerHandler sender = listOfPlayers.get(nickname);
-
-        switch (enumTag) {
-
-            case MESSAGE:
-                Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.decode(message));
-                break;
-            case NICK:
-                sender.sendMessage(EncodeDecode.NICK.encode(nickname));
-                break;
-            case NICKOK:
-                break;
-            case TIMER:
-                break;
-            case NICKMESSAGE:
-                break;
-            case VOTE:
-                addVote(EncodeDecode.VOTE.decode(message));
-                break;
-            case NICKLIST:
-                sender.sendMessage(EncodeDecode.NICKLIST.encode(getNickList()));
-                break;
-            case ROLE:
-                sender.sendMessage(EncodeDecode.ROLE.encode(sender.getRole().name()));
-                break;
-            default:
-                break;
-        }
+        GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
 
-    private String getNickList() {
+    String getNickList() {
         return String.join(" ", listOfPlayers.keySet());
     }
 
@@ -149,14 +122,14 @@ public class GameMaster implements Runnable {
         return true;
     }
 
-    boolean kickPlayer(String nickname) {
+    public boolean kickPlayer(String nickname) {
 
         if (mafiosiNicks.contains(nickname)) {
             mafiosiNicks.remove(nickname);
-        } else {
+        }
+        if (mafiosiNicks.contains(nickname)) {
             villagersNicks.remove(nickname);
         }
-        listOfPlayers.get(nickname).disconnectPlayer();
         return listOfPlayers.remove(nickname) != null;
     }
 
@@ -167,5 +140,9 @@ public class GameMaster implements Runnable {
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+    }
+
+    public Map <String, Server.PlayerHandler> getListOfPlayers() {
+        return listOfPlayers;
     }
 }
