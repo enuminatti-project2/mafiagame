@@ -16,7 +16,8 @@ public enum EncodeDecode {
     NICKLIST("<NICKLIST>", "</NICKLIST>"),
     START("<START>", "</START>"),
     KILL("<KILL>", "</KILL>"),
-    ROLE("<ROLE>", "</ROLE>");
+    ROLE("<ROLE>", "</ROLE>"),
+    OVER("<OVER>", "</OVER>");
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
@@ -94,7 +95,8 @@ public enum EncodeDecode {
         }
         String tempTag = message.replaceAll("(?<=>)(.*)", "");
 
-        if (tempTag.matches("(<\\w+>)*")) {
+        if (tempTag.matches("(<\\w+>)*"))
+        {
             return tempTag;
         }
         return null;

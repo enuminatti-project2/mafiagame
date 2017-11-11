@@ -13,7 +13,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
  */
 class ControllerDecoder {
 
-    //Make a decode(Controller controller) to choose which method?
+    //Make a decode(Controller controller, String message) to choose which method?
 
 
     /**
@@ -71,9 +71,10 @@ class ControllerDecoder {
         switch (tag) {
 
             case MESSAGE:
-                chatController.getChatWindow().appendText(message + "\n");
+                chatController.getChatWindow().appendText(EncodeDecode.MESSAGE.decode(message) + "\n");
                 break;
             case KILL:
+                chatController.getChatWindow().appendText("You have been killed.");
                 chatController.getVoteButton().setDisable(true);
             case NICKOK:
                 break;
@@ -92,6 +93,9 @@ class ControllerDecoder {
                 break;
             case ROLE:
                 chatController.getChatWindow().appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
+                break;
+            case OVER:
+                Platform.runLater(() -> SceneNavigator.getInstance().back());
                 break;
             default:
                 chatController.getChatWindow().appendText(message + "\n");

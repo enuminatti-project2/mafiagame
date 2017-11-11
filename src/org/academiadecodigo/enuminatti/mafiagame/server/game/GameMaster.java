@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * (c) 2017 Ricardo Constantino
  */
 
-public class GameMaster implements Runnable {
+public class GameMaster {
 
     private static final int TIMETOSTART = 10;
     private static final int MINPLAYERS = 1; //1 PLAYER
@@ -100,10 +100,10 @@ public class GameMaster implements Runnable {
                 break;
             }
         }
-
     }
 
     public void receiveMessage(String message, String nickname) {
+
 
         GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
@@ -135,7 +135,7 @@ public class GameMaster implements Runnable {
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
+            schedule = startGame.schedule(this::startGame, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
         }
         return true;
@@ -161,6 +161,7 @@ public class GameMaster implements Runnable {
         Server.PlayerHandler playerRemoved = listOfPlayers.remove(nickname);
 
         if (playerRemoved != null) {
+
             playerRemoved.disconnectPlayer();
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
 
@@ -176,26 +177,26 @@ public class GameMaster implements Runnable {
             message = "The villagers won, all the mobsters are dead!";
         }
 
-        if (villagersNicks.size() == 0){
-            message = "The mobsters killed everyone!";
+        if (villagersNicks.size() < mafiosiNicks.size()){
+            message = "The mobsters won!";
         }
 
         if (message != null) {
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(message));
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER.encode("GAME OVER"));
             return true;
         }
         return false;
     }
 
 
-    @Override
-    public void run() {
-
+    private void startGame() {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
+
 
     public Map <String, Server.PlayerHandler> getListOfPlayers() {
         return listOfPlayers;

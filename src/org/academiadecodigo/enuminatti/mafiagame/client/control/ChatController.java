@@ -87,7 +87,7 @@ public class ChatController implements Controller {
     }
 
 
-    private void updateNickList(String message) {
+    void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
         Platform.runLater(() ->usersList.setItems(names));
