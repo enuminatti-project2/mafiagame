@@ -6,10 +6,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 /**
  * Created by Daniel Baeta on 11/11/17.
- */
-
-
-/**
+ *
  * A support utilitary class for GameMaster to have messages decoded.
  */
 
@@ -35,8 +32,8 @@ public class GameMasterDecoder {
             //Implement EncodeDecode.SERVER to be sent in a different color
             case MESSAGE:
                 String messageDecoded = EncodeDecode.MESSAGE.decode(message);
-                Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(),
-                        EncodeDecode.MESSAGE.encode("<" + nickname + "> " + messageDecoded));
+                Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), EncodeDecode.MESSAGE,
+                        String.format("<%s> %s", nickname, messageDecoded));
                 break;
             case NICK:
                 System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));

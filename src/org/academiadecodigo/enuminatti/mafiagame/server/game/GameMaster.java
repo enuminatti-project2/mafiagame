@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
+import org.academiadecodigo.enuminatti.mafiagame.server.stages.*;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -17,8 +18,11 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster {
 
-    private static final int TIMETOSTART = 10;
-    private static final int MINPLAYERS = 1; //1 PLAYER
+    private static final int MIN_PLAYERS = 1; //1 PLAYER
+
+    private static final int SECONDS_TO_START_GAME = 10;
+    private static final int SECONDS_TO_TALK = 60;
+    private static final int SECONDS_TO_VOTE = 30;
 
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
@@ -26,6 +30,7 @@ public class GameMaster {
 
     private boolean gameHasStarted;
     private boolean night;
+    private Stages currentGameStage;
 
     private Map<String, Integer> votesCount;
     private int numberOfVotes;
@@ -48,12 +53,12 @@ public class GameMaster {
     private void toggleDayAndNight() {
 
         night = !night;
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT.encode(Boolean.toString(night)));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT, Boolean.toString(night));
     }
 
     /**
      * This adds a vote to votesCount for the player specified in nickname parameter.
-     * <p>
+     *
      * If the nickname isn't a valid player, it doesn't do anything.
      *
      * @param nickname player to add a vote to
@@ -80,7 +85,7 @@ public class GameMaster {
     /**
      * This grabs the votesCount map and finds the player which
      * had the same votes as mostVotes and kills them.
-     * <p>
+     *
      * In case of a draw, this will grab the first player.
      *
      * @param mostVotes the most votes that are in the map
@@ -112,12 +117,13 @@ public class GameMaster {
         return String.join(" ", listOfPlayers.keySet());
     }
 
-    private void killPlayer(String nickname) {
+    public void killPlayer(String nickname) {
 
         listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
 
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode("Player " + nickname + " was sentenced to death. The role was: "
-                + listOfPlayers.get(nickname).getRole().toString()));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
+                String.format("Player %s was sentenced to death. The role was: %s",
+                        nickname, listOfPlayers.get(nickname).getRole()));
         kickPlayer(nickname);
     }
 
@@ -129,14 +135,14 @@ public class GameMaster {
 
         listOfPlayers.put(nick, playerHandler);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(nick + " has entered the game."));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= MINPLAYERS) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= MIN_PLAYERS) { // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this::startGame, TIMETOSTART, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER.encode(Integer.toString(TIMETOSTART))); //Send boadcast to reset the timer
+            schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
         }
         return true;
     }
@@ -144,7 +150,7 @@ public class GameMaster {
     /**
      * Remove the player with this nickname from all lists and maps
      * and disconnect them.
-     * <p>
+     *
      * At the end, it updates everyone's nicklist to reflect this change.
      *
      * @param nickname player to be kicked from the game
@@ -163,13 +169,13 @@ public class GameMaster {
         if (playerRemoved != null) {
 
             playerRemoved.disconnectPlayer();
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST.encode(getNickList()));
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
         }
 
     }
 
-    private boolean gameover() {
+    private void gameover() {
 
         String message = null;
 
@@ -182,23 +188,53 @@ public class GameMaster {
         }
 
         if (message != null) {
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE.encode(message));
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER.encode("GAME OVER"));
-            return true;
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, message);
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER, "GAME OVER");
         }
-        return false;
     }
 
 
     private void startGame() {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START.encode("begin"));
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
 
 
     public Map<String, Server.PlayerHandler> getListOfPlayers() {
         return listOfPlayers;
+    }
+
+    private void startCurrentStage() {
+        Stage currentStage = null;
+        switch (currentGameStage) {
+            case TALK:
+                currentStage = new Talk(this);
+                break;
+            case VOTE:
+                currentStage = new Vote(this);
+                break;
+            case GAMEOVERCHECK:
+                currentStage = new GameOverCheck(this);
+                break;
+        }
+
+        if (currentStage != null) {
+
+            // pass active users on current stage <- relevant for Vote and Talk
+            // and possible targets on current stage <- relevant for Vote
+            currentStage.startStage(null, null);
+            return;
+        }
+
+        System.out.println("Something went wrong, we're at null currentGameStage.");
+    }
+
+    public void changeStage() {
+        Stages newGameStage = currentGameStage.getNextStage();
+        System.out.printf("Changing stage from %s to %s.\n", currentGameStage, newGameStage);
+        currentGameStage = newGameStage;
+        startCurrentStage();
     }
 }
