@@ -48,7 +48,7 @@ public class Broadcaster {
 
         for (String nick : playersList.keySet()) {
 
-            if (!messageTargets.contains(nick)) {
+            if (!messageTargets.contains(nick) || !playersList.containsKey(nick)) {
                 continue;
             }
             playersList.get(nick).sendMessage(message);
