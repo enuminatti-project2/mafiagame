@@ -60,7 +60,7 @@ public class ChatController implements Controller {
             System.out.println("I voted in " + votedUser);
             client.encodeAndSend(EncodeDecode.VOTE, votedUser);
             usersList.getSelectionModel().clearSelection();
-            voteButton.setDisable(true);
+            //voteButton.setDisable(true);
         }
     }
 

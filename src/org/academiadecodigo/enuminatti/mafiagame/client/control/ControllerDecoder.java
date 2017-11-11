@@ -84,7 +84,7 @@ class ControllerDecoder {
                 break;
             case NIGHT:
                 chatController.setNight(EncodeDecode.NIGHT.decode(message));
-                chatController.getVoteButton().setDisable(true);
+                //chatController.getVoteButton().setDisable(true);
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
