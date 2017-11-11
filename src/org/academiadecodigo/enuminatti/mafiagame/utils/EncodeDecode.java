@@ -17,7 +17,9 @@ public enum EncodeDecode {
     START("<START>", "</START>"),
     KILL("<KILL>", "</KILL>"),
     ROLE("<ROLE>", "</ROLE>"),
-    OVER("<OVER>", "</OVER>");
+    OVER("<OVER>", "</OVER>"),
+    ALLOW_TALK("<ALLOW_TALK>", "</ALLOW_TALK>"),
+    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>");
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();

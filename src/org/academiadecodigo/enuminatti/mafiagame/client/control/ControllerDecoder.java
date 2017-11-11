@@ -76,17 +76,18 @@ class ControllerDecoder {
             case KILL:
                 chatController.getChatWindow().appendText("You have been killed.");
                 chatController.getVoteButton().setDisable(true);
+                chatController.getSendButton().setDisable(true);
             case NICKOK:
                 break;
             case TIMER:
                 System.out.println("Timer message");
                 break;
             case NIGHT:
-                chatController.toggleCss(EncodeDecode.NIGHT.decode(message));
+                chatController.setNight(EncodeDecode.NIGHT.decode(message));
+                chatController.getVoteButton().setDisable(true);
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
-                System.out.println("Recieved a nicklist: " + message);
                 chatController.updateNickList(message);
                 break;
             case NICK:
@@ -97,6 +98,13 @@ class ControllerDecoder {
                 break;
             case OVER:
                 Platform.runLater(() -> SceneNavigator.getInstance().back());
+                break;
+            case ALLOW_TALK:
+                chatController.getSendButton().setDisable(false);
+                break;
+            case ALLOW_VOTE:
+                chatController.getSendButton().setDisable(true);
+                chatController.getVoteButton().setDisable(false);
                 break;
             default:
                 chatController.getChatWindow().appendText(message + "\n");

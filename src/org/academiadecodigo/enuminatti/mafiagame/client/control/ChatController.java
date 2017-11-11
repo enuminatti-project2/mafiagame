@@ -44,7 +44,7 @@ public class ChatController implements Controller {
         if (clientPrompt.getText().matches(".*\\S.*")) {
             //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
-            client.encodeAndSend(EncodeDecode.MESSAGE,message);
+            client.encodeAndSend(EncodeDecode.MESSAGE, message);
             clientPrompt.setText("");
             clientPrompt.requestFocus();
         }
@@ -79,26 +79,26 @@ public class ChatController implements Controller {
     void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICKLIST,"que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.NICKLIST, "que sa foda este encode");
         client.encodeAndSend(EncodeDecode.ROLE, "asking for my role");
-        toggleCss("false");
+        setNight("false");
     }
 
 
     void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
-        Platform.runLater(() ->usersList.setItems(names));
+        Platform.runLater(() -> usersList.setItems(names));
     }
 
 
-    public void toggleCss(String message){
+    void setNight(String message) {
 
         boolean night = Boolean.parseBoolean(message);
 
         System.out.println("Night: " + night);
 
-        if (dayCSS == null){
+        if (dayCSS == null) {
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
             dayCSS = getClass().getResource("css/day.css").toExternalForm();
         }
@@ -114,11 +114,15 @@ public class ChatController implements Controller {
         pane.getScene().getStylesheets().add(dayCSS);
     }
 
-    public TextArea getChatWindow() {
+    TextArea getChatWindow() {
         return chatWindow;
     }
 
-    public Button getVoteButton() {
+    Button getVoteButton() {
         return voteButton;
+    }
+
+    Button getSendButton() {
+        return sendButton;
     }
 }
