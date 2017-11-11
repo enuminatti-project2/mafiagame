@@ -21,10 +21,6 @@ public class ChatController implements Controller {
     private String dayCSS;
     private boolean night;
 
-
-    @FXML
-    private TextArea chatWindow;
-
     @FXML
     private TextFlow flowChat;
 
@@ -50,7 +46,6 @@ public class ChatController implements Controller {
     void initialize() {
         assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ClientView.fxml'.";
         assert clientPrompt != null : "fx:id=\"clientPrompt\" was not injected: check your FXML file 'ClientView.fxml'.";
-        assert chatWindow != null : "fx:id=\"chatWindow\" was not injected: check your FXML file 'ClientView.fxml'.";
         assert flowChat != null : "fx:id=\"flowChat\" was not injected: check your FXML file 'ClientView.fxml'.";
         assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
         assert sendButton != null : "fx:id=\"sendButton\" was not injected: check your FXML file 'ClientView.fxml'.";
@@ -117,7 +112,6 @@ public class ChatController implements Controller {
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
         if (tag == null) {
-            chatWindow.appendText(message + "\n");
             writeNewLine(message, Color.BLACK);
             return;
         }
@@ -125,13 +119,11 @@ public class ChatController implements Controller {
         switch (tag) {
 
             case MESSAGE:
-                chatWindow.appendText(EncodeDecode.MESSAGE.decode(message) + "\n");
                 writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
                 voteButton.setDisable(true);
                 writeNewLine("Foste com o C******", Color.RED);
-                chatWindow.appendText("Foste com o c******o\n");
                 break;
             case NICKOK:
                 break;
@@ -146,15 +138,12 @@ public class ChatController implements Controller {
                 updateNickList(message);
                 break;
             case NICK:
-                chatWindow.appendText("You are " + EncodeDecode.NICK.decode(message) + "\n");
                 writeNewLine("You are " + EncodeDecode.NICK.decode(message), Color.HOTPINK);
                 break;
             case ROLE:
-                chatWindow.appendText("You are assigned to " + EncodeDecode.ROLE.decode(message) + "\n");
                 writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.YELLOW);
                 break;
             default:
-                chatWindow.appendText(message + "\n");
                 System.out.println("Deu merda");
         }
     }
