@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class GameMaster {
 
     private static final int TIMETOSTART = 10;
-    private static final int MINPLAYERS = 1; //1 PLAYER
+    private static final int MINPLAYERS = 4; //1 PLAYER
 
     private Map <String, Server.PlayerHandler> listOfPlayers;
     private List <String> mafiosiNicks;

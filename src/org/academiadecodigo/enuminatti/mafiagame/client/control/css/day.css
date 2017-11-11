@@ -1,3 +1,7 @@
+@font-face {
+    src: url("/Fixedsys.ttf");
+}
+
 #pane {
     -fx-background-image: url(/Day.png);
 }
@@ -8,4 +12,9 @@
 
 #rootChat .tab-header-area .tab-header-background {
     -fx-background-color: transparent;
+}
+#flowChat {
+    -fx-background-color: white;
+    -fx-font-family: 'Fixedsys Excelsior 3.01';
+    -fx-font-size: 20;
 }

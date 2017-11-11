@@ -1,15 +1,16 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -18,10 +19,10 @@ public class ChatController implements Controller {
     private Client client;
     private String nightCSS;
     private String dayCSS;
-
+    private boolean night;
 
     @FXML
-    private TextArea chatWindow;
+    private TextFlow flowChat;
 
     @FXML
     private TextField clientPrompt;
@@ -39,6 +40,22 @@ public class ChatController implements Controller {
     private ListView<String> usersList;
 
     @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
+    void initialize() {
+        assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert clientPrompt != null : "fx:id=\"clientPrompt\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert flowChat != null : "fx:id=\"flowChat\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert usersList != null : "fx:id=\"usersList\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert sendButton != null : "fx:id=\"sendButton\" was not injected: check your FXML file 'ClientView.fxml'.";
+        assert voteButton != null : "fx:id=\"voteButton\" was not injected: check your FXML file 'ClientView.fxml'.";
+
+        scrollPane.vvalueProperty().bind(flowChat.heightProperty());
+
+    }
+
+    @FXML
     void sendMessageToClient(ActionEvent event) {
 
         if (clientPrompt.getText().matches(".*\\S.*")) {
@@ -49,7 +66,6 @@ public class ChatController implements Controller {
             clientPrompt.requestFocus();
         }
     }
-
 
     @FXML
     void vote(ActionEvent event) {
@@ -91,10 +107,9 @@ public class ChatController implements Controller {
         Platform.runLater(() -> usersList.setItems(names));
     }
 
-
     void setNight(String message) {
 
-        boolean night = Boolean.parseBoolean(message);
+        night = Boolean.parseBoolean(message);
 
         System.out.println("Night: " + night);
 
@@ -104,15 +119,36 @@ public class ChatController implements Controller {
         }
 
         voteButton.setDisable(false);
-        pane.getScene().getStylesheets().clear();
-        pane.getScene().getStylesheets().removeAll();
 
         if (night) {
-            pane.getScene().getStylesheets().add(nightCSS);
+            StyleManager.getInstance().removeUserAgentStylesheet(dayCSS);
+            StyleManager.getInstance().addUserAgentStylesheet(nightCSS);
             return;
         }
-        pane.getScene().getStylesheets().add(dayCSS);
+        StyleManager.getInstance().removeUserAgentStylesheet(nightCSS);
+        StyleManager.getInstance().addUserAgentStylesheet(dayCSS);
+
     }
+
+    private void writeNewLine(String message, Color color) {
+
+        final String finalMessage = (message == null ? "": message);
+        final Color textColor;
+
+        if (night && color == Color.BLACK){
+            textColor = Color.WHITE;
+        } else {
+            textColor = color;
+        }
+
+        Platform.runLater(
+                () -> {
+
+                    Text newText = new Text();
+                    newText.setFill(textColor);
+                    newText.setText(finalMessage + "\n");
+                    flowChat.getChildren().add(newText);                }
+        );
 
     TextArea getChatWindow() {
         return chatWindow;

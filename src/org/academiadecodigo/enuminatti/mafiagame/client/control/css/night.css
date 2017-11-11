@@ -1,3 +1,7 @@
+@font-face {
+    src: url("/Fixedsys.ttf");
+}
+
 #pane {
     -fx-background-image: url(/NightMafia.jpg);
 }
@@ -26,4 +30,12 @@
 
 #rootChat .tab-header-area .tab-header-background {
     -fx-background-color: transparent;
+}
+
+#flowChat {
+
+    -fx-font-family: 'Fixedsys Excelsior 3.01';
+    -fx-font-size: 20;
+    -fx-background-color: rgba(0,0,0,0.2);
+
 }
