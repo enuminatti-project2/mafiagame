@@ -80,11 +80,16 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
-                chatController.writeNewLine("You have been killed.", Color.RED);
-                chatController.getVoteButton().setDisable(true);
-                chatController.getSendButton().setDisable(true);
+                if (!chatController.isNight()) {
+                    chatController.getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
+                    chatController.getEndImage().setFitWidth(240.0);
+                    chatController.getEndImage().setFitHeight(400.0);
+                    chatController.getEndImage().setY(-100.0);
+                }
                 chatController.getEndImage().setVisible(true);
                 chatController.getGunShotSound().play(true);
+                chatController.getVoteButton().setDisable(true);
+                chatController.getSendButton().setDisable(true);
             case NICKOK:
                 break;
             case TIMER:

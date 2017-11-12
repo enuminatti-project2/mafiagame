@@ -30,34 +30,17 @@ public class Sound {
         clip.start();
     }
 
+    //Remove if NOT necessary
     public void stop() {
 
         clip.stop();
     }
-
+    //Remove if NOT necessary
     public void close() {
 
         clip.close();
     }
 
-    private int getLength() {
-        return clip.getFrameLength();
-    }
-
-
-    public void reOpen() {
-
-        AudioInputStream inputStream;
-
-        try {
-
-            inputStream = AudioSystem.getAudioInputStream(soundURL);
-            clip.open(inputStream);
-
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
 
     private void initClip(String path) {
 

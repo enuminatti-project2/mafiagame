@@ -176,4 +176,8 @@ public class ChatController implements Controller {
     Sound getGunShotSound() {
         return gunShotSound;
     }
+
+    boolean isNight() {
+        return night;
+    }
 }
