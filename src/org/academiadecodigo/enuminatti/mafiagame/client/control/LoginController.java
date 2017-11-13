@@ -56,7 +56,7 @@ public class LoginController implements Controller {
         }
     }
 
-    public void changeNick(ActionEvent event) {
+    private void changeNick(ActionEvent event) {
         client.encodeAndSend(EncodeDecode.NICK, usernameTextField.getText());
         mainButton.setOnAction(this::changeNick);
     }
