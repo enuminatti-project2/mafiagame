@@ -2,6 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server.stages;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.Set;
@@ -46,10 +47,11 @@ public class Talk implements Stage {
             talkTimer.cancel(true);
         }
 
-        talkTimer = talkRunner.schedule(this::endTimer, SECONDS_TO_TALK, TimeUnit.SECONDS);
+        talkTimer = talkRunner.schedule(this::endTimer,
+                Constants.SECONDS_TO_TALK, TimeUnit.SECONDS);
 
         Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), talkers,
-                EncodeDecode.TIMER, Integer.toString(SECONDS_TO_TALK));
+                EncodeDecode.TIMER, Integer.toString(Constants.SECONDS_TO_TALK));
     }
 
     private void endTimer() {

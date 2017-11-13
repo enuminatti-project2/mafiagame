@@ -15,7 +15,6 @@ public class Player {
     private GameStrategy gameStrategy;
     private VisitStrategy visitStrategy;
     private GameMaster gameMaster;
-    private String nickname;
 
     public Player(Server.ServerWorker serverWorker, String name, GameMaster gameMaster) {
         this.serverWorker = serverWorker;
@@ -23,56 +22,56 @@ public class Player {
         this.gameMaster = gameMaster;
     }
 
-    public void writeToPlayer(String message){
+    public void writeToPlayer(String message) {
         serverWorker.sendMessage(message);
     }
 
-    public void getFromPlayer(String message){
+    public void getFromPlayer(String message) {
         gameMaster.receiveMessage(message, name);
     }
 
-    public void endGameAction(){
+    public void endGameAction() {
         gameStrategy = null;
         visitStrategy = null;
     }
 
-    public void setStrategies (GameStrategy gameStrategy,VisitStrategy visitStrategy){
+    public void setStrategies(GameStrategy gameStrategy, VisitStrategy visitStrategy) {
 
         this.gameStrategy = gameStrategy;
         this.visitStrategy = visitStrategy;
     }
 
-    public void doDayStrategy(){
+    public void doDayStrategy() {
         gameStrategy.prepareDay(this);
     }
 
-    public void doNightStrategy(){
+    public void doNightStrategy() {
         gameStrategy.prepareNight(this);
     }
 
-    public void disconnect(){
+    public void disconnect() {
         serverWorker.disconnectPlayer();
     }
 
-    public String getStrategyMessage(){
+    public String getStrategyMessage() {
         return gameStrategy.dieMessage();
     }
 
 
     /**
-     * Receives the list of mafia , villagers , others
-     * @return
+     * Executes the respective GameStrategy win condition checker
+     *
+     * @return true if player won
      */
-    public boolean checkWinCondition(GameMaster gameMaster){
-        gameStrategy.checkWinCondition(gameMaster);
-        return false;
+    public boolean checkWinCondition() {
+        return gameStrategy.checkWinCondition(gameMaster);
     }
 
-    public void doVisitStrategy(String name , GameMaster gameMaster){
-        visitStrategy.performVisit(name,gameMaster);
+    public void doVisitStrategy(String name) {
+        visitStrategy.performVisit(name, gameMaster);
     }
 
-    public String getRole(){
+    public String getRole() {
         return gameStrategy.role();
     }
 
@@ -80,7 +79,7 @@ public class Player {
         return name;
     }
 
-    public void setName(String nickname) {
-        this.nickname = nickname;
+    public void setName(String name) {
+        this.name = name;
     }
 }

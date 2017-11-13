@@ -4,6 +4,7 @@ import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.stages.*;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.*;
@@ -20,11 +21,7 @@ import java.util.stream.Collectors;
 
 public class GameMaster {
 
-    private static final int MIN_PLAYERS = 1; //1 PLAYER
 
-    private static final int SECONDS_TO_START_GAME = 10;
-    private static final int SECONDS_TO_TALK = 60;
-    private static final int SECONDS_TO_VOTE = 30;
 
     private Map<String, Player> listOfPlayers;
     private List<String> mafiosiNicks;
@@ -35,21 +32,17 @@ public class GameMaster {
     private boolean night;
     private Stages currentGameStage;
 
-    private Map<String, Integer> votesCount;
-    private int numberOfVotes;
-
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
 
-    Stage talkStage;
-    Stage voteStage;
-    Stage gameOverStage;
+    private Stage talkStage;
+    private Stage voteStage;
+    private Stage gameOverStage;
 
     public GameMaster() {
 
         listOfPlayers = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-        votesCount = new HashMap<>();
         mafiosiNicks = new LinkedList<>();
         villagersNicks = new LinkedList<>();
     }
@@ -109,12 +102,17 @@ public class GameMaster {
         System.out.println("Player added");
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= MIN_PLAYERS) { // Se o jogo ainda não começou, reset ao timer
+        if (!gameHasStarted && listOfPlayers.size() >= Constants.MIN_PLAYERS) {
+            // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
+            schedule = startGame.schedule(this::startGame,
+                    Constants.SECONDS_TO_START_GAME, TimeUnit.SECONDS);
+
+            // Send broadcast to reset the timer
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER,
+                    Integer.toString(Constants.SECONDS_TO_START_GAME));
         }
 
         return true;
@@ -213,9 +211,8 @@ public class GameMaster {
     }
 
     public void changeStage(Stages nextStage) {
-        Stages newGameStage = currentGameStage.getNextStage();
-        System.out.printf("Changing stage from %s to %s.\n", currentGameStage, newGameStage);
-        currentGameStage = newGameStage;
+        System.out.printf("Changing stage from %s to %s.\n", currentGameStage, nextStage);
+        currentGameStage = nextStage;
         startCurrentStage();
     }
 
@@ -231,7 +228,7 @@ public class GameMaster {
         return thirdPartyNicks;
     }
 
-    public Set<String> getActiveNicks() {
+    private Set<String> getActiveNicks() {
         if (night) {
             return listOfPlayers.keySet().stream().filter(mafiosiNicks::contains).collect(Collectors.toSet());
         }
