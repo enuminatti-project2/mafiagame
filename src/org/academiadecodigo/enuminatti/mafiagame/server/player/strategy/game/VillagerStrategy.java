@@ -17,7 +17,7 @@ public class VillagerStrategy extends GenericGameStrategy {
 
     @Override
     public boolean checkWinCondition(GameMaster gameMaster) {
-        if(gameMaster.mafialist == 0){
+        if(gameMaster.getMafiosiNicks().size() == 0){
             return true;
         }
 
@@ -27,5 +27,9 @@ public class VillagerStrategy extends GenericGameStrategy {
     @Override
     public void prepareNight(Player player) {
         return;
+    }
+
+    public String role(){
+        return "Villager";
     }
 }

@@ -15,4 +15,5 @@ public interface GameStrategy {
     void prepareNight(Player player);
 
     String dieMessage();
+    String role();
 }

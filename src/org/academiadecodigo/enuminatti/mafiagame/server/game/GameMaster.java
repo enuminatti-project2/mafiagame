@@ -100,12 +100,11 @@ public class GameMaster {
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
 
 
-
         if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
-        Player newPlayer = new Player(serverWorker,nick);
+        Player newPlayer = new Player(serverWorker, nick, this);
         listOfPlayers.put(nick, newPlayer);
         System.out.println("Player added");
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
@@ -117,6 +116,7 @@ public class GameMaster {
             schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
         }
+
         return true;
     }
 
@@ -171,7 +171,7 @@ public class GameMaster {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
-        Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+        RoleFactory.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
 
         // Stage initiation
         talkStage = new Talk(this);
@@ -219,16 +219,16 @@ public class GameMaster {
         startCurrentStage();
     }
 
-    public List<String> getThirdParties() {
-        return thirdPartyNicks;
+    public List<String> getMafiosiNicks() {
+        return mafiosiNicks;
     }
 
-    public List<String> getVillagers() {
+    public List<String> getVillagersNicks() {
         return villagersNicks;
     }
 
-    public List<String> getMafias() {
-        return mafiosiNicks;
+    public List<String> getThirdParties() {
+        return thirdPartyNicks;
     }
 
     public Set<String> getActiveNicks() {
