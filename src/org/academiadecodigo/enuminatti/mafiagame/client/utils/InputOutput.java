@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.utils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -8,11 +9,22 @@ import java.util.Objects;
 public final class InputOutput {
 
     public static LinkedHashMap<String, String> IOReadHost(String pathToFile) {
-        return IORead(pathToFile, "Host");
+        return reverseOrderMap(IORead(pathToFile, "Host"));
     }
 
     public static LinkedHashMap<String, String> IOReadNick(String pathToFile) {
-        return IORead(pathToFile, "Nick");
+        return reverseOrderMap(IORead(pathToFile, "Nick"));
+    }
+
+    private static LinkedHashMap<String, String> reverseOrderMap(Map <String, String> map){
+        ArrayList<String> arrayList = new ArrayList<>(map.keySet());
+        LinkedHashMap<String, String> newMap = new LinkedHashMap<>();
+        for(int i = arrayList.size()-1; i >= 0; i--){
+            String value = map.get(arrayList.get(i));
+            String key = arrayList.get(i);
+            newMap.put(key, value);
+        }
+        return newMap;
     }
 
     private static LinkedHashMap<String, String> IORead(String pathToFile, String type) {
@@ -38,15 +50,19 @@ public final class InputOutput {
 
             line = bReader.readLine();
 
-            if (!Objects.equals(line, "<" + type + ">")) {
-                do {
+            while (!Objects.equals(line, "<" + type + ">") && line != null) {
                     line = bReader.readLine();
-                } while (!Objects.equals("<" + type + ">", line) && line != null);
             }
 
             line = bReader.readLine();
 
             while (line != null && !line.matches("(<\\w+>)*")) {
+
+                if (Objects.equals(type, "Nick")) {
+                    listOfSN.put(line, "");
+                    line = bReader.readLine();
+                    continue;
+                }
                 String[] s = line.split("\\|");
                 listOfSN.put(s[0], s[1]);
                 line = bReader.readLine();
@@ -70,12 +86,12 @@ public final class InputOutput {
         final String lineSeparator = System.getProperty("line.separator");
         createIfNotExists(pathToFile);
 
-        LinkedHashMap<String, String> hosts = IOReadHost(pathToFile);
+        LinkedHashMap<String, String> hosts = IORead(pathToFile, "Host");
         if (hosts == null){
             hosts = new LinkedHashMap<>();
         }
 
-        LinkedHashMap<String, String> nicks = IOReadNick(pathToFile);
+        LinkedHashMap<String, String> nicks = IORead(pathToFile, "Nick");
         if (nicks == null){
             nicks = new LinkedHashMap<>();
         }
@@ -92,6 +108,31 @@ public final class InputOutput {
 
         writeToFile(bigString, pathToFile);
 
+    }
+
+    public static void addNick(String nick, String pathToFile){
+        final String lineSeparator = System.getProperty("line.separator");
+        createIfNotExists(pathToFile);
+
+        LinkedHashMap<String, String> hosts = IORead(pathToFile, "Host");
+        if (hosts == null){
+            hosts = new LinkedHashMap<>();
+        }
+
+        LinkedHashMap<String, String> nicks = IORead(pathToFile, "Nick");
+        if (nicks == null){
+            nicks = new LinkedHashMap<>();
+        }
+
+        StringBuilder bigString = new StringBuilder();
+
+        bigString.append("<HN>").append(lineSeparator).
+                append("<Host>").append(lineSeparator).
+                append(mapToString(hosts)).
+                append("<Nick>").append(lineSeparator).
+                append(mapToString(nicks));
+
+        writeToFile(bigString, pathToFile);
     }
 
     private static StringBuilder mapToString(LinkedHashMap<String, String> linkedHashMap) {
@@ -134,5 +175,10 @@ public final class InputOutput {
             e.printStackTrace();
         }
     }
+
+/*    ArrayList<Integer> keys = new ArrayList<Integer>(map.keySet());
+        for(int i=keys.size()-1; i>=0;i--){
+        System.out.println(map.get(keys.get(i)));
+    }*/
 
 }
