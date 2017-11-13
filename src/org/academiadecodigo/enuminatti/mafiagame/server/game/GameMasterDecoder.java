@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -26,7 +27,7 @@ public class GameMasterDecoder {
         if (enumTag == null) {
             return;
         }
-        Server.ServerWorker sender = gameMaster.getListOfPlayers().get(nickname);
+        Player sender = gameMaster.getListOfPlayers().get(nickname);
 
         switch (enumTag) {
             //Implement EncodeDecode.SERVER to be sent in a different color
@@ -40,10 +41,10 @@ public class GameMasterDecoder {
                 String newNickname = EncodeDecode.NICK.decode(message);
 
                 if (gameMaster.getListOfPlayers().containsKey(newNickname)) {
-                    sender.sendMessage(EncodeDecode.MESSAGE.encode("The name you chose is already in use"));
+                    sender.writeToPlayer(EncodeDecode.MESSAGE.encode("The name you chose is already in use"));
                     return;
                 }
-                sender.setNickname(newNickname);
+                sender.setName(newNickname);
                 gameMaster.getListOfPlayers().put(newNickname, sender);
                 gameMaster.getListOfPlayers().remove(nickname);
                 break;
@@ -58,10 +59,10 @@ public class GameMasterDecoder {
                 break;
             case NICKLIST:
                 System.out.println("Asking for a nicklist. The current list is: " + gameMaster.getNickList());
-                sender.sendMessage(EncodeDecode.NICKLIST.encode(gameMaster.getNickList()));
+                sender.writeToPlayer(EncodeDecode.NICKLIST.encode(gameMaster.getNickList()));
                 break;
             case ROLE:
-                sender.sendMessage(EncodeDecode.ROLE.encode(sender.getRole().name()));
+                sender.writeToPlayer(EncodeDecode.ROLE.encode(sender.getRole()));
                 break;
             default:
                 break;

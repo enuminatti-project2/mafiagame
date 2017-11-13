@@ -8,16 +8,17 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 /**
  * Created by codecadet on 13/11/17.
  */
-public class Mafia extends GenericGameStrategy {
+public class MafiaStrategy extends GenericGameStrategy {
 
     @Override
     public String dieMessage() {
-        return "They were Mafia!";
+        return "They were MafiaStrategy!";
     }
+
 
     @Override
     public boolean checkWinCondition(GameMaster gameMaster) {
-        if(gameMaster.mafiaList.size() >= gameMaster.villagersList.size()){
+        if(gameMaster.getMafiosiNicks().size() >= gameMaster.getVillagersNicks().size()){
             return true;
         }
 
@@ -28,5 +29,10 @@ public class Mafia extends GenericGameStrategy {
     public void prepareNight(Player player) {
         Broadcaster.broadcastToPlayer(player, EncodeDecode.ALLOW_TALK,null);
         Broadcaster.broadcastToPlayer(player, EncodeDecode.ALLOW_VOTE,null);
+    }
+
+    @Override
+    public String role() {
+        return "Mafia";
     }
 }

@@ -59,7 +59,7 @@ public class GameMaster {
 
     /**
      * This adds a vote to votesCount for the player specified in nickname parameter.
-     *
+     * <p>
      * If the nickname isn't a valid player, it doesn't do anything.
      *
      * @param nickname player to add a vote to
@@ -86,7 +86,7 @@ public class GameMaster {
     /**
      * This grabs the votesCount map and finds the player which
      * had the same votes as mostVotes and kills them.
-     *
+     * <p>
      * In case of a draw, this will grab the first player.
      *
      * @param mostVotes the most votes that are in the map
@@ -110,7 +110,6 @@ public class GameMaster {
 
     public void receiveMessage(String message, String nickname) {
 
-
         GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
 
@@ -131,12 +130,11 @@ public class GameMaster {
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
 
 
-
         if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
-        Player newPlayer = new Player(serverWorker,nick);
+        Player newPlayer = new Player(serverWorker, nick, this);
         listOfPlayers.put(nick, newPlayer);
         System.out.println("Player added");
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
@@ -148,13 +146,14 @@ public class GameMaster {
             schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
         }
+
         return true;
     }
 
     /**
      * Remove the player with this nickname from all lists and maps
      * and disconnect them.
-     *
+     * <p>
      * At the end, it updates everyone's nicklist to reflect this change.
      *
      * @param nickname player to be kicked from the game
@@ -202,7 +201,7 @@ public class GameMaster {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
-        Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+        RoleFactory.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
     }
 
 
@@ -240,5 +239,13 @@ public class GameMaster {
         System.out.printf("Changing stage from %s to %s.\n", currentGameStage, newGameStage);
         currentGameStage = newGameStage;
         startCurrentStage();
+    }
+
+    public List<String> getMafiosiNicks() {
+        return mafiosiNicks;
+    }
+
+    public List<String> getVillagersNicks() {
+        return villagersNicks;
     }
 }

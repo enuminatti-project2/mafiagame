@@ -1,7 +1,8 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
-import org.academiadecodigo.enuminatti.mafiagame.server.game.Role;
+import org.academiadecodigo.enuminatti.mafiagame.server.game.RoleFactory;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -77,10 +78,9 @@ public class Server {
     public class ServerWorker implements Runnable {
         private Socket clientSocket;
 
-        private String nickname;
-        private Role role;
         private BufferedReader in;
         private PrintWriter out;
+        private Player player;
 
         public ServerWorker(Socket clientSocket) {
             this.clientSocket = clientSocket;
@@ -91,16 +91,14 @@ public class Server {
             this.out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
         }
 
-        private void receiveMessage(String message) {
-            gameMaster.receiveMessage(message, nickname);
+        public void receiveMessage(String message) {
+            System.out.println("Sending to player the message: " + message);
+            player.getFromPlayer(message);
+            System.out.println("Server sent.");
         }
 
         public void sendMessage(String message) {
             out.println(message);
-        }
-
-        public void setRole(Role role) {
-            this.role = role;
         }
 
         @Override
@@ -108,12 +106,11 @@ public class Server {
             try {
                 String message = "";
                 while ((message = in.readLine()) != null) {
-                    if (nickname == null) {
+                    if (EncodeDecode.getStartTag(message).equals(EncodeDecode.NICK.getStartTag())
+                            && gameMaster.getListOfPlayers().get(EncodeDecode.NICK.decode(message)) == null) {
                         if (!tryRegister(message)) {
-                            sendMessage(EncodeDecode.MESSAGE.encode("The nickname you chose is already in use."));
-                            continue;
+                            sendMessage(EncodeDecode.MESSAGE.encode("The nickname you chose is already in use, you bitch."));
                         }
-                        this.nickname = EncodeDecode.NICK.decode(message);
                     } else {
                         receiveMessage(message);
                     }
@@ -128,9 +125,9 @@ public class Server {
         public void disconnectPlayer() {
             System.out.println("disconnected player");
             try {
-                System.out.println(nickname);
-                if (gameMaster.getListOfPlayers().containsKey(nickname)) {
-                    gameMaster.kickPlayer(nickname);
+                System.out.println(player.getName());
+                if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
+                    gameMaster.kickPlayer(player.getName());
                 }
                 clientSocket.close();
             } catch (IOException e) {
@@ -143,16 +140,15 @@ public class Server {
                 return false;
             }
 
-            return gameMaster.addNick(EncodeDecode.NICK.decode(message), this);
+            String nickname = (EncodeDecode.getStartTag(message).equals(EncodeDecode.NICK.getStartTag()) ?
+                    EncodeDecode.NICK.decode(message) : null);
+            if (gameMaster.addNick(nickname, this)) {
+                player = gameMaster.getListOfPlayers().get(nickname);
+                return true;
+            }
+            return false;
+
         }
 
-        public Role getRole() {
-            return role;
-        }
-
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
-        }
     }
-
 }

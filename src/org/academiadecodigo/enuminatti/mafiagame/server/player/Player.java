@@ -14,14 +14,21 @@ public class Player {
     private String name;
     private GameStrategy gameStrategy;
     private VisitStrategy visitStrategy;
+    private GameMaster gameMaster;
+    private String nickname;
 
-    public Player(Server.ServerWorker serverWorker, String name) {
+    public Player(Server.ServerWorker serverWorker, String name, GameMaster gameMaster) {
         this.serverWorker = serverWorker;
         this.name = name;
+        this.gameMaster = gameMaster;
     }
 
     public void writeToPlayer(String message){
         serverWorker.sendMessage(message);
+    }
+
+    public void getFromPlayer(String message){
+        gameMaster.receiveMessage(message, name);
     }
 
     public void endGameAction(){
@@ -65,4 +72,15 @@ public class Player {
         visitStrategy.performVisit(name,gameMaster);
     }
 
+    public String getRole(){
+        return gameStrategy.role();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String nickname) {
+        this.nickname = nickname;
+    }
 }
