@@ -19,7 +19,7 @@ public class Vote implements Stage {
 
     private final int SECONDS_TO_VOTE = 60;
 
-    private GameMaster game;
+    private GameMaster gameMaster;
 
     private Set<String> voters;
     private Map<String, Integer> voted;
@@ -28,11 +28,12 @@ public class Vote implements Stage {
     private ScheduledExecutorService calculateVotesRunner;
     private ScheduledFuture<?> calculateVotesTimer;
 
-    public Vote(GameMaster game) {
-        this.game = game;
+    public Vote(GameMaster gameMaster) {
+        this.gameMaster = gameMaster;
     }
 
-    public void startStage(Set<String> voters, Set<String> targets) {
+    @Override
+    public void runStage(Set<String> voters, Set<String> targets) {
         this.voted = new HashMap<>();
         for (String target : targets) {
             voted.put(target, 0);
@@ -42,6 +43,10 @@ public class Vote implements Stage {
         votesCounted = 0;
 
         startTimer();
+    }
+
+    private void goNext() {
+        gameMaster.changeStage(Stages.GAMEOVERCHECK);
     }
 
     /**
@@ -58,7 +63,7 @@ public class Vote implements Stage {
 
         calculateVotesTimer = calculateVotesRunner.schedule(this::endTimer, SECONDS_TO_VOTE, TimeUnit.SECONDS);
 
-        Broadcaster.broadcastToPlayers(game.getListOfPlayers(), voters,
+        Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
                 EncodeDecode.TIMER, Integer.toString(SECONDS_TO_VOTE));
     }
 
@@ -116,15 +121,25 @@ public class Vote implements Stage {
 
         if (playerToKill != null) {
             calculateVotesTimer.cancel(true);
-            calculateVotesRunner.shutdown();
 
-            game.killPlayer(playerToKill);
-            game.changeStage();
+            gameMaster.killPlayer(playerToKill);
+            goNext();
+
             return;
         }
 
         // if no one voted
         startTimer();
+    }
+
+    /**
+     * Run cleanup on open handlers/threadpools for this Stage
+     */
+    @Override
+    public void cleanup() {
+        if (calculateVotesRunner != null) {
+            calculateVotesRunner.shutdown();
+        }
     }
 
 }
