@@ -63,9 +63,9 @@ public class Server {
     }
 
     private void acceptConnection(Socket client) {
-        PlayerHandler newPlayer = null;
+        ServerWorker newPlayer = null;
         try {
-            newPlayer = new PlayerHandler(client);
+            newPlayer = new ServerWorker(client);
             newPlayer.init();
             executorService.submit(newPlayer);
         } catch (IOException e) {
@@ -74,7 +74,7 @@ public class Server {
     }
 
 
-    public class PlayerHandler implements Runnable {
+    public class ServerWorker implements Runnable {
         private Socket clientSocket;
 
         private String nickname;
@@ -82,7 +82,7 @@ public class Server {
         private BufferedReader in;
         private PrintWriter out;
 
-        public PlayerHandler(Socket clientSocket) {
+        public ServerWorker(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
 

@@ -9,17 +9,18 @@ public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
     NICK("<NICK>", "</NICK>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
-    TIMER("<TIMER>", "<TIMER>"),
+    TIMER("<TIMER>", "</TIMER>"),
     NIGHT("<NIGHT>", "</NIGHT>"),
     NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
-    VOTE("<VOTE>", "<VOTE>"),
+    VOTE("<VOTE>", "</VOTE>"),
     NICKLIST("<NICKLIST>", "</NICKLIST>"),
     START("<START>", "</START>"),
     KILL("<KILL>", "</KILL>"),
     ROLE("<ROLE>", "</ROLE>"),
     OVER("<OVER>", "</OVER>"),
     ALLOW_TALK("<ALLOW_TALK>", "</ALLOW_TALK>"),
-    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>");
+    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>"),
+    ALLOW_VISIT("<ALLOW_VISIT>", "</ALLOW_VISIT>");
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();

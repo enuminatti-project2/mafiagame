@@ -26,7 +26,7 @@ public class GameMasterDecoder {
         if (enumTag == null) {
             return;
         }
-        Server.PlayerHandler sender = gameMaster.getListOfPlayers().get(nickname);
+        Server.ServerWorker sender = gameMaster.getListOfPlayers().get(nickname);
 
         switch (enumTag) {
             //Implement EncodeDecode.SERVER to be sent in a different color

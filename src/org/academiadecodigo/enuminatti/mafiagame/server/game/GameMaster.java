@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.stages.*;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -24,7 +25,7 @@ public class GameMaster {
     private static final int SECONDS_TO_TALK = 60;
     private static final int SECONDS_TO_VOTE = 30;
 
-    private Map<String, Server.PlayerHandler> listOfPlayers;
+    private Map<String, Player> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
 
@@ -119,21 +120,24 @@ public class GameMaster {
 
     public void killPlayer(String nickname) {
 
-        listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
+        listOfPlayers.get(nickname).writeToPlayer(EncodeDecode.KILL.encode(nickname));
 
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
-                String.format("Player %s was sentenced to death. The role was: %s",
-                        nickname, listOfPlayers.get(nickname).getRole()));
+                String.format("Player %s was sentenced to death. %s",
+                        nickname, listOfPlayers.get(nickname).getStrategyMessage()));
         kickPlayer(nickname);
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+    public boolean addNick(String nick, Server.ServerWorker serverWorker) {
+
+
 
         if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
-        listOfPlayers.put(nick, playerHandler);
+        Player newPlayer = new Player(serverWorker,nick);
+        listOfPlayers.put(nick, newPlayer);
         System.out.println("Player added");
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
 
@@ -164,11 +168,11 @@ public class GameMaster {
         mafiosiNicks.remove(nickname);
         villagersNicks.remove(nickname);
 
-        Server.PlayerHandler playerRemoved = listOfPlayers.remove(nickname);
+        Player playerRemoved = listOfPlayers.remove(nickname);
 
         if (playerRemoved != null) {
 
-            playerRemoved.disconnectPlayer();
+            playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
         }
@@ -202,7 +206,7 @@ public class GameMaster {
     }
 
 
-    public Map<String, Server.PlayerHandler> getListOfPlayers() {
+    public Map<String, Player> getListOfPlayers() {
         return listOfPlayers;
     }
 
