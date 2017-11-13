@@ -1,73 +1,44 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.utils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 
 public final class InputOutput {
 
-    public static LinkedHashMap<String, String> IOReadHost(String pathToFile) {
-        return reverseOrderMap(IORead(pathToFile, "Host"));
-    }
+    private static final String hostPath = "savedfiles/Hosts.txt";
+    private static final String nicksPath = "savedfiles/Nicks.txt";
 
-    public static LinkedHashMap<String, String> IOReadNick(String pathToFile) {
-        return reverseOrderMap(IORead(pathToFile, "Nick"));
-    }
+    /**
+     * Read all the nicks from the file
+     * @return a Set with the nicks
+     */
+    public static Set<String> readNicks() {
 
-    private static LinkedHashMap<String, String> reverseOrderMap(Map <String, String> map){
-        ArrayList<String> arrayList = new ArrayList<>(map.keySet());
-        LinkedHashMap<String, String> newMap = new LinkedHashMap<>();
-        for(int i = arrayList.size()-1; i >= 0; i--){
-            String value = map.get(arrayList.get(i));
-            String key = arrayList.get(i);
-            newMap.put(key, value);
+        File file = new File(nicksPath);
+        if (!file.exists()){
+            return null;
         }
-        return newMap;
-    }
 
-    private static LinkedHashMap<String, String> IORead(String pathToFile, String type) {
+        Set<String> listOfNicks = new HashSet<>();
 
-        LinkedHashMap<String, String> listOfSN = new LinkedHashMap<>();
 
         FileReader fReader = null;
         BufferedReader bReader = null;
 
         String line = null;
 
-        File file = new File(pathToFile);
-
         try {
             fReader = new FileReader(file);
             bReader = new BufferedReader(fReader);
 
             line = bReader.readLine();
-
-            if (!Objects.equals(line, "<HN>")) {
-                return null;
-            }
-
-            line = bReader.readLine();
-
-            while (!Objects.equals(line, "<" + type + ">") && line != null) {
-                    line = bReader.readLine();
-            }
-
-            line = bReader.readLine();
-
-            while (line != null && !line.matches("(<\\w+>)*")) {
-
-                if (Objects.equals(type, "Nick")) {
-                    listOfSN.put(line, "");
-                    line = bReader.readLine();
-                    continue;
-                }
-                String[] s = line.split("\\|");
-                listOfSN.put(s[0], s[1]);
+            while (line != null) {
+                listOfNicks.add(line);
                 line = bReader.readLine();
             }
-            return listOfSN;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,72 +50,180 @@ public final class InputOutput {
                 e.printStackTrace();
             }
         }
-        return null;
+        return listOfNicks;
     }
 
-    public static void addHost(String ip, int port, String name, String pathToFile) {
-        final String lineSeparator = System.getProperty("line.separator");
-        createIfNotExists(pathToFile);
+    /**
+     * Read all the hosts from the file
+     * @return the LinkedHashMap with the hosts
+     */
+    public static LinkedHashMap<String, String> readHosts() {
 
-        LinkedHashMap<String, String> hosts = IORead(pathToFile, "Host");
-        if (hosts == null){
-            hosts = new LinkedHashMap<>();
+        File file = new File(nicksPath);
+        if (!file.exists()){
+            return null;
         }
 
-        LinkedHashMap<String, String> nicks = IORead(pathToFile, "Nick");
-        if (nicks == null){
-            nicks = new LinkedHashMap<>();
-        }
+        LinkedHashMap<String, String> listOfSN = new LinkedHashMap<>();
 
-        StringBuilder bigString = new StringBuilder();
+        FileReader fReader = null;
+        BufferedReader bReader = null;
+
+        String line = null;
+
+        try {
+            fReader = new FileReader(file);
+            bReader = new BufferedReader(fReader);
+
+            line = bReader.readLine();
+
+            while (line != null) {
+                String[] s = line.split("\\|");
+                listOfSN.put(s[0], s[1]);
+                line = bReader.readLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fReader.close();
+                bReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return listOfSN;
+    }
+
+    /**
+     * Reverse the order of an LinkedHashMap
+     * @param map LinkedHashMap to reverse
+     * @return the reversed LinkedHashMap
+     */
+    public static LinkedHashMap<String, String> reverseOrderMap(Map<String, String> map) {
+        ArrayList<String> arrayList = new ArrayList<>(map.keySet());
+        LinkedHashMap<String, String> newMap = new LinkedHashMap<>();
+        for (int i = arrayList.size() - 1; i >= 0; i--) {
+            String value = map.get(arrayList.get(i));
+            String key = arrayList.get(i);
+            newMap.put(key, value);
+        }
+        return newMap;
+    }
+
+    /**
+     * Edit the name of the host referenced by the ip and port
+     * @param ip of the host
+     * @param port of the host
+     * @param name new name to the host
+     */
+    public static void editHost(String ip, int port, String name) {
+        createIfNotExists(hostPath);
+
+        LinkedHashMap<String, String> hosts = readHosts();
+        if (hosts == null) {
+            return;
+        }
 
         hosts.put(ip + ":" + port, name);
 
-        bigString.append("<HN>").append(lineSeparator).
-                append("<Host>").append(lineSeparator).
-                append(mapToString(hosts)).
-                append("<Nick>").append(lineSeparator).
-                append(mapToString(nicks));
-
-        writeToFile(bigString, pathToFile);
+        writeToFile(mapToString(hosts), hostPath);
 
     }
 
-    public static void addNick(String nick, String pathToFile){
+    /**
+     * Delete a host referenced by the ip and port
+     * @param ip of the host
+     * @param port of the host
+     */
+    public static void deleteHost(String ip, int port){
+        createIfNotExists(hostPath);
+
+        LinkedHashMap<String, String> hosts = readHosts();
+
+        if (hosts == null) {
+            return;
+        }
+
+        hosts.remove(ip + ":" + port);
+
+        writeToFile(mapToString(hosts), hostPath);
+
+    }
+
+    /**
+     * Delete the nick
+     * @param nick delete
+     */
+    public static void deleteNick (String nick) {
+
+        Set<String> nicks = readNicks();
+        if (nicks == null) {
+            return;
+        }
+
+        nicks.remove(nick);
+
+        writeToFile(setToString(nicks), nicksPath);
+    }
+
+    /**
+     * Add a new host
+     * @param ip of the host do add
+     * @param port of the host to add
+     * @param name of the host to add
+     */
+    public static void addHost(String ip, int port, String name) {
         final String lineSeparator = System.getProperty("line.separator");
-        createIfNotExists(pathToFile);
 
-        LinkedHashMap<String, String> hosts = IORead(pathToFile, "Host");
-        if (hosts == null){
-            hosts = new LinkedHashMap<>();
+        createIfNotExists(hostPath);
+
+        String newHost = ip + ":" + port + "|" + name + lineSeparator;
+
+        try {
+            Files.write(Paths.get(hostPath), newHost.getBytes(), StandardOpenOption.APPEND);
+        }catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        LinkedHashMap<String, String> nicks = IORead(pathToFile, "Nick");
-        if (nicks == null){
-            nicks = new LinkedHashMap<>();
+    /**
+     * Add a new nick
+     * @param nick to add
+     */
+    public static void addNick(String nick) {
+        final String lineSeparator = System.getProperty("line.separator");
+
+        createIfNotExists(nicksPath);
+
+        try {
+            Files.write(Paths.get(nicksPath), (nick + lineSeparator).getBytes(), StandardOpenOption.APPEND);
+        }catch (IOException e) {
+            e.printStackTrace();
         }
-
-        StringBuilder bigString = new StringBuilder();
-
-        bigString.append("<HN>").append(lineSeparator).
-                append("<Host>").append(lineSeparator).
-                append(mapToString(hosts)).
-                append("<Nick>").append(lineSeparator).
-                append(mapToString(nicks));
-
-        writeToFile(bigString, pathToFile);
     }
 
     private static StringBuilder mapToString(LinkedHashMap<String, String> linkedHashMap) {
         final String lineSeparator = System.getProperty("line.separator");
-        //final String lineSeparator = System.getProperty("\n");
 
         StringBuilder bigString = new StringBuilder();
 
         for (Map.Entry<String, String> newLine : linkedHashMap.entrySet()) {
 
             bigString.append(newLine.getKey()).append("|").append(newLine.getValue()).append(lineSeparator);
+        }
+        return bigString;
+    }
 
+
+    private static StringBuilder setToString (Set<String> list) {
+        final String lineSeparator = System.getProperty("line.separator");
+
+        StringBuilder bigString = new StringBuilder();
+
+        for(String s : list){
+            bigString.append(s).append(lineSeparator);
         }
         return bigString;
     }
@@ -167,7 +246,7 @@ public final class InputOutput {
         }
     }
 
-    private static void createIfNotExists(String pathToFile){
+    private static void createIfNotExists(String pathToFile) {
         File file = new File(pathToFile);
         try {
             file.createNewFile();
@@ -175,10 +254,4 @@ public final class InputOutput {
             e.printStackTrace();
         }
     }
-
-/*    ArrayList<Integer> keys = new ArrayList<Integer>(map.keySet());
-        for(int i=keys.size()-1; i>=0;i--){
-        System.out.println(map.get(keys.get(i)));
-    }*/
-
 }
