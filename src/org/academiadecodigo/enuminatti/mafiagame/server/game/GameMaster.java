@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * MIT License
@@ -27,6 +28,7 @@ public class GameMaster {
     private Map<String, Server.PlayerHandler> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
+    private List<String> thirdPartyNicks;
 
     private boolean gameHasStarted;
     private boolean night;
@@ -37,6 +39,10 @@ public class GameMaster {
 
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
+
+    Stage talkStage;
+    Stage voteStage;
+    Stage gameOverStage;
 
     public GameMaster() {
 
@@ -50,7 +56,7 @@ public class GameMaster {
     /**
      * Toggle day and night, when called they switch...
      */
-    private void toggleDayAndNight() {
+    public void toggleDayAndNight() {
 
         night = !night;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT, Boolean.toString(night));
@@ -199,6 +205,11 @@ public class GameMaster {
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
         Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+
+        // Stage initiation
+        talkStage = new Talk(this);
+        voteStage = new Vote(this);
+        gameOverStage = new GameOverCheck(this);
     }
 
 
@@ -210,13 +221,13 @@ public class GameMaster {
         Stage currentStage = null;
         switch (currentGameStage) {
             case TALK:
-                currentStage = new Talk(this);
+                currentStage = talkStage;
                 break;
             case VOTE:
-                currentStage = new Vote(this);
+                currentStage = voteStage;
                 break;
             case GAMEOVERCHECK:
-                currentStage = new GameOverCheck(this);
+                currentStage = gameOverStage;
                 break;
         }
 
@@ -224,17 +235,36 @@ public class GameMaster {
 
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
-            currentStage.startStage(null, null);
+            currentStage.runStage(getActiveNicks(), listOfPlayers.keySet());
             return;
         }
 
         System.out.println("Something went wrong, we're at null currentGameStage.");
     }
 
-    public void changeStage() {
+    public void changeStage(Stages nextStage) {
         Stages newGameStage = currentGameStage.getNextStage();
         System.out.printf("Changing stage from %s to %s.\n", currentGameStage, newGameStage);
         currentGameStage = newGameStage;
         startCurrentStage();
+    }
+
+    public List<String> getThirdParties() {
+        return thirdPartyNicks;
+    }
+
+    public List<String> getVillagers() {
+        return villagersNicks;
+    }
+
+    public List<String> getMafias() {
+        return mafiosiNicks;
+    }
+
+    public Set<String> getActiveNicks() {
+        if (night) {
+            return listOfPlayers.keySet().stream().filter(mafiosiNicks::contains).collect(Collectors.toSet());
+        }
+        return listOfPlayers.keySet();
     }
 }

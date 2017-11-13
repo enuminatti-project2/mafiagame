@@ -153,6 +153,10 @@ public class Server {
         public void setNickname(String nickname) {
             this.nickname = nickname;
         }
+
+        public boolean checkWinCondition() {
+            return false;
+        }
     }
 
 }
