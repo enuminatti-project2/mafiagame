@@ -52,7 +52,7 @@ public class Vote implements Stage {
     /**
      * Starts or restarts a vote timer and announces to the voters.
      */
-    public void startTimer() {
+    private void startTimer() {
         if (calculateVotesRunner == null) {
             calculateVotesRunner = Executors.newSingleThreadScheduledExecutor();
         }
@@ -71,12 +71,11 @@ public class Vote implements Stage {
      * Adds a vote for the specified nickname.
      *
      * @param nickname to vote for
-     * @return true if the vote was valid
      */
-    public boolean addVote(String nickname) {
+    public void addVote(String nickname) {
         if (nickname == null || !voted.containsKey(nickname)) {
             System.out.println("addVote: Invalid vote received for: " + nickname);
-            return false;
+            return;
         }
 
         voted.merge(nickname, 1, Integer::sum);
@@ -87,7 +86,6 @@ public class Vote implements Stage {
             endTimer();
         }
 
-        return true;
     }
 
     /**

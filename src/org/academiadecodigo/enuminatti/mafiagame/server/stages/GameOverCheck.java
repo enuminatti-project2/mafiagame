@@ -30,13 +30,13 @@ public class GameOverCheck implements Stage {
         String[] winningPlayers;
         if ((winningPlayers = getWinningPlayer(thirdparties)) != null) {
             // a single third-party player won
-            return;
         } else if ((winningPlayers = getWinningFaction(mafias, villagers)) != null) {
             // a faction won
-            return;
         } else {
             goNext();
         }
+
+        // winningPlayers won the game
     }
 
     private String[] getWinningPlayer(List<String> thirdparties) {
@@ -81,6 +81,6 @@ public class GameOverCheck implements Stage {
 
     @Override
     public void cleanup() {
-        return;
+        // no cleanup needed in this one
     }
 }

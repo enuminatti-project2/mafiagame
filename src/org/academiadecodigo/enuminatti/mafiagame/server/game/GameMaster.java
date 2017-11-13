@@ -71,50 +71,13 @@ public class GameMaster {
      */
     void addVote(String nickname) {
 
-        if (nickname == null || !listOfPlayers.containsKey(nickname)) {
-            return;
+        if (currentGameStage == Stages.VOTE) {
+            ((Vote) voteStage).addVote(nickname);
         }
 
-        numberOfVotes++;
-        votesCount.merge(nickname, 1, Integer::sum);
-
-        System.out.println("Votes N = " + numberOfVotes + " List of Players: " + listOfPlayers.size());
-
-        if (numberOfVotes >= listOfPlayers.size()) {
-            calculateVotes(Collections.max(votesCount.values()));
-            toggleDayAndNight();
-        }
-
-    }
-
-
-    /**
-     * This grabs the votesCount map and finds the player which
-     * had the same votes as mostVotes and kills them.
-     *
-     * In case of a draw, this will grab the first player.
-     *
-     * @param mostVotes the most votes that are in the map
-     */
-    private void calculateVotes(Integer mostVotes) {
-
-        for (String player : votesCount.keySet()) {
-
-            if (votesCount.get(player).equals(mostVotes)) {
-
-                votesCount.clear();
-                numberOfVotes = 0;
-                killPlayer(player);
-
-                gameover();
-
-                break;
-            }
-        }
     }
 
     public void receiveMessage(String message, String nickname) {
-
 
         GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
@@ -210,6 +173,9 @@ public class GameMaster {
         talkStage = new Talk(this);
         voteStage = new Vote(this);
         gameOverStage = new GameOverCheck(this);
+
+        currentGameStage = Stages.TALK;
+        startCurrentStage();
     }
 
 

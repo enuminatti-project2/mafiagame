@@ -126,10 +126,9 @@ public class Server {
         }
 
         public void disconnectPlayer() {
-            System.out.println("disconnected player");
             try {
-                System.out.println(nickname);
                 if (gameMaster.getListOfPlayers().containsKey(nickname)) {
+                    System.out.println("disconnected player: " + nickname);
                     gameMaster.kickPlayer(nickname);
                 }
                 clientSocket.close();
