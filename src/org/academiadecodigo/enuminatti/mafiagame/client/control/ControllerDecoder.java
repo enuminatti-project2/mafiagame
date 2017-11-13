@@ -46,10 +46,10 @@ class ControllerDecoder {
                 });
                 break;
             case TIMER:
-                loginController.getServerMessageArea().appendText("Game will start in " + tag.decode(message) + " seconds.\n");
+                //loginController.getServerMessageArea().appendText("Game will start in " + tag.decode(message) + " seconds.\n");
                 break;
             default:
-                loginController.getServerMessageArea().appendText(tag.decode(message) + "\n");
+                //loginController.getServerMessageArea().appendText(tag.decode(message) + "\n");
         }
     }
 
