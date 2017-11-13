@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.util;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.Collection;
@@ -20,7 +21,7 @@ public class Broadcaster {
      * @param encoding    to encode message with
      * @param message     to send
      */
-    public static void broadcastToPlayers(Map<String, Server.PlayerHandler> playersList,
+    public static void broadcastToPlayers(Map<String, Player> playersList,
                                           EncodeDecode encoding, String message) {
 
         broadcastToPlayers(playersList, playersList.keySet(), encoding, message);
@@ -35,7 +36,7 @@ public class Broadcaster {
      * @param encoding       to encode message with
      * @param message        to send to specific targets
      */
-    public static void broadcastToPlayers(Map<String, Server.PlayerHandler> playersList,
+    public static void broadcastToPlayers(Map<String, Player> playersList,
                                           Collection<String> messageTargets,
                                           EncodeDecode encoding, String message) {
 
@@ -51,9 +52,23 @@ public class Broadcaster {
             if (!messageTargets.contains(nick)) {
                 continue;
             }
-            playersList.get(nick).sendMessage(message);
+            playersList.get(nick).writeToPlayer(message);
         }
 
+    }
+
+
+    public static  void broadcastToPlayer(Player player,
+                                          EncodeDecode encoding , String message){
+
+        if (encoding == null || player == null) {
+            return;
+        }
+
+        message = sanitizeMessage(message);
+        message = encoding.encode(message);
+
+        player.writeToPlayer(message);
     }
 
     /**
