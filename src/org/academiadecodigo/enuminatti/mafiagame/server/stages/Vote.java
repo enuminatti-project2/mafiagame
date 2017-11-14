@@ -107,8 +107,9 @@ public class Vote implements Stage {
         int mostVotes = Collections.max(voted.values());
 
         for (String player: voted.keySet()) {
-
+            System.out.println("checking if " + player + " has the most votes");
             if(voted.get(player).equals(mostVotes)) {
+                System.out.println(player + " has the most votes");
 
                 return player;
             }

@@ -44,6 +44,7 @@ public class GameMaster {
         startGame = Executors.newSingleThreadScheduledExecutor();
         mafiosiNicks = new LinkedList<>();
         villagersNicks = new LinkedList<>();
+        thirdPartyNicks = new LinkedList<>();
     }
 
     /**
@@ -158,6 +159,7 @@ public class GameMaster {
 
         if (playerRemoved != null) {
 
+            System.out.println("kicking player " + playerRemoved.getName());
             playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
@@ -200,6 +202,7 @@ public class GameMaster {
         }
 
         if (currentStage != null) {
+            System.out.println("running stage " + currentGameStage);
 
 
             // pass active users on current stage <- relevant for Vote and Talk

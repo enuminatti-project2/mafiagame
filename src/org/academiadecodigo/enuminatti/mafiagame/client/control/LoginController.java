@@ -58,14 +58,14 @@ public class LoginController implements Controller {
 
         boolean flag = false;
 
-        if (serversCombo.getValue() == null){
+        if (serversCombo.getValue() == null) {
             serverError.setVisible(true);
             flag = true;
         } else {
             serverError.setVisible(false);
         }
 
-        if(nicksCombo.getValue() == null){
+        if (nicksCombo.getValue() == null) {
             nickError.setText("Invalid Nick");
             nickError.setVisible(true);
             flag = true;
@@ -74,7 +74,7 @@ public class LoginController implements Controller {
         }
 
 
-        if (flag){
+        if (flag) {
             return;
         }
 
@@ -125,18 +125,13 @@ public class LoginController implements Controller {
         if (client != null) {
             return false;
         }
-        String host = serversCombo.getValue();
-        if (host == null || !host.contains("(")) {
+        String host = serversCombo.getEditor().getText();
+
+        host = InputOutput.parseIp(host);
+
+        if (host == null) {
+            System.out.println("invalid ip");
             serverError.setVisible(true);
-            return false;
-        }
-
-        host = host.substring(host.indexOf("(") + 1, host.indexOf(")"));
-        if (host.length() == 0){
-            host = serversCombo.getValue();
-        }
-
-        if (!IPAddressUtil.isIPv4LiteralAddress(host)){
             return false;
         }
 
@@ -156,6 +151,7 @@ public class LoginController implements Controller {
 
     @Override
     public void shutdown() {
+        saveLists();
         if (client != null) {
             client.shutdown();
         }
@@ -182,6 +178,9 @@ public class LoginController implements Controller {
 
         serversCombo.setItems(FXCollections.observableArrayList(tempList));
         serversCombo.setEditable(true);
+        if (!hostsMap.isEmpty()) {
+            serversCombo.getSelectionModel().select(0);
+        }
     }
 
     private void populateNicks() {
@@ -208,5 +207,10 @@ public class LoginController implements Controller {
                 InputOutput.addHost(s[0], s[1]);
             }
         }
+    }
+
+    public void saveLists() {
+        InputOutput.addNick(nicksCombo.getEditor().getText());
+        InputOutput.addHost(serversCombo.getEditor().getText());
     }
 }
