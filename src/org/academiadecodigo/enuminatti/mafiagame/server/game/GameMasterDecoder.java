@@ -52,8 +52,6 @@ public class GameMasterDecoder {
                 break;
             case TIMER:
                 break;
-            case NICKMESSAGE:
-                break;
             case VOTE:
                 gameMaster.addVote(EncodeDecode.VOTE.decode(message));
                 break;

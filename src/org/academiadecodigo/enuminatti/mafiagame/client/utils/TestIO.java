@@ -16,10 +16,9 @@ public class TestIO {
     }
 
     private void testWrite(){
-        InputOutput.addHost("127.0.0.1", 6667, "MyNewLocalhost");
-        InputOutput.addHost("127.0.0.1", 6688, "anotherlocalhost");
-        InputOutput.addHost("127.0.0.1", 6669, "MyNewLocalhost");
-        InputOutput.addHost("127.0.0.1", 6670, "anotherlocalhost");
+        InputOutput.addHost("127.0.0.1", "MyNewLocalhost");
+        InputOutput.addHost("127.0.0.1", "anotherlocalhost");
+        InputOutput.addHost("127.0.0.1", "anotherlocalhost");
         //InputOutput.editHost("127.0.0.1", 6668, "edited host");
         //InputOutput.addNick("Sarc");
         //InputOutput.addNick("Sarc1");

@@ -8,11 +8,11 @@ import java.util.*;
 public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
     NICK("<NICK>", "</NICK>"),
+    LOGIN("<LOGIN>", "</LOGIN>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
     TIMER("<TIMER>", "</TIMER>"),
     NIGHT("<NIGHT>", "</NIGHT>"),
-    NICKMESSAGE("<_NICKMESSAGE>", "</_NICKMESSAGE>"), //Tags that begin with _ are group tags
-    VOTE("<VOTE>", "</VOTE>"),
+    VOTE("<VOTE>", "<VOTE>"),
     NICKLIST("<NICKLIST>", "</NICKLIST>"),
     START("<START>", "</START>"),
     KILL("<KILL>", "</KILL>"),
@@ -20,7 +20,10 @@ public enum EncodeDecode {
     OVER("<OVER>", "</OVER>"),
     ALLOW_TALK("<ALLOW_TALK>", "</ALLOW_TALK>"),
     ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>"),
-    ALLOW_VISIT("<ALLOW_VISIT>", "</ALLOW_VISIT>");
+    ALLOW_VISIT("<ALLOW_VISIT>", "</ALLOW_VISIT>"),
+    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>"),
+    HOSTSLIST("<HOSTS>", "</HOST>"),
+    PWDERROR("<PWDERROR>","</PWDERROR>");
 
     //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
@@ -102,65 +105,6 @@ public enum EncodeDecode {
             return tempTag;
         }
         return null;
-    }
-
-    /**
-     * Wrap the values of a given Map inside a tag
-     *
-     * @param mapToSend the map with the values to send
-     * @return the Encoded String
-     */
-    public String encode(Map<EncodeDecode, String> mapToSend) {
-        String encodedString = "";
-
-        for (Map.Entry<EncodeDecode, String> entry : mapToSend.entrySet()) {
-            EncodeDecode key = entry.getKey();
-            String value = entry.getValue();
-
-            encodedString += key.encode(value);
-        }
-        encodedString = encode(encodedString);
-
-        return encodedString;
-    }
-
-    /**
-     * Decode a multiple tags string to a Map<EncodeDecode, String>
-     *
-     * @param message the message to decode
-     * @return the map with the multiple values
-     */
-    public Map<EncodeDecode, String> decodeStringMap(String message) {
-        if (!isGroupString(message)) {
-            return null;
-        }
-
-        String decodedString = decode(message);
-        if (decodedString == null) {
-            return null;
-        }
-
-        String[] splitted = decodedString.split("(?=<)(?<=>)");
-
-        Map<EncodeDecode, String> mapToReturn = new HashMap<>();
-
-        for (String stringToDecode : splitted) {
-            EncodeDecode enumType = getEnum(getStartTag(stringToDecode));
-            mapToReturn.put(enumType, enumType.decode(stringToDecode));
-        }
-
-        return mapToReturn;
-    }
-
-    /**
-     * check if a given string is a group of strings
-     *
-     * @param message the message to analyze
-     * @return true or false
-     */
-    private boolean isGroupString(String message) {
-        String tag = getStartTag(message);
-        return (tag != null && tag.startsWith("<_"));
     }
 
     /**

@@ -171,15 +171,14 @@ public final class InputOutput {
     /**
      * Add a new host
      * @param ip of the host do add
-     * @param port of the host to add
      * @param name of the host to add
      */
-    public static void addHost(String ip, int port, String name) {
+    public static void addHost(String ip, String name) {
         final String lineSeparator = System.getProperty("line.separator");
 
         createIfNotExists(hostPath);
 
-        String newHost = ip + ":" + port + "|" + name + lineSeparator;
+        String newHost = ip + "|" + name + lineSeparator;
 
         try {
             Files.write(Paths.get(hostPath), newHost.getBytes(), StandardOpenOption.APPEND);

@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.RoleFactory;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
@@ -9,6 +10,8 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +26,7 @@ public class Server {
     private GameMaster gameMaster;
     private ServerSocket server;
     private ExecutorService executorService;
+    private Map<String, String> hostsMap;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -32,6 +36,7 @@ public class Server {
     public Server() {
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
+        hostsMap = new LinkedHashMap<>();
     }
 
     private void closeServer() {
@@ -74,6 +79,18 @@ public class Server {
         }
     }
 
+    private synchronized void updateHostList(String message) {
+        Map<String, String> tempMap = new LinkedHashMap<>();
+        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split(",");
+
+        for(String host: hostslist){
+            String[] s = host.split("\\|");
+            tempMap.put(s[0], s[1]);
+        }
+
+        hostsMap.putAll(tempMap);
+    }
+
 
     public class ServerWorker implements Runnable {
         private Socket clientSocket;
@@ -106,19 +123,46 @@ public class Server {
             try {
                 String message = "";
                 while ((message = in.readLine()) != null) {
-                    if (EncodeDecode.getStartTag(message).equals(EncodeDecode.NICK.getStartTag())
-                            && gameMaster.getListOfPlayers().get(EncodeDecode.NICK.decode(message)) == null) {
-                        if (!tryRegister(message)) {
-                            sendMessage(EncodeDecode.MESSAGE.encode("The nickname you chose is already in use, you bitch."));
-                        }
-                    } else {
-                        receiveMessage(message);
+
+                    EncodeDecode parsedEncoding = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+                    if (parsedEncoding == null) {
+                        // ignore unencoded message
+                        continue;
+                    }
+
+                    switch (parsedEncoding) {
+                        case HOSTSLIST:
+                            updateHostList(message);
+                            break;
+                        case LOGIN:
+                            doLogin(message);
+                            break;
+                        default:
+                            receiveMessage(message);
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 disconnectPlayer();
+            }
+        }
+
+        private void doLogin(String message) {
+            String nickAndPass = EncodeDecode.LOGIN.decode(message);
+
+            if (nickAndPass == null || nickAndPass.split(",").length != 2) {
+                return;
+            }
+
+            String[] splitUserPass = nickAndPass.split(",");
+            // pwd is encoded with String.hash();
+
+            if (player == null) {
+                if (!tryRegister(splitUserPass[0])) {
+                    sendMessage(EncodeDecode.NICKOK.encode("false"));
+                }
             }
         }
 
@@ -135,19 +179,14 @@ public class Server {
             }
         }
 
-        private boolean tryRegister(String message) {
-            if (!Objects.equals(EncodeDecode.getStartTag(message), EncodeDecode.NICK.getStartTag())) {
-                return false;
-            }
-
-            String nickname = EncodeDecode.NICK.decode(message);
-            if (gameMaster.addNick(nickname, this)) {
-                player = gameMaster.getListOfPlayers().get(nickname);
+        private boolean tryRegister(String nick) {
+            if (gameMaster.addNick(nick, this)) {
+                player = gameMaster.getListOfPlayers().get(nick);
                 return true;
             }
             return false;
-
         }
+
 
         public boolean checkWinCondition() {
             return false;
@@ -155,3 +194,4 @@ public class Server {
 
     }
 }
+
