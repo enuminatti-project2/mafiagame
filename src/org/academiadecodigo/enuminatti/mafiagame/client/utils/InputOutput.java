@@ -194,6 +194,12 @@ public final class InputOutput {
     public static void addNick(String nick) {
         final String lineSeparator = System.getProperty("line.separator");
 
+        Set<String> nicks = readNicks();
+
+        if (!nicks.add(nick) || nick == null){
+            return;
+        }
+
         createIfNotExists(nicksPath);
 
         try {

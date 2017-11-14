@@ -53,6 +53,6 @@
             <Font name="Krungthep" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="guestButton" layoutX="384.0" layoutY="643.0" mnemonicParsing="false" text="Play as guest" />
+      <Button fx:id="guestButton" layoutX="384.0" layoutY="643.0" mnemonicParsing="false" onAction="#playAsGuest" text="Play as guest" />
    </children>
 </Pane>

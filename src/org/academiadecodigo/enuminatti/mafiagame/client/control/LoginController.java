@@ -3,7 +3,6 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
@@ -13,10 +12,10 @@ import javafx.scene.control.*;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import sun.net.util.IPAddressUtil;
 
-import static org.academiadecodigo.enuminatti.mafiagame.client.utils.ClientConstants.REGEXIP;
 
-public class LoginController implements Controller{
+public class LoginController implements Controller {
 
     @FXML
     private ResourceBundle resources;
@@ -50,41 +49,28 @@ public class LoginController implements Controller{
 
     private Client client;
 
-    private Pattern pattern;
+    private Map<String, String> hostsMap;
 
-    Map<String, String> hostsMap;
-
-    Set<String> nicksList;
+    private Set<String> nicksList;
 
     @FXML
     void connectToServer(ActionEvent event) {
-        if (client == null) {
-            client = new Client(this);
-            Matcher matcher = pattern.matcher(serversCombo.getValue());
-            if (!matcher.find()){
-                serverError.setVisible(true);
-                return;
-            }
-            try {
-                String host = matcher.group(0);
-                serverError.setVisible(false);
-                client.connect(host);
-                sendHosts();
-                doLogin();
-            } catch (IOException e) {
-                serverError.setVisible(true);
-                client = null;
-            }
+
+        if (!connect()) {
+            return;
         }
+        doLogin();
     }
 
     private void doLogin() {
-        client.encodeAndSend(EncodeDecode.LOGIN, nicksCombo.getValue() + "," + pwdField.getText().hashCode());
+        String nick = nicksCombo.getValue();
+        InputOutput.addNick(nick);
+        client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + pwdField.getText().hashCode());
     }
 
     private void sendHosts() {
         String serversList = "";
-        for (Map.Entry<String, String> entry : hostsMap.entrySet()){
+        for (Map.Entry<String, String> entry : hostsMap.entrySet()) {
             serversList += entry.getKey() + "|" + entry.getValue() + ",";
         }
         client.encodeAndSend(EncodeDecode.HOSTSLIST, serversList);
@@ -102,7 +88,47 @@ public class LoginController implements Controller{
 
         populateHosts();
         populateNicks();
-        pattern = Pattern.compile(REGEXIP);
+    }
+
+    @FXML
+    void playAsGuest() {
+        if (!connect()) {
+            return;
+        }
+        client.encodeAndSend(EncodeDecode.GUESTLOGIN, "");
+    }
+
+    private boolean connect() {
+        if (client != null) {
+            return false;
+        }
+        String host = serversCombo.getValue();
+        if (host == null) {
+            serverError.setVisible(true);
+            return false;
+        }
+
+        host = host.substring(host.indexOf("(") + 1, host.indexOf(")"));
+        if (host.length() == 0){
+            host = serversCombo.getValue();
+        }
+
+        if (!IPAddressUtil.isIPv4LiteralAddress(host)){
+            return false;
+        }
+
+        try {
+            client = new Client(this);
+            serverError.setVisible(false);
+            client.connect(host);
+            sendHosts();
+            return true;
+        } catch (IOException e) {
+            serverError.setVisible(true);
+            client = null;
+            return false;
+        }
+
     }
 
     @Override
@@ -121,13 +147,13 @@ public class LoginController implements Controller{
         return client;
     }
 
-    private void populateHosts(){
+    private void populateHosts() {
         hostsMap = InputOutput.readHosts();
 
         LinkedList<String> tempList = new LinkedList<>();
 
-        for (Map.Entry<String, String> entry : hostsMap.entrySet()){
-            String s = entry.getValue() + "( " + entry.getKey() + " )";
+        for (Map.Entry<String, String> entry : hostsMap.entrySet()) {
+            String s = entry.getValue() + " (" + entry.getKey() + ")";
             tempList.add(s);
         }
 
@@ -135,7 +161,7 @@ public class LoginController implements Controller{
         serversCombo.setEditable(true);
     }
 
-    private void populateNicks(){
+    private void populateNicks() {
         nicksList = InputOutput.readNicks();
         nicksCombo.setItems(FXCollections.observableArrayList(nicksList));
         nicksCombo.setEditable(true);
@@ -152,9 +178,9 @@ public class LoginController implements Controller{
     void updateHostList(String message) {
         String[] tempHost = message.split(",");
 
-        for(String hostToSplit: tempHost){
+        for (String hostToSplit : tempHost) {
             String[] s = hostToSplit.split("\\|");
-            if (!hostsMap.containsKey(s[0])){
+            if (!hostsMap.containsKey(s[0])) {
                 InputOutput.addHost(s[0], s[1]);
             }
         }

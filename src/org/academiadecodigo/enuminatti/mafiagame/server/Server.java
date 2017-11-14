@@ -120,6 +120,9 @@ public class Server {
                         case LOGIN:
                             doLogin(message);
                             break;
+                        case GUESTLOGIN:
+                            guestLogin();
+                            break;
                         default:
                             receiveMessage(message);
                     }
@@ -131,9 +134,17 @@ public class Server {
             }
         }
 
+        private void guestLogin() {
+            String nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
+
+            while(!tryRegister(nick)){
+                nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
+            }
+        }
+
         private void doLogin(String message) {
             String[] s = EncodeDecode.LOGIN.decode(message).split(",");
-            //pwd is incoded with String.hash();
+            //s[1] pwd is incoded with String.hash();
 
             if (nickname == null) {
                 if (!tryRegister(s[0])) {

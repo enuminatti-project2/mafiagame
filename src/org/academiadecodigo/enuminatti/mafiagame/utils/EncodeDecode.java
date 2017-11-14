@@ -8,6 +8,7 @@ import java.util.*;
 public enum EncodeDecode {
     MESSAGE("<MSG>", "</MSG>"),
     NICK("<NICK>", "</NICK>"),
+    GUESTLOGIN("<GUEST>", "</GUEST>"),
     LOGIN("<LOGIN>", "</LOGIN>"),
     NICKOK("<NICKOK>", "</NICKOK>"),
     TIMER("<TIMER>", "<TIMER>"),
@@ -64,7 +65,6 @@ public enum EncodeDecode {
         if (canDecode(message)) {
             return message.substring(message.indexOf(startTag) + startTag.length(), message.lastIndexOf(endTag));
         }
-
         return null;
     }
 
