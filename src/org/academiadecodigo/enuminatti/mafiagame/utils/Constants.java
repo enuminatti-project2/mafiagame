@@ -11,7 +11,7 @@ public class Constants {
 
     public static final int MIN_PLAYERS = 1; //1 PLAYER
 
-    public static final int SECONDS_TO_START_GAME = 2;
+    public static final int SECONDS_TO_START_GAME = 10;
     public static final int SECONDS_TO_TALK = 60;
     public static final int SECONDS_TO_VOTE = 30;
 

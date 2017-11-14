@@ -12,7 +12,7 @@ public class MafiaStrategy extends GenericGameStrategy {
 
     @Override
     public String dieMessage() {
-        return "They were MafiaStrategy!";
+        return "One Mafia member less!";
     }
 
 

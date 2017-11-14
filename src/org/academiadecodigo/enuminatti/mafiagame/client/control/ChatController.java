@@ -59,7 +59,9 @@ public class ChatController implements Controller {
         assert voteButton != null : "fx:id=\"voteButton\" was not injected: check your FXML file 'ClientView.fxml'.";
 
         scrollPane.vvalueProperty().bind(flowChat.heightProperty());
-
+        System.out.println("Disabling vote button");
+        voteButton.setDisable(true);
+        //sendButton.setDisable(true);
     }
 
     @FXML
@@ -83,7 +85,7 @@ public class ChatController implements Controller {
             System.out.println("I voted in " + votedUser);
             client.encodeAndSend(EncodeDecode.VOTE, votedUser);
             usersList.getSelectionModel().clearSelection();
-            //voteButton.setDisable(true);
+            voteButton.setDisable(true);
         }
     }
 
@@ -124,8 +126,6 @@ public class ChatController implements Controller {
             nightCSS = getClass().getResource("css/night.css").toExternalForm();
             dayCSS = getClass().getResource("css/day.css").toExternalForm();
         }
-
-        voteButton.setDisable(false);
 
         if (night) {
             StyleManager.getInstance().removeUserAgentStylesheet(dayCSS);

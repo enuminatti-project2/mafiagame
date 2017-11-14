@@ -33,7 +33,8 @@ public class Talk implements Stage {
     @Override
     public void runStage(Set<String> activePlayersOnStage, Set<String> possibleTargets) {
         this.talkers = activePlayersOnStage;
-
+        Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), talkers,
+                EncodeDecode.ALLOW_TALK, "vote");
         startTimer();
     }
 

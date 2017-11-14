@@ -36,7 +36,7 @@
       </TabPane>
       <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="80.0" prefHeight="502.0" prefWidth="200.0" style="-fx-background-color: transparent;" />
       <Button fx:id="sendButton" defaultButton="true" layoutX="785.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
-      <Button fx:id="voteButton" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
+      <Button fx:id="voteButton" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" disable="true" />
       <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="785.0" layoutY="46.0" prefHeight="31.0" prefWidth="200.0" text="Users">
          <font>
             <Font size="28.0" />

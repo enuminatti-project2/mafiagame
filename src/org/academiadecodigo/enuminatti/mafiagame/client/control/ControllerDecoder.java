@@ -70,6 +70,7 @@ class ControllerDecoder {
     static void chatControllerDecoder(ChatController chatController, String message) {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        System.out.println(message + " on chat");
 
         if (tag == null) {
 
@@ -97,11 +98,11 @@ class ControllerDecoder {
             case NICKOK:
                 break;
             case TIMER:
-                System.out.println("Timer message");
+                chatController.writeNewLine("Timer message: " + EncodeDecode.TIMER.decode(message), Color.CHOCOLATE);
                 break;
             case NIGHT:
                 chatController.setNight(EncodeDecode.NIGHT.decode(message));
-                //chatController.getVoteButton().setDisable(true);
+                chatController.getVoteButton().setDisable(true);
                 break;
             case NICKLIST:
                 message = EncodeDecode.NICKLIST.decode(message);
@@ -124,6 +125,7 @@ class ControllerDecoder {
                 chatController.getVoteButton().setDisable(false);
                 break;
             case SCORE:
+                chatController.writeNewLine(EncodeDecode.SCORE.decode(message), Color.BLUEVIOLET);
                 //Will receive a String "points rounds" to be split
                 break;
             default:

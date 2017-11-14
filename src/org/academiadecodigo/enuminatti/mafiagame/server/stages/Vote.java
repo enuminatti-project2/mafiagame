@@ -34,6 +34,8 @@ public class Vote implements Stage {
     @Override
     public void runStage(Set<String> voters, Set<String> targets) {
         this.voted = new HashMap<>();
+        Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
+                EncodeDecode.ALLOW_VOTE, "vote");
         for (String target : targets) {
             voted.put(target, 0);
         }

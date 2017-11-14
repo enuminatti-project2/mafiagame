@@ -12,7 +12,7 @@ public class VillagerStrategy extends GenericGameStrategy {
 
     @Override
     public String dieMessage() {
-        return "They were a Villager!";
+        return "An innocent villager.";
     }
 
     @Override
