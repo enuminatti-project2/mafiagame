@@ -207,6 +207,9 @@ public class GameMaster {
 
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
+            if (night){
+
+            }
             currentStage.runStage(getActiveNicks(), listOfPlayers.keySet());
             return;
         }
@@ -232,7 +235,7 @@ public class GameMaster {
         return thirdPartyNicks;
     }
 
-    private Set<String> getActiveNicks() {
+    Set<String> getActiveNicks() {
         if (night) {
             return listOfPlayers.keySet().stream().filter(mafiosiNicks::contains).collect(Collectors.toSet());
         }

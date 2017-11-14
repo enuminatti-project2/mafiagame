@@ -120,6 +120,7 @@ class ControllerDecoder {
                 break;
             case ALLOW_TALK:
                 chatController.getSendButton().setDisable(false);
+                System.out.println("Enabling send button");
                 break;
             case ALLOW_VOTE:
                 chatController.getSendButton().setDisable(true);
