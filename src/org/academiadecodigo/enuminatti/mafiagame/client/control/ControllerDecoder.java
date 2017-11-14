@@ -43,8 +43,8 @@ class ControllerDecoder {
             case START:
                 loginController.saveLists();
                 Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                    SceneNavigator.getInstance().loadScreen("Lobby");
+                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
                             .setClient(loginController.getClient());
                 });
                 break;
@@ -127,6 +127,31 @@ class ControllerDecoder {
             default:
                 chatController.writeNewLine(message, Color.BLUE);
                 System.out.println("Deu merda");
+        }
+    }
+
+
+    static void chatControllerDecoder(LobbyController lobbyController, String message) {
+
+        EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+        if (tag == null) {
+
+            //lobbyController.writeNewLine(message, Color.DEEPPINK);
+            //System.out.println(message);
+            return;
+        }
+
+        switch (tag) {
+
+            case MESSAGE:
+                lobbyController.writeNewLine(EncodeDecode.MESSAGE.decode(message));
+                break;
+            case NICK:
+                System.out.println("Message" + message);
+                lobbyController.updateStats(EncodeDecode.NICK.decode(message));
+                break;
+
         }
     }
 }

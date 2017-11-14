@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
+
+<Pane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0"  xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.LobbyController">
+   <children>
+      <ImageView fitHeight="700.0" fitWidth="1000.0" pickOnBounds="true">
+         <image>
+            <Image url="@../../../../../../../resources/Night.png" />
+         </image>
+      </ImageView>
+      <TextField fx:id="clientPrompt" layoutX="164.0" layoutY="609.0" opacity="0.65" prefHeight="45.0" prefWidth="604.0" />
+      <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="93.0" opacity="0.65" prefHeight="489.0" prefWidth="200.0"/>
+      <Button fx:id="sendButton" defaultButton="true" layoutX="785.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
+      <Button fx:id="statsButton" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#showStats" prefHeight="45.0" prefWidth="94.0" text="Stats" />
+      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="785.0" layoutY="31.0" prefHeight="31.0" prefWidth="200.0" text="Lobby">
+         <font>
+            <Font name="Oriya MN" size="49.0" />
+         </font>
+      </Label>
+      <Pane layoutX="164.0" layoutY="46.0" opacity="0.65" prefHeight="536.0" prefWidth="604.0">
+         <children>
+            <ScrollPane id="scrollPane" fx:id="scrollPane" hbarPolicy="NEVER" hmax="0.0" prefHeight="536.0" prefWidth="604.0" style="-fx-background: transparent;" vvalue="0.0">
+               <content>
+                  <TextFlow id="flowChat" fx:id="flowChat" lineSpacing="0.8" prefHeight="533.0" prefWidth="605.0" style="-fx-background-color: white;">
+                     <padding>
+                        <Insets left="200.0" right="10.0" top="50.0" />
+                     </padding>
+                  </TextFlow>
+               </content>
+            </ScrollPane>
+         </children>
+      </Pane>
+      <GridPane fx:id="statsWindow" alignment="BASELINE_CENTER" cacheShape="false" centerShape="false" layoutX="257.0" layoutY="63.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="502.0" prefWidth="374.0" scaleShape="false" style="-fx-background-color: black; -fx-border-color: peru; -fx-border-width: 10; -fx-border-style: segments;" vgap="10.0" visible="false">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ImageView fitHeight="108.0" fitWidth="90.0" layoutX="234.0" layoutY="419.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2">
+               <image>
+                  <Image url="@../../../../../../../../blood1.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="136.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="9">
+               <image>
+                  <Image url="@../../../../../../../../Mafia.png" />
+               </image>
+               <GridPane.margin>
+                  <Insets bottom="18.0" />
+               </GridPane.margin>
+            </ImageView>
+            <Label fx:id="nameStats" alignment="CENTER" contentDisplay="CENTER" prefHeight="63.0" prefWidth="198.0" text="Rodas198" textFill="WHITE" GridPane.columnIndex="1" GridPane.columnSpan="3">
+               <font>
+                  <Font name="Chalkduster" size="27.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Label>
+            <Label layoutX="35.0" layoutY="29.0" prefHeight="63.0" prefWidth="198.0" text="Games Won:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Label>
+            <Label layoutX="10.0" layoutY="130.0" prefHeight="63.0" prefWidth="198.0" text="Games Lost:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label layoutX="10.0" layoutY="231.0" prefHeight="63.0" prefWidth="198.0" text="Games Won:" textFill="#fffdfd" GridPane.columnSpan="2" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label layoutX="10.0" layoutY="358.0" prefHeight="63.0" prefWidth="198.0" GridPane.rowIndex="6">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </GridPane>
+      <Button fx:id="logoutButton" layoutX="28.0" layoutY="23.0" mnemonicParsing="false" onAction="#logout" prefHeight="39.0" prefWidth="90.0" text="Logout" />
+   </children>
+</Pane>

@@ -37,7 +37,7 @@ public class GameMasterDecoder {
                         String.format("<%s> %s", nickname, messageDecoded));
                 break;
             case NICK:
-                System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));
+            /*    System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));
                 String newNickname = EncodeDecode.NICK.decode(message);
 
                 if (gameMaster.getListOfPlayers().containsKey(newNickname)) {
@@ -46,7 +46,8 @@ public class GameMasterDecoder {
                 }
                 sender.setName(newNickname);
                 gameMaster.getListOfPlayers().put(newNickname, sender);
-                gameMaster.getListOfPlayers().remove(nickname);
+                gameMaster.getListOfPlayers().remove(nickname);*/
+                sender.writeToPlayer(EncodeDecode.NICK.encode(sender.getName()));
                 break;
             case NICKOK:
                 break;
