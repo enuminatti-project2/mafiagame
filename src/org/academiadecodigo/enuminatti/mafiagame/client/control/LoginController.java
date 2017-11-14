@@ -56,9 +56,32 @@ public class LoginController implements Controller {
     @FXML
     void connectToServer(ActionEvent event) {
 
+        boolean flag = false;
+
+        if (serversCombo.getValue() == null){
+            serverError.setVisible(true);
+            flag = true;
+        } else {
+            serverError.setVisible(false);
+        }
+
+        if(nicksCombo.getValue() == null){
+            nickError.setText("Invalid Nick");
+            nickError.setVisible(true);
+            flag = true;
+        } else {
+            nickError.setVisible(false);
+        }
+
+
+        if (flag){
+            return;
+        }
+
         if (!connect()) {
             return;
         }
+
         doLogin();
     }
 
@@ -103,7 +126,7 @@ public class LoginController implements Controller {
             return false;
         }
         String host = serversCombo.getValue();
-        if (host == null) {
+        if (host == null || !host.contains("(")) {
             serverError.setVisible(true);
             return false;
         }
@@ -168,6 +191,7 @@ public class LoginController implements Controller {
     }
 
     void nickInUse() {
+        nickError.setText("Nick already in use");
         nickError.setVisible(true);
     }
 
