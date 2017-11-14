@@ -2,6 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server.stages;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
+import org.academiadecodigo.enuminatti.mafiagame.server.game.ScoreCalculator;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;

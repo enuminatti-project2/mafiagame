@@ -62,6 +62,7 @@ public class GameMaster {
             }
             player.doDayStrategy();
         }
+        ScoreCalculator.nextRound();
 
     }
 
@@ -91,6 +92,7 @@ public class GameMaster {
 
     public void killPlayer(String nickname) {
 
+        ScoreCalculator.calculate(nickname, listOfPlayers.get(nickname));
         listOfPlayers.get(nickname).writeToPlayer(EncodeDecode.KILL.encode(nickname));
 
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
@@ -199,6 +201,7 @@ public class GameMaster {
 
         if (currentStage != null) {
 
+
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
             currentStage.runStage(getActiveNicks(), listOfPlayers.keySet());
@@ -234,6 +237,8 @@ public class GameMaster {
     }
 
     public void gameOver() {
+
+        ScoreCalculator.calculateEnd(getListOfPlayers());
         Broadcaster.broadcastToPlayers(getListOfPlayers(),
                 EncodeDecode.OVER, "GAME OVER");
 
