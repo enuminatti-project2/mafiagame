@@ -2,20 +2,17 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import static org.academiadecodigo.enuminatti.mafiagame.client.utils.ClientConstants.REGEXIP;
 
@@ -40,6 +37,9 @@ public class LoginController implements Controller{
     private Label pwdError;
 
     @FXML
+    private Label nickError;
+
+    @FXML
     private ComboBox<String> nicksCombo;
 
     @FXML
@@ -52,16 +52,25 @@ public class LoginController implements Controller{
 
     private Pattern pattern;
 
+    Map<String, String> hostsMap;
+
+    Set<String> nicksList;
+
     @FXML
     void connectToServer(ActionEvent event) {
         if (client == null) {
             client = new Client(this);
             Matcher matcher = pattern.matcher(serversCombo.getValue());
-            String host = matcher.group(1);
+            if (!matcher.find()){
+                serverError.setVisible(true);
+                return;
+            }
             try {
+                String host = matcher.group(0);
                 serverError.setVisible(false);
                 client.connect(host);
-                exchangeData();
+                sendHosts();
+                doLogin();
             } catch (IOException e) {
                 serverError.setVisible(true);
                 client = null;
@@ -69,8 +78,17 @@ public class LoginController implements Controller{
         }
     }
 
+    private void doLogin() {
+        client.encodeAndSend(EncodeDecode.LOGIN, nicksCombo.getValue() + "," + pwdField.getText().hashCode());
+    }
+
     //TODO exchange data with the server
-    private void exchangeData() {
+    private void sendHosts() {
+        String serversList = "";
+        for (Map.Entry<String, String> entry : hostsMap.entrySet()){
+            serversList += entry.getKey() + "|" + entry.getValue() + ",";
+        }
+        client.encodeAndSend(EncodeDecode.HOSTSLIST, serversList);
     }
 
     @FXML
@@ -97,7 +115,6 @@ public class LoginController implements Controller{
 
     @Override
     public void getMessage(String message) {
-
         ControllerDecoder.loginControllerDecoder(this, message);
     }
 
@@ -106,15 +123,30 @@ public class LoginController implements Controller{
     }
 
     private void populateHosts(){
-        Map<String, String> hostsMap = InputOutput.readHosts();
-        serversCombo.setItems(FXCollections.observableArrayList(hostsMap.values()));
+        hostsMap = InputOutput.readHosts();
+
+        LinkedList<String> tempList = new LinkedList<>();
+
+        for (Map.Entry<String, String> entry : hostsMap.entrySet()){
+            String s = entry.getValue() + "( " + entry.getKey() + " )";
+            tempList.add(s);
+        }
+
+        serversCombo.setItems(FXCollections.observableArrayList(tempList));
         serversCombo.setEditable(true);
     }
 
     private void populateNicks(){
-        Set<String> nicksList = InputOutput.readNicks();
+        nicksList = InputOutput.readNicks();
         nicksCombo.setItems(FXCollections.observableArrayList(nicksList));
         nicksCombo.setEditable(true);
     }
 
+    public void nickInUse() {
+        nickError.setVisible(true);
+    }
+
+    public void wrongPWD() {
+        pwdError.setVisible(true);
+    }
 }

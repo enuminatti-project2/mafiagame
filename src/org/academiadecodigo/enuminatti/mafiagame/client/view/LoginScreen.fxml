@@ -41,6 +41,11 @@
             </Label>
             <ComboBox fx:id="nicksCombo" layoutX="146.0" layoutY="62.0" prefHeight="27.0" prefWidth="167.0" />
             <ComboBox fx:id="serversCombo" layoutX="146.0" layoutY="1.0" prefHeight="27.0" prefWidth="167.0" />
+            <Label fx:id="nickError" layoutX="362.0" layoutY="62.0" prefHeight="27.0" prefWidth="189.0" text="Nick in use" textFill="RED" visible="false">
+               <font>
+                  <Font name="Lantinghei SC Demibold" size="13.0" />
+               </font>
+            </Label>
          </children>
       </Group>
       <Label layoutX="59.0" layoutY="642.0" prefHeight="29.0" prefWidth="309.0" text="Dont want to be part of the family?" textFill="WHITE" textOverrun="CLIP">

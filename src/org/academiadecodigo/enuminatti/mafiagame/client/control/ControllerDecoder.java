@@ -45,8 +45,11 @@ class ControllerDecoder {
                             .setClient(loginController.getClient());
                 });
                 break;
-            case TIMER:
-                //loginController.getServerMessageArea().appendText("Game will start in " + tag.decode(message) + " seconds.\n");
+            case NICKOK:
+                loginController.nickInUse();
+                break;
+            case PWDERROR:
+                loginController.wrongPWD();
                 break;
             default:
                 //loginController.getServerMessageArea().appendText(tag.decode(message) + "\n");

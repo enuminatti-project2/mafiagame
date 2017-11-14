@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.Role;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
@@ -8,6 +9,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +24,7 @@ public class Server {
     private GameMaster gameMaster;
     private ServerSocket server;
     private ExecutorService executorService;
+    private LinkedHashMap hostsMap;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -31,6 +34,7 @@ public class Server {
     public Server() {
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
+        hostsMap = new LinkedHashMap();
     }
 
     private void closeServer() {
@@ -108,20 +112,35 @@ public class Server {
             try {
                 String message = "";
                 while ((message = in.readLine()) != null) {
-                    if (nickname == null) {
-                        if (!tryRegister(message)) {
-                            sendMessage(EncodeDecode.MESSAGE.encode("The nickname you chose is already in use."));
-                            continue;
-                        }
-                        this.nickname = EncodeDecode.NICK.decode(message);
-                    } else {
-                        receiveMessage(message);
+
+                    switch (EncodeDecode.getEnum(EncodeDecode.getStartTag(message))) {
+                        case HOSTSLIST:
+                            updateHostList(message);
+                            break;
+                        case LOGIN:
+                            doLogin(message);
+                            break;
+                        default:
+                            receiveMessage(message);
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 disconnectPlayer();
+            }
+        }
+
+        private void doLogin(String message) {
+            String[] s = message.split("\n");
+            //pwd is incoded with String.hash();
+
+            if (nickname == null) {
+                if (!tryRegister(s[0])) {
+                    sendMessage(EncodeDecode.NICKOK.encode("false"));
+                    return;
+                }
+                this.nickname = EncodeDecode.NICK.decode(message);
             }
         }
 
@@ -139,10 +158,6 @@ public class Server {
         }
 
         private boolean tryRegister(String message) {
-            if (!Objects.equals(EncodeDecode.getStartTag(message), EncodeDecode.NICK.getStartTag())) {
-                return false;
-            }
-
             return gameMaster.addNick(EncodeDecode.NICK.decode(message), this);
         }
 
@@ -153,6 +168,18 @@ public class Server {
         public void setNickname(String nickname) {
             this.nickname = nickname;
         }
+    }
+
+    private synchronized void updateHostList(String message) {
+        LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
+        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split("\n");
+
+        for(String host: hostslist){
+            String[] s = host.split("\\|");
+            tempMap.put(s[0], s[1]);
+        }
+
+        hostsMap.putAll(tempMap);
     }
 
 }
