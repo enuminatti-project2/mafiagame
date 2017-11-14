@@ -51,8 +51,9 @@ class ControllerDecoder {
             case PWDERROR:
                 loginController.wrongPWD();
                 break;
+            case HOSTSLIST:
+                loginController.updateHostList(message);
             default:
-                //loginController.getServerMessageArea().appendText(tag.decode(message) + "\n");
         }
     }
 

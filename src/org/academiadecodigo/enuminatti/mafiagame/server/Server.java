@@ -132,7 +132,7 @@ public class Server {
         }
 
         private void doLogin(String message) {
-            String[] s = message.split("\n");
+            String[] s = EncodeDecode.LOGIN.decode(message).split(",");
             //pwd is incoded with String.hash();
 
             if (nickname == null) {
@@ -140,7 +140,7 @@ public class Server {
                     sendMessage(EncodeDecode.NICKOK.encode("false"));
                     return;
                 }
-                this.nickname = EncodeDecode.NICK.decode(message);
+                this.nickname = s[0];
             }
         }
 
@@ -157,8 +157,8 @@ public class Server {
             }
         }
 
-        private boolean tryRegister(String message) {
-            return gameMaster.addNick(EncodeDecode.NICK.decode(message), this);
+        private boolean tryRegister(String nick) {
+            return gameMaster.addNick(nick, this);
         }
 
         public Role getRole() {
@@ -172,7 +172,7 @@ public class Server {
 
     private synchronized void updateHostList(String message) {
         LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
-        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split("\n");
+        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split(",");
 
         for(String host: hostslist){
             String[] s = host.split("\\|");

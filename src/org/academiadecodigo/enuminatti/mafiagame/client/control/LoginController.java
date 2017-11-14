@@ -82,7 +82,6 @@ public class LoginController implements Controller{
         client.encodeAndSend(EncodeDecode.LOGIN, nicksCombo.getValue() + "," + pwdField.getText().hashCode());
     }
 
-    //TODO exchange data with the server
     private void sendHosts() {
         String serversList = "";
         for (Map.Entry<String, String> entry : hostsMap.entrySet()){
@@ -142,11 +141,22 @@ public class LoginController implements Controller{
         nicksCombo.setEditable(true);
     }
 
-    public void nickInUse() {
+    void nickInUse() {
         nickError.setVisible(true);
     }
 
-    public void wrongPWD() {
+    void wrongPWD() {
         pwdError.setVisible(true);
+    }
+
+    void updateHostList(String message) {
+        String[] tempHost = message.split(",");
+
+        for(String hostToSplit: tempHost){
+            String[] s = hostToSplit.split("\\|");
+            if (!hostsMap.containsKey(s[0])){
+                InputOutput.addHost(s[0], s[1]);
+            }
+        }
     }
 }
