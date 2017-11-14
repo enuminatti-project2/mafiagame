@@ -66,7 +66,13 @@ public class LobbyController implements Controller {
 
     @FXML
     void sendMessageToClient(ActionEvent event) {
-
+        if (clientPrompt.getText().matches(".*\\S.*")) {
+            //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
+            String message = clientPrompt.getText();
+            client.encodeAndSend(EncodeDecode.MESSAGE, message);
+            clientPrompt.setText("");
+            clientPrompt.requestFocus();
+        }
     }
 
     @FXML
@@ -104,6 +110,14 @@ public class LobbyController implements Controller {
     }
 
     void writeNewLine(String message) {
+
+        Platform.runLater(
+                () -> {
+                    Text newText = new Text();
+                    newText.setText(message + "\n");
+                    flowChat.getChildren().add(newText);
+                }
+        );
 
     }
 
