@@ -6,44 +6,35 @@ import java.util.*;
  * Created by Samuel Laço on 07/11/17.
  */
 public enum EncodeDecode {
-    MESSAGE("<MSG>", "</MSG>"),
-    NICK("<NICK>", "</NICK>"),
-    LOGIN("<LOGIN>", "</LOGIN>"),
-    NICKOK("<NICKOK>", "</NICKOK>"),
-    TIMER("<TIMER>", "</TIMER>"),
-    NIGHT("<NIGHT>", "</NIGHT>"),
-    VOTE("<VOTE>", "<VOTE>"),
-    NICKLIST("<NICKLIST>", "</NICKLIST>"),
-    START("<START>", "</START>"),
-    KILL("<KILL>", "</KILL>"),
-    ROLE("<ROLE>", "</ROLE>"),
-    OVER("<OVER>", "</OVER>"),
-    ALLOW_TALK("<ALLOW_TALK>", "</ALLOW_TALK>"),
-    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>"),
-    ALLOW_VISIT("<ALLOW_VISIT>", "</ALLOW_VISIT>"),
-    ALLOW_VOTE("<ALLOW_VOTE>", "</ALLOW_VOTE>"),
-    HOSTSLIST("<HOSTS>", "</HOST>"),
-    PWDERROR("<PWDERROR>","</PWDERROR>");
+    MESSAGE("MSG"),
+    NICK("NICK"),
+    LOGIN("LOGIN"),
+    NICKOK("NICKOK"),
+    TIMER("TIMER"),
+    NIGHT("NIGHT"),
+    VOTE("VOTE"),
+    NICKLIST("NICKLIST"),
+    START("START"),
+    KILL("KILL"),
+    ROLE("ROLE"),
+    OVER("OVER"),
+    ALLOW_TALK("ALLOW_TALK"),
+    ALLOW_VOTE("ALLOW_VOTE"),
+    ALLOW_VISIT("ALLOW_VISIT"),
+    HOSTSLIST("HOSTS"),
+    PWDERROR("PWDERROR");
 
-    //private static ArrayList<String> listEnum = new ArrayList<>(values().length);
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
-    private String startTag;
-    private String endTag;
+    private String tag;
 
     static {
         for (int i = 0; i < values().length; i++) {
-            //listEnum.add(values()[i].getStart());
             mapEnum.put(values()[i].getStart(), values()[i]);
         }
     }
 
-    EncodeDecode(String s, String s1) {
-        this.startTag = s;
-        this.endTag = s1;
-    }
-
-    public String getStartTag() {
-        return startTag;
+    EncodeDecode(String tag) {
+        this.tag = tag;
     }
 
     /**
@@ -53,7 +44,7 @@ public enum EncodeDecode {
      * @return the encoded string
      */
     public String encode(String message) {
-        return startTag + message + endTag;
+        return String.format("<%s>%s</%s>", tag, message, tag);
     }
 
     /**
@@ -64,18 +55,19 @@ public enum EncodeDecode {
      */
     public String decode(String message) {
         if (canDecode(message)) {
-            return message.substring(message.indexOf(startTag) + startTag.length(), message.lastIndexOf(endTag));
+            return message.substring(message.indexOf(getStart()) + getStart().length(),
+                    message.lastIndexOf("</" + tag + ">"));
         }
 
         return null;
     }
 
     private boolean canDecode(String message) {
-        return (message.startsWith(startTag) && message.endsWith(endTag));
+        return (message.startsWith("<" + tag + ">") && message.endsWith("</" + tag + ">"));
     }
 
     private String getStart() {
-        return startTag;
+        return "<" + tag + ">";
     }
 
     /**
