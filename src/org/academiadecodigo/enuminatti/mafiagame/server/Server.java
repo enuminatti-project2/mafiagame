@@ -138,6 +138,9 @@ public class Server {
                         case LOGIN:
                             doLogin(message);
                             break;
+                        case GUESTLOGIN:
+                            guestLogin();
+                            break;
                         default:
                             receiveMessage(message);
                     }
@@ -146,6 +149,14 @@ public class Server {
                 e.printStackTrace();
             } finally {
                 disconnectPlayer();
+            }
+        }
+
+        private void guestLogin() {
+            String nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
+
+            while(!tryRegister(nick)){
+                nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
             }
         }
 
