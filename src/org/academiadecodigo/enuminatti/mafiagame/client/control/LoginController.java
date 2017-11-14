@@ -107,6 +107,7 @@ public class LoginController implements Controller{
 
     @Override
     public void shutdown() {
+        saveLists();
         if (client != null) {
             client.shutdown();
         }
@@ -133,6 +134,9 @@ public class LoginController implements Controller{
 
         serversCombo.setItems(FXCollections.observableArrayList(tempList));
         serversCombo.setEditable(true);
+        if (!hostsMap.isEmpty()) {
+            serversCombo.getSelectionModel().select(0);
+        }
     }
 
     private void populateNicks(){
@@ -158,5 +162,10 @@ public class LoginController implements Controller{
                 InputOutput.addHost(s[0], s[1]);
             }
         }
+    }
+
+    public void saveLists() {
+        InputOutput.addNick(nicksCombo.getEditor().getText());
+        InputOutput.addHost(serversCombo.getEditor().getText());
     }
 }

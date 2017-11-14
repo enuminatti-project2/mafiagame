@@ -41,6 +41,7 @@ class ControllerDecoder {
 
         switch (tag) {
             case START:
+                loginController.saveLists();
                 Platform.runLater(() -> {
                     SceneNavigator.getInstance().loadScreen("ClientView");
                     SceneNavigator.getInstance().<ChatController>getController("ClientView")
