@@ -29,8 +29,8 @@ public class ClientUI extends Application {
         SceneNavigator.getInstance().setStage(primaryStage);
         primaryStage.setTitle("Mafia: The Game");
 
-        SceneNavigator.getInstance().loadScreen("LoginView");
-        LoginController loginController = SceneNavigator.getInstance().getController("LoginView");
+        SceneNavigator.getInstance().loadScreen("LoginScreen");
+        LoginController loginController = SceneNavigator.getInstance().getController("LoginScreen");
 
         primaryStage.setOnCloseRequest(event -> loginController.shutdown());
 

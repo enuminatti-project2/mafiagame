@@ -1,64 +1,91 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
-import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 
-import java.io.IOException;
+import static org.academiadecodigo.enuminatti.mafiagame.client.utils.ClientConstants.REGEXIP;
 
-
-/**
- * Created by codecadet on 08/11/17.
- */
-public class LoginController implements Controller {
+public class LoginController implements Controller{
 
     @FXML
-    private TextField ipAddressTextField;
+    private ResourceBundle resources;
 
     @FXML
-    private TextField usernameTextField;
+    private URL location;
 
     @FXML
-    private Button mainButton;
+    private Button joinButton;
 
     @FXML
-    private TextArea serverMessageArea;
+    private PasswordField pwdField;
 
+    @FXML
+    private Label serverError;
+
+    @FXML
+    private Label pwdError;
+
+    @FXML
+    private ComboBox<String> nicksCombo;
+
+    @FXML
+    private ComboBox<String> serversCombo;
+
+    @FXML
+    private Button guestButton;
 
     private Client client;
 
-    @FXML
-    void initialize() {
-        ipAddressTextField.setText("");
-        usernameTextField.setText("");
-        mainButton.setText("Connect");
-        serverMessageArea.setText("");
-    }
+    private Pattern pattern;
 
     @FXML
     void connectToServer(ActionEvent event) {
         if (client == null) {
             client = new Client(this);
-            String host = ipAddressTextField.getText();
+            Matcher matcher = pattern.matcher(serversCombo.getValue());
+            String host = matcher.group(1);
             try {
+                serverError.setVisible(false);
                 client.connect(host);
-                ipAddressTextField.setDisable(true);
-                mainButton.setText("Change nick");
-                changeNick(null);
+                exchangeData();
             } catch (IOException e) {
-                getMessage("Failed to connect to host " + host);
+                serverError.setVisible(true);
                 client = null;
             }
         }
     }
 
-    public void changeNick(ActionEvent event) {
-        client.encodeAndSend(EncodeDecode.NICK, usernameTextField.getText());
-        mainButton.setOnAction(this::changeNick);
+    //TODO exchange data with the server
+    private void exchangeData() {
+    }
+
+    @FXML
+    void initialize() {
+        assert joinButton != null : "fx:id=\"joinButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert pwdField != null : "fx:id=\"pwdField\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert serverError != null : "fx:id=\"serverError\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert pwdError != null : "fx:id=\"pwdError\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert nicksCombo != null : "fx:id=\"nicksCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert serversCombo != null : "fx:id=\"serversCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+        assert guestButton != null : "fx:id=\"guestButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
+
+        populateHosts();
+        populateNicks();
+        pattern = Pattern.compile(REGEXIP);
     }
 
     @Override
@@ -78,7 +105,16 @@ public class LoginController implements Controller {
         return client;
     }
 
-    public TextArea getServerMessageArea() {
-        return serverMessageArea;
+    private void populateHosts(){
+        Map<String, String> hostsMap = InputOutput.readHosts();
+        serversCombo.setItems(FXCollections.observableArrayList(hostsMap.values()));
+        serversCombo.setEditable(true);
     }
+
+    private void populateNicks(){
+        Set<String> nicksList = InputOutput.readNicks();
+        nicksCombo.setItems(FXCollections.observableArrayList(nicksList));
+        nicksCombo.setEditable(true);
+    }
+
 }
