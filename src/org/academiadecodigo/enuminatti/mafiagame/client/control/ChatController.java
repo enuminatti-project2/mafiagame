@@ -7,11 +7,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.Sound;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class ChatController implements Controller {
@@ -20,6 +23,7 @@ public class ChatController implements Controller {
     private String nightCSS;
     private String dayCSS;
     private boolean night;
+    private Sound gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
 
     @FXML
     private TextFlow flowChat;
@@ -41,6 +45,9 @@ public class ChatController implements Controller {
 
     @FXML
     private ScrollPane scrollPane;
+
+    @FXML
+    private ImageView endImage;
 
     @FXML
     void initialize() {
@@ -100,12 +107,12 @@ public class ChatController implements Controller {
         setNight("false");
     }
 
-
     void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
         Platform.runLater(() -> usersList.setItems(names));
     }
+
 
     void setNight(String message) {
 
@@ -154,15 +161,23 @@ public class ChatController implements Controller {
 
     }
 
-    TextFlow getFlowChat() {
-        return flowChat;
-    }
-
-    public Button getSendButton() {
+    Button getSendButton() {
         return sendButton;
     }
 
-    public Button getVoteButton() {
+    Button getVoteButton() {
         return voteButton;
+    }
+
+    ImageView getEndImage() {
+        return endImage;
+    }
+
+    Sound getGunShotSound() {
+        return gunShotSound;
+    }
+
+    boolean isNight() {
+        return night;
     }
 }

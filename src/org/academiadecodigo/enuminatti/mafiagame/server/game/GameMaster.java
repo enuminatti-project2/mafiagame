@@ -1,8 +1,10 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.stages.*;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.*;
@@ -10,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * MIT License
@@ -18,31 +21,27 @@ import java.util.concurrent.TimeUnit;
 
 public class GameMaster {
 
-    private static final int MIN_PLAYERS = 1; //1 PLAYER
 
-    private static final int SECONDS_TO_START_GAME = 10;
-    private static final int SECONDS_TO_TALK = 60;
-    private static final int SECONDS_TO_VOTE = 30;
-
-    private Map<String, Server.PlayerHandler> listOfPlayers;
+    private Map<String, Player> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
+    private List<String> thirdPartyNicks;
 
     private boolean gameHasStarted;
     private boolean night;
     private Stages currentGameStage;
 
-    private Map<String, Integer> votesCount;
-    private int numberOfVotes;
-
     private ScheduledExecutorService startGame;
     private ScheduledFuture<?> schedule;
+
+    private Stage talkStage;
+    private Stage voteStage;
+    private Stage gameOverStage;
 
     public GameMaster() {
 
         listOfPlayers = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
-        votesCount = new HashMap<>();
         mafiosiNicks = new LinkedList<>();
         villagersNicks = new LinkedList<>();
     }
@@ -50,10 +49,20 @@ public class GameMaster {
     /**
      * Toggle day and night, when called they switch...
      */
-    private void toggleDayAndNight() {
+    public void toggleDayAndNight() {
 
         night = !night;
+
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT, Boolean.toString(night));
+
+        for (Player player : listOfPlayers.values()) {
+            if (night) {
+                player.doNightStrategy();
+                continue;
+            }
+            player.doDayStrategy();
+        }
+
     }
 
     /**
@@ -65,50 +74,13 @@ public class GameMaster {
      */
     void addVote(String nickname) {
 
-        if (nickname == null || !listOfPlayers.containsKey(nickname)) {
-            return;
+        if (currentGameStage == Stages.VOTE) {
+            ((Vote) voteStage).addVote(nickname);
         }
 
-        numberOfVotes++;
-        votesCount.merge(nickname, 1, Integer::sum);
-
-        System.out.println("Votes N = " + numberOfVotes + " List of Players: " + listOfPlayers.size());
-
-        if (numberOfVotes >= listOfPlayers.size()) {
-            calculateVotes(Collections.max(votesCount.values()));
-            toggleDayAndNight();
-        }
-
-    }
-
-
-    /**
-     * This grabs the votesCount map and finds the player which
-     * had the same votes as mostVotes and kills them.
-     *
-     * In case of a draw, this will grab the first player.
-     *
-     * @param mostVotes the most votes that are in the map
-     */
-    private void calculateVotes(Integer mostVotes) {
-
-        for (String player : votesCount.keySet()) {
-
-            if (votesCount.get(player).equals(mostVotes)) {
-
-                votesCount.clear();
-                numberOfVotes = 0;
-                killPlayer(player);
-
-                gameover();
-
-                break;
-            }
-        }
     }
 
     public void receiveMessage(String message, String nickname) {
-
 
         GameMasterDecoder.gameMasterDecoder(this, message, nickname);
     }
@@ -119,32 +91,47 @@ public class GameMaster {
 
     public void killPlayer(String nickname) {
 
-        listOfPlayers.get(nickname).sendMessage(EncodeDecode.KILL.encode(nickname));
+        listOfPlayers.get(nickname).writeToPlayer(EncodeDecode.KILL.encode(nickname));
 
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
-                String.format("Player %s was sentenced to death. The role was: %s",
-                        nickname, listOfPlayers.get(nickname).getRole()));
+                String.format("Player %s was sentenced to death. %s",
+                        nickname, listOfPlayers.get(nickname).getStrategyMessage()));
         kickPlayer(nickname);
     }
 
-    public boolean addNick(String nick, Server.PlayerHandler playerHandler) {
+    public boolean addNick(String nick, Server.ServerWorker serverWorker) {
+
 
         if (listOfPlayers.get(nick) != null) {
             return false;
         }
 
-        listOfPlayers.put(nick, playerHandler);
+        Player newPlayer = new Player(serverWorker, nick, this);
+        listOfPlayers.put(nick, newPlayer);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
+                nick + " has entered the game.");
 
-        if (!gameHasStarted && listOfPlayers.size() >= MIN_PLAYERS) { // Se o jogo ainda não começou, reset ao timer
+        canGameStart();
+
+        return true;
+    }
+
+    private void canGameStart() {
+
+        if (!gameHasStarted && listOfPlayers.size() >= Constants.MIN_PLAYERS) {
+
+            // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
             }
-            schedule = startGame.schedule(this::startGame, SECONDS_TO_START_GAME, TimeUnit.SECONDS); //substituir this por uma runnable task
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER, Integer.toString(SECONDS_TO_START_GAME)); //Send boadcast to reset the timer
+            schedule = startGame.schedule(this::startGame,
+                    Constants.SECONDS_TO_START_GAME, TimeUnit.SECONDS);
+
+            // Send broadcast to reset the timer
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER,
+                    Integer.toString(Constants.SECONDS_TO_START_GAME));
         }
-        return true;
     }
 
     /**
@@ -155,6 +142,7 @@ public class GameMaster {
      *
      * @param nickname player to be kicked from the game
      */
+
     public void kickPlayer(String nickname) {
 
         if (nickname == null) {
@@ -164,45 +152,34 @@ public class GameMaster {
         mafiosiNicks.remove(nickname);
         villagersNicks.remove(nickname);
 
-        Server.PlayerHandler playerRemoved = listOfPlayers.remove(nickname);
+        Player playerRemoved = listOfPlayers.remove(nickname);
 
         if (playerRemoved != null) {
 
-            playerRemoved.disconnectPlayer();
+            playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
         }
 
     }
 
-    private void gameover() {
-
-        String message = null;
-
-        if (mafiosiNicks.size() == 0) {
-            message = "The villagers won, all the mobsters are dead!";
-        }
-
-        if (villagersNicks.size() < mafiosiNicks.size()) {
-            message = "The mobsters won!";
-        }
-
-        if (message != null) {
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, message);
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER, "GAME OVER");
-        }
-    }
-
-
     private void startGame() {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
-        Role.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+        RoleFactory.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
+
+        // Stage initiation
+        talkStage = new Talk(this);
+        voteStage = new Vote(this);
+        gameOverStage = new GameOverCheck(this);
+
+        currentGameStage = Stages.TALK;
+        startCurrentStage();
     }
 
 
-    public Map<String, Server.PlayerHandler> getListOfPlayers() {
+    public Map<String, Player> getListOfPlayers() {
         return listOfPlayers;
     }
 
@@ -210,13 +187,13 @@ public class GameMaster {
         Stage currentStage = null;
         switch (currentGameStage) {
             case TALK:
-                currentStage = new Talk(this);
+                currentStage = talkStage;
                 break;
             case VOTE:
-                currentStage = new Vote(this);
+                currentStage = voteStage;
                 break;
             case GAMEOVERCHECK:
-                currentStage = new GameOverCheck(this);
+                currentStage = gameOverStage;
                 break;
         }
 
@@ -224,17 +201,49 @@ public class GameMaster {
 
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
-            currentStage.startStage(null, null);
+            currentStage.runStage(getActiveNicks(), listOfPlayers.keySet());
             return;
         }
 
         System.out.println("Something went wrong, we're at null currentGameStage.");
     }
 
-    public void changeStage() {
-        Stages newGameStage = currentGameStage.getNextStage();
-        System.out.printf("Changing stage from %s to %s.\n", currentGameStage, newGameStage);
-        currentGameStage = newGameStage;
+    public void changeStage(Stages nextStage) {
+        System.out.printf("Changing stage from %s to %s.\n", currentGameStage, nextStage);
+        currentGameStage = nextStage;
         startCurrentStage();
+    }
+
+    public List<String> getMafiosiNicks() {
+        return mafiosiNicks;
+    }
+
+    public List<String> getVillagersNicks() {
+        return villagersNicks;
+    }
+
+    public List<String> getThirdParties() {
+        return thirdPartyNicks;
+    }
+
+    private Set<String> getActiveNicks() {
+        if (night) {
+            return listOfPlayers.keySet().stream().filter(mafiosiNicks::contains).collect(Collectors.toSet());
+        }
+        return listOfPlayers.keySet();
+    }
+
+    public void gameOver() {
+        Broadcaster.broadcastToPlayers(getListOfPlayers(),
+                EncodeDecode.OVER, "GAME OVER");
+
+        // cleanup roles/strategies from players
+        for (Player player : getListOfPlayers().values()) {
+            player.endGameAction();
+        }
+
+        gameHasStarted = false;
+        canGameStart();
+
     }
 }

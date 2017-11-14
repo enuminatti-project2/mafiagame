@@ -1,7 +1,10 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.Server;
-import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.MafiaStrategy;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.VillagerStrategy;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.visit.NoVisitStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,13 +15,9 @@ import java.util.Map;
  * (c) 2017 Ricardo Constantino
  */
 
-public enum Role {
+public class RoleFactory {
 
-    MAFIA,
-    VILLAGER;
-
-
-    public static void setRolesToAllPlayers(Map<String, Server.PlayerHandler> listOfPlayers,
+    public static void setRolesToAllPlayers(Map<String, Player> listOfPlayers,
                                             List<String> mafiaListOfPlayers, List<String> villagerListOfPlayers) {
 
         int numberOfMafia = (int) Math.ceil(listOfPlayers.size() / 5.0); // always at least one mafia
@@ -30,13 +29,13 @@ public enum Role {
 
             int roll = (int) (Math.random() * players.size());
             String selected = players.remove(roll);
-            listOfPlayers.get(selected).setRole(MAFIA);
+            listOfPlayers.get(selected).setStrategies(new MafiaStrategy(), new NoVisitStrategy());
 
             mafiaListOfPlayers.add(selected);
         }
 
         for (String player : players) {
-            listOfPlayers.get(player).setRole(VILLAGER);
+            listOfPlayers.get(player).setStrategies(new VillagerStrategy(), new NoVisitStrategy());
             villagerListOfPlayers.add(player);
         }
     }

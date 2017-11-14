@@ -2,7 +2,8 @@ package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
-import org.academiadecodigo.enuminatti.mafiagame.server.game.Role;
+import org.academiadecodigo.enuminatti.mafiagame.server.game.RoleFactory;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -10,6 +11,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,7 +26,7 @@ public class Server {
     private GameMaster gameMaster;
     private ServerSocket server;
     private ExecutorService executorService;
-    private LinkedHashMap hostsMap;
+    private Map<String, String> hostsMap;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -34,7 +36,7 @@ public class Server {
     public Server() {
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
-        hostsMap = new LinkedHashMap();
+        hostsMap = new LinkedHashMap<>();
     }
 
     private void closeServer() {
@@ -67,9 +69,9 @@ public class Server {
     }
 
     private void acceptConnection(Socket client) {
-        PlayerHandler newPlayer = null;
+        ServerWorker newPlayer = null;
         try {
-            newPlayer = new PlayerHandler(client);
+            newPlayer = new ServerWorker(client);
             newPlayer.init();
             executorService.submit(newPlayer);
         } catch (IOException e) {
@@ -77,16 +79,27 @@ public class Server {
         }
     }
 
+    private synchronized void updateHostList(String message) {
+        Map<String, String> tempMap = new LinkedHashMap<>();
+        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split(",");
 
-    public class PlayerHandler implements Runnable {
+        for(String host: hostslist){
+            String[] s = host.split("\\|");
+            tempMap.put(s[0], s[1]);
+        }
+
+        hostsMap.putAll(tempMap);
+    }
+
+
+    public class ServerWorker implements Runnable {
         private Socket clientSocket;
 
-        private String nickname;
-        private Role role;
         private BufferedReader in;
         private PrintWriter out;
+        private Player player;
 
-        public PlayerHandler(Socket clientSocket) {
+        public ServerWorker(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
 
@@ -95,16 +108,14 @@ public class Server {
             this.out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
         }
 
-        private void receiveMessage(String message) {
-            gameMaster.receiveMessage(message, nickname);
+        public void receiveMessage(String message) {
+            System.out.println("Sending to player the message: " + message);
+            player.getFromPlayer(message);
+            System.out.println("Server sent.");
         }
 
         public void sendMessage(String message) {
             out.println(message);
-        }
-
-        public void setRole(Role role) {
-            this.role = role;
         }
 
         @Override
@@ -113,7 +124,14 @@ public class Server {
                 String message = "";
                 while ((message = in.readLine()) != null) {
 
-                    switch (EncodeDecode.getEnum(EncodeDecode.getStartTag(message))) {
+                    EncodeDecode parsedEncoding = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+                    if (parsedEncoding == null) {
+                        // ignore unencoded message
+                        continue;
+                    }
+
+                    switch (parsedEncoding) {
                         case HOSTSLIST:
                             updateHostList(message);
                             break;
@@ -143,24 +161,28 @@ public class Server {
         }
 
         private void doLogin(String message) {
-            String[] s = EncodeDecode.LOGIN.decode(message).split(",");
-            //s[1] pwd is incoded with String.hash();
+            String nickAndPass = EncodeDecode.LOGIN.decode(message);
 
-            if (nickname == null) {
-                if (!tryRegister(s[0])) {
+            if (nickAndPass == null || nickAndPass.split(",").length != 2) {
+                return;
+            }
+
+            String[] splitUserPass = nickAndPass.split(",");
+            // pwd is encoded with String.hash();
+
+            if (player == null) {
+                if (!tryRegister(splitUserPass[0])) {
                     sendMessage(EncodeDecode.NICKOK.encode("false"));
-                    return;
                 }
-                this.nickname = s[0];
             }
         }
 
         public void disconnectPlayer() {
-            System.out.println("disconnected player");
             try {
-                System.out.println(nickname);
-                if (gameMaster.getListOfPlayers().containsKey(nickname)) {
-                    gameMaster.kickPlayer(nickname);
+                if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
+                    System.out.println("disconnected player: " + player.getName());
+
+                    gameMaster.kickPlayer(player.getName());
                 }
                 clientSocket.close();
             } catch (IOException e) {
@@ -169,28 +191,18 @@ public class Server {
         }
 
         private boolean tryRegister(String nick) {
-            return gameMaster.addNick(nick, this);
+            if (gameMaster.addNick(nick, this)) {
+                player = gameMaster.getListOfPlayers().get(nick);
+                return true;
+            }
+            return false;
         }
 
-        public Role getRole() {
-            return role;
+
+        public boolean checkWinCondition() {
+            return false;
         }
 
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
-        }
     }
-
-    private synchronized void updateHostList(String message) {
-        LinkedHashMap<String, String> tempMap = new LinkedHashMap<>();
-        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split(",");
-
-        for(String host: hostslist){
-            String[] s = host.split("\\|");
-            tempMap.put(s[0], s[1]);
-        }
-
-        hostsMap.putAll(tempMap);
-    }
-
 }
+

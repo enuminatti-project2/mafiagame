@@ -2,6 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server.stages;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.*;
@@ -17,9 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Vote implements Stage {
 
-    private final int SECONDS_TO_VOTE = 60;
-
-    private GameMaster game;
+    private GameMaster gameMaster;
 
     private Set<String> voters;
     private Map<String, Integer> voted;
@@ -28,11 +27,12 @@ public class Vote implements Stage {
     private ScheduledExecutorService calculateVotesRunner;
     private ScheduledFuture<?> calculateVotesTimer;
 
-    public Vote(GameMaster game) {
-        this.game = game;
+    public Vote(GameMaster gameMaster) {
+        this.gameMaster = gameMaster;
     }
 
-    public void startStage(Set<String> voters, Set<String> targets) {
+    @Override
+    public void runStage(Set<String> voters, Set<String> targets) {
         this.voted = new HashMap<>();
         for (String target : targets) {
             voted.put(target, 0);
@@ -44,10 +44,14 @@ public class Vote implements Stage {
         startTimer();
     }
 
+    private void goNext() {
+        gameMaster.changeStage(Stages.GAMEOVERCHECK);
+    }
+
     /**
      * Starts or restarts a vote timer and announces to the voters.
      */
-    public void startTimer() {
+    private void startTimer() {
         if (calculateVotesRunner == null) {
             calculateVotesRunner = Executors.newSingleThreadScheduledExecutor();
         }
@@ -56,22 +60,22 @@ public class Vote implements Stage {
             calculateVotesTimer.cancel(true);
         }
 
-        calculateVotesTimer = calculateVotesRunner.schedule(this::endTimer, SECONDS_TO_VOTE, TimeUnit.SECONDS);
+        calculateVotesTimer = calculateVotesRunner.schedule(this::endTimer,
+                Constants.SECONDS_TO_VOTE, TimeUnit.SECONDS);
 
-        Broadcaster.broadcastToPlayers(game.getListOfPlayers(), voters,
-                EncodeDecode.TIMER, Integer.toString(SECONDS_TO_VOTE));
+        Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
+                EncodeDecode.TIMER, Integer.toString(Constants.SECONDS_TO_VOTE));
     }
 
     /**
      * Adds a vote for the specified nickname.
      *
      * @param nickname to vote for
-     * @return true if the vote was valid
      */
-    public boolean addVote(String nickname) {
+    public void addVote(String nickname) {
         if (nickname == null || !voted.containsKey(nickname)) {
             System.out.println("addVote: Invalid vote received for: " + nickname);
-            return false;
+            return;
         }
 
         voted.merge(nickname, 1, Integer::sum);
@@ -82,7 +86,6 @@ public class Vote implements Stage {
             endTimer();
         }
 
-        return true;
     }
 
     /**
@@ -116,15 +119,25 @@ public class Vote implements Stage {
 
         if (playerToKill != null) {
             calculateVotesTimer.cancel(true);
-            calculateVotesRunner.shutdown();
 
-            game.killPlayer(playerToKill);
-            game.changeStage();
+            gameMaster.killPlayer(playerToKill);
+            goNext();
+
             return;
         }
 
         // if no one voted
         startTimer();
+    }
+
+    /**
+     * Run cleanup on open handlers/threadpools for this Stage
+     */
+    @Override
+    public void cleanup() {
+        if (calculateVotesRunner != null) {
+            calculateVotesRunner.shutdown();
+        }
     }
 
 }

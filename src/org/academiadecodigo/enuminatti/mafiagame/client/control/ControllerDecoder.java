@@ -1,8 +1,10 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import javafx.application.Platform;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 /**
@@ -82,7 +84,14 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
-                chatController.writeNewLine("You have been killed.", Color.RED);
+                if (!chatController.isNight()) {
+                    chatController.getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
+                    chatController.getEndImage().setFitWidth(240.0);
+                    chatController.getEndImage().setFitHeight(400.0);
+                    chatController.getEndImage().setY(-100.0);
+                }
+                chatController.getEndImage().setVisible(true);
+                chatController.getGunShotSound().play(true);
                 chatController.getVoteButton().setDisable(true);
                 chatController.getSendButton().setDisable(true);
             case NICKOK:
