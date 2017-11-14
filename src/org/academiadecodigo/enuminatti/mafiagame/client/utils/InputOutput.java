@@ -13,18 +13,24 @@ public final class InputOutput {
     private static final String hostPath = "savedfiles/Hosts.txt";
     private static final String nicksPath = "savedfiles/Nicks.txt";
 
+    private static String validIpRegex =
+            "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+                    + "\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+
+
     /**
      * Read all the nicks from the file
      * @return a Set with the nicks
      */
     public static Set<String> readNicks() {
 
+        Set<String> listOfNicks = new HashSet<>();
+
         File file = new File(nicksPath);
         if (!file.exists()){
-            return null;
+            return listOfNicks;
         }
 
-        Set<String> listOfNicks = new HashSet<>();
 
 
         FileReader fReader = null;
@@ -61,12 +67,13 @@ public final class InputOutput {
      */
     public static LinkedHashMap<String, String> readHosts() {
 
+        LinkedHashMap<String, String> listOfSN = new LinkedHashMap<>();
+
         File file = new File(hostPath);
         if (!file.exists()){
-            return null;
+            return listOfSN;
         }
 
-        LinkedHashMap<String, String> listOfSN = new LinkedHashMap<>();
 
         FileReader fReader = null;
         BufferedReader bReader = null;
@@ -189,8 +196,6 @@ public final class InputOutput {
 
     public static void addHost(String host) {
         final String lineSeparator = System.getProperty("line.separator");
-        final String validIpRegex =
-                "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
 
         Pattern pattern = Pattern.compile("(?<name>\\w+)?[\\s(]*(?<ip>" +
@@ -258,6 +263,20 @@ public final class InputOutput {
         }catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String parseIp(String host) {
+
+        Pattern pattern = Pattern.compile(validIpRegex);
+
+        Matcher matcher = pattern.matcher(host);
+
+        if (!matcher.find()) {
+            System.out.println("no match for ip");
+            return null;
+        }
+
+        return matcher.group();
     }
 
     private static StringBuilder mapToString(Map<String, String> map) {
