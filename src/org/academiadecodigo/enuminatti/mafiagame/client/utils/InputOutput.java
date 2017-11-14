@@ -189,10 +189,12 @@ public final class InputOutput {
 
     public static void addHost(String host) {
         final String lineSeparator = System.getProperty("line.separator");
+        final String validIpRegex =
+                "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
 
         Pattern pattern = Pattern.compile("(?<name>\\w+)?[\\s(]*(?<ip>" +
-                ClientConstants.REGEXIP + ")");
+                validIpRegex + ")");
 
         Matcher matcher = pattern.matcher(host);
 
