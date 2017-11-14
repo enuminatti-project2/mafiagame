@@ -2,11 +2,22 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
+
+import static org.academiadecodigo.enuminatti.mafiagame.client.utils.ClientConstants.REGEXIP;
 
 public class LoginController implements Controller{
 
@@ -39,20 +50,27 @@ public class LoginController implements Controller{
 
     private Client client;
 
+    private Pattern pattern;
+
     @FXML
     void connectToServer(ActionEvent event) {
         if (client == null) {
             client = new Client(this);
-            String host = serversCombo.getValue();
+            Matcher matcher = pattern.matcher(serversCombo.getValue());
+            String host = matcher.group(1);
             try {
                 serverError.setVisible(false);
                 client.connect(host);
+                exchangeData();
             } catch (IOException e) {
                 serverError.setVisible(true);
                 client = null;
             }
         }
+    }
 
+    //TODO exchange data with the server
+    private void exchangeData() {
     }
 
     @FXML
@@ -65,6 +83,9 @@ public class LoginController implements Controller{
         assert serversCombo != null : "fx:id=\"serversCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
         assert guestButton != null : "fx:id=\"guestButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
 
+        populateHosts();
+        populateNicks();
+        pattern = Pattern.compile(REGEXIP);
     }
 
     @Override
@@ -82,6 +103,18 @@ public class LoginController implements Controller{
 
     public Client getClient() {
         return client;
+    }
+
+    private void populateHosts(){
+        Map<String, String> hostsMap = InputOutput.readHosts();
+        serversCombo.setItems(FXCollections.observableArrayList(hostsMap.values()));
+        serversCombo.setEditable(true);
+    }
+
+    private void populateNicks(){
+        Set<String> nicksList = InputOutput.readNicks();
+        nicksCombo.setItems(FXCollections.observableArrayList(nicksList));
+        nicksCombo.setEditable(true);
     }
 
 }

@@ -59,7 +59,7 @@ public final class InputOutput {
      */
     public static LinkedHashMap<String, String> readHosts() {
 
-        File file = new File(nicksPath);
+        File file = new File(hostPath);
         if (!file.exists()){
             return null;
         }
