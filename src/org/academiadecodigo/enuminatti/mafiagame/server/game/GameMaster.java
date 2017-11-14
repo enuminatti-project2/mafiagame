@@ -53,7 +53,17 @@ public class GameMaster {
     public void toggleDayAndNight() {
 
         night = !night;
+
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NIGHT, Boolean.toString(night));
+
+        for (Player player : listOfPlayers.values()) {
+            if (night) {
+                player.doNightStrategy();
+                continue;
+            }
+            player.doDayStrategy();
+        }
+
     }
 
     /**
@@ -145,25 +155,6 @@ public class GameMaster {
         }
 
     }
-
-    private void gameover() {
-
-        String message = null;
-
-        if (mafiosiNicks.size() == 0) {
-            message = "The villagers won, all the mobsters are dead!";
-        }
-
-        if (villagersNicks.size() < mafiosiNicks.size()) {
-            message = "The mobsters won!";
-        }
-
-        if (message != null) {
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, message);
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.OVER, "GAME OVER");
-        }
-    }
-
 
     private void startGame() {
         System.out.println("Let the game Begin");
