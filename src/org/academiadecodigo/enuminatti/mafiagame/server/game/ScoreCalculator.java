@@ -16,8 +16,8 @@ public class ScoreCalculator {
 
     static void calculate(String nickname, Player player) {
 
-        points += roundNumber * 100;
-        Broadcaster.broadcastToPlayer(player, EncodeDecode.SCORE, points + "");
+        points = roundNumber * 100;
+        Broadcaster.broadcastToPlayer(player, EncodeDecode.SCORE, points + " " + roundNumber);
         //Get the list of players in a file, check if the player's there and increment rounds killed.
     }
 
@@ -29,7 +29,7 @@ public class ScoreCalculator {
 
         for (Player player :
                 listOfPlayers.values()) {
-            Broadcaster.broadcastToPlayer(player, EncodeDecode.SCORE, points + "");
+            Broadcaster.broadcastToPlayer(player, EncodeDecode.SCORE, points + " " + roundNumber);
             //Get the list of players in a file, check who's there, and overwrite incrementing rounds survived.
         }
     }

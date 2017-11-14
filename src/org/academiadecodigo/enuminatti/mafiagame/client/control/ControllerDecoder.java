@@ -123,6 +123,9 @@ class ControllerDecoder {
                 chatController.getSendButton().setDisable(true);
                 chatController.getVoteButton().setDisable(false);
                 break;
+            case SCORE:
+                //Will receive a String "points rounds" to be split
+                break;
             default:
                 chatController.writeNewLine(message, Color.BLUE);
                 System.out.println("Deu merda");
