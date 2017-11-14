@@ -16,10 +16,17 @@ public class Player {
     private VisitStrategy visitStrategy;
     private GameMaster gameMaster;
 
+    private boolean readyToPlay;
+
     public Player(Server.ServerWorker serverWorker, String name, GameMaster gameMaster) {
         this.serverWorker = serverWorker;
         this.name = name;
         this.gameMaster = gameMaster;
+        this.readyToPlay = true;
+    }
+
+    public boolean isReadyToPlay() {
+        return readyToPlay;
     }
 
     public void writeToPlayer(String message) {
@@ -33,6 +40,7 @@ public class Player {
     public void endGameAction() {
         gameStrategy = null;
         visitStrategy = null;
+        readyToPlay = false;
     }
 
     public void setStrategies(GameStrategy gameStrategy, VisitStrategy visitStrategy) {

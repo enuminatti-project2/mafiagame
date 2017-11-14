@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class GameMaster {
 
 
-
     private Map<String, Player> listOfPlayers;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
@@ -110,9 +109,18 @@ public class GameMaster {
         Player newPlayer = new Player(serverWorker, nick, this);
         listOfPlayers.put(nick, newPlayer);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE, nick + " has entered the game.");
+        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
+                nick + " has entered the game.");
+
+        canGameStart();
+
+        return true;
+    }
+
+    private void canGameStart() {
 
         if (!gameHasStarted && listOfPlayers.size() >= Constants.MIN_PLAYERS) {
+
             // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
                 schedule.cancel(true);
@@ -124,8 +132,6 @@ public class GameMaster {
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER,
                     Integer.toString(Constants.SECONDS_TO_START_GAME));
         }
-
-        return true;
     }
 
     /**
@@ -136,6 +142,7 @@ public class GameMaster {
      *
      * @param nickname player to be kicked from the game
      */
+
     public void kickPlayer(String nickname) {
 
         if (nickname == null) {
@@ -224,5 +231,19 @@ public class GameMaster {
             return listOfPlayers.keySet().stream().filter(mafiosiNicks::contains).collect(Collectors.toSet());
         }
         return listOfPlayers.keySet();
+    }
+
+    public void gameOver() {
+        Broadcaster.broadcastToPlayers(getListOfPlayers(),
+                EncodeDecode.OVER, "GAME OVER");
+
+        // cleanup roles/strategies from players
+        for (Player player : getListOfPlayers().values()) {
+            player.endGameAction();
+        }
+
+        gameHasStarted = false;
+        canGameStart();
+
     }
 }

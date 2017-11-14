@@ -18,11 +18,7 @@ public class MafiaStrategy extends GenericGameStrategy {
 
     @Override
     public boolean checkWinCondition(GameMaster gameMaster) {
-        if(gameMaster.getMafiosiNicks().size() >= gameMaster.getVillagersNicks().size()){
-            return true;
-        }
-
-        return false;
+        return gameMaster.getMafiosiNicks().size() >= gameMaster.getVillagersNicks().size();
     }
 
     @Override

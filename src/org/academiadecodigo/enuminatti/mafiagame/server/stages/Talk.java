@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Talk implements Stage {
-    private final int SECONDS_TO_TALK = 5;
 
     private GameMaster gameMaster;
 

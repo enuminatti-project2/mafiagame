@@ -47,8 +47,9 @@ public class GameOverCheck implements Stage {
         // winningPlayers won the game
         Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(),
                 EncodeDecode.MESSAGE, winningMessage);
-        Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(),
-                EncodeDecode.OVER, "GAME OVER");
+
+        gameMaster.gameOver();
+
     }
 
     private String getWinningPlayer(List<String> thirdparties) {

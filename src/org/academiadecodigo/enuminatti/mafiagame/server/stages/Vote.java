@@ -2,6 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server.stages;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.*;
@@ -16,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Vote implements Stage {
-
-    private final int SECONDS_TO_VOTE = 60;
 
     private GameMaster gameMaster;
 
@@ -61,10 +60,11 @@ public class Vote implements Stage {
             calculateVotesTimer.cancel(true);
         }
 
-        calculateVotesTimer = calculateVotesRunner.schedule(this::endTimer, SECONDS_TO_VOTE, TimeUnit.SECONDS);
+        calculateVotesTimer = calculateVotesRunner.schedule(this::endTimer,
+                Constants.SECONDS_TO_VOTE, TimeUnit.SECONDS);
 
         Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
-                EncodeDecode.TIMER, Integer.toString(SECONDS_TO_VOTE));
+                EncodeDecode.TIMER, Integer.toString(Constants.SECONDS_TO_VOTE));
     }
 
     /**

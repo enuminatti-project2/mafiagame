@@ -17,11 +17,7 @@ public class VillagerStrategy extends GenericGameStrategy {
 
     @Override
     public boolean checkWinCondition(GameMaster gameMaster) {
-        if(gameMaster.getMafiosiNicks().size() == 0){
-            return true;
-        }
-
-        return false;
+        return gameMaster.getMafiosiNicks().size() == 0;
     }
 
     @Override
