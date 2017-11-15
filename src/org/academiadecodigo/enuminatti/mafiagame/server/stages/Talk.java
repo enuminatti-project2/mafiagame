@@ -51,7 +51,7 @@ public class Talk implements Stage {
                 Constants.SECONDS_TO_TALK, TimeUnit.SECONDS);
 
         Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), talkers,
-                EncodeDecode.TIMER, Integer.toString(Constants.SECONDS_TO_TALK));
+                EncodeDecode.TIMER, String.format("You have %d seconds to talk.", Constants.SECONDS_TO_TALK));
     }
 
     private void endTimer() {
