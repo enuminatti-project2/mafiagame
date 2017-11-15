@@ -16,4 +16,5 @@ public interface GameStrategy {
 
     String dieMessage();
     String role();
+    String roleDescription();
 }

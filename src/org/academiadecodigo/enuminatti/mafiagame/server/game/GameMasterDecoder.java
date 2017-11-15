@@ -61,9 +61,10 @@ public class GameMasterDecoder {
                 sender.writeToPlayer(EncodeDecode.LOBBYNICKLIST.encode(gameMaster.getNickListOfLobby()));
                 break;
             case ROLE:
-                String msg = String.format("%s, and you're assigned to %s",
+                String msg = String.format("%s, and you're assigned to %s.",
                         sender.getName(), sender.getRole());
                 sender.writeToPlayer(EncodeDecode.ROLE.encode(msg));
+                sender.writeToPlayer(EncodeDecode.ROLE.encode(sender.getDescriptionMessage()));
                 break;
             default:
                 break;
