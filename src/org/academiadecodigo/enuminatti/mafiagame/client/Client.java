@@ -38,6 +38,7 @@ public class Client {
     }
 
     public void encodeAndSend(EncodeDecode tag, String message) {
+        System.out.println(message + " on the client classsssss");
         writer.println(tag.encode(message));
     }
 

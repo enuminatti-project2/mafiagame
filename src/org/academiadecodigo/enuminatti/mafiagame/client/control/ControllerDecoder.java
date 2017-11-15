@@ -94,7 +94,6 @@ class ControllerDecoder {
                 }
                 chatController.getEndImage().setVisible(true);
                 chatController.getGunShotSound().play(true);
-                //chatController.getVoteButton().setDisable(true);
                 chatController.getSendButton().setDisable(false);
                 Platform.runLater(() -> chatController.getSendButton().setText("Back"));
             case NICKOK:

@@ -62,6 +62,7 @@ public class LobbyController implements Controller {
 
     @FXML
     void logout(ActionEvent event) {
+        client.encodeAndSend(EncodeDecode.EXIT, "");
         SceneNavigator.getInstance().back();
     }
 

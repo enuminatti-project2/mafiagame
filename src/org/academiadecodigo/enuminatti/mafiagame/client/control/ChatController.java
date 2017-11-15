@@ -69,7 +69,9 @@ public class ChatController implements Controller {
     void sendMessageToClient(ActionEvent event) {
 
         if (sendButton.getText().equals("Back")){
-            Platform.runLater(() -> SceneNavigator.getInstance().loadScreen("Lobby"));
+            Platform.runLater(() -> {SceneNavigator.getInstance().loadScreen("Lobby");
+                                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                                            .setClient(client);});
         }
 
         if (clientPrompt.getText().matches(".*\\S.*")) {

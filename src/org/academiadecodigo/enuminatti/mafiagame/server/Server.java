@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
+import com.sun.tools.internal.ws.wsdl.document.soap.SOAPUse;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
@@ -120,7 +121,7 @@ public class Server {
             try {
                 String message = "";
                 while ((message = in.readLine()) != null) {
-
+                    System.out.println(message + " in the serveeeeeer");
                     EncodeDecode parsedEncoding = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
                     if (parsedEncoding == null) {
@@ -192,7 +193,7 @@ public class Server {
 
         private boolean tryRegister(String nick) {
             if (gameMaster.addNick(nick, this)) {
-
+                System.out.println("Added player: " + nick);
                 player = gameMaster.getListOfLobby().get(nick);
                 return true;
             }

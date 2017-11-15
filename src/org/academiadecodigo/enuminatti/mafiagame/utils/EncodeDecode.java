@@ -28,7 +28,8 @@ public enum EncodeDecode {
     ALLOW_VISIT("ALLOW_VISIT"),
     HOSTSLIST("HOSTS"),
     PWDERROR("PWDERROR"),
-    SCORE("SCORE");
+    SCORE("SCORE"),
+    EXIT("EXIT");
 
     private static Map<String, EncodeDecode> mapEnum = new HashMap<>();
     private String tag;

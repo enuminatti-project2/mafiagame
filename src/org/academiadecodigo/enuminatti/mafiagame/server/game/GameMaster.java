@@ -97,11 +97,13 @@ public class GameMaster {
 
         ScoreCalculator.calculate(nickname, listOfPlayers.get(nickname));
         listOfPlayers.get(nickname).writeToPlayer(EncodeDecode.KILL.encode(nickname));
+        listOfPlayers.remove(nickname);
+        listOfLobby.put(nickname, listOfPlayers.get(nickname));
 
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
                 String.format("Player %s was sentenced to death. %s",
                         nickname, listOfPlayers.get(nickname).getStrategyMessage()));
-        kickPlayer(nickname);
+        //kickPlayer(nickname);
     }
 
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
@@ -109,6 +111,7 @@ public class GameMaster {
 
         if (listOfLobby.get(nick) != null) {
 
+            System.out.println("Still in the player lobby " + nick);
             return false;
         }
 
@@ -119,6 +122,7 @@ public class GameMaster {
 
         Broadcaster.broadcastToPlayers(listOfLobby,EncodeDecode.LOBBYNICKLIST,getNickListOfLobby());
 
+        System.out.println("Entered the lobby " + nick);
         canGameStart();
 
         return true;
@@ -158,6 +162,8 @@ public class GameMaster {
 
         mafiosiNicks.remove(nickname);
         villagersNicks.remove(nickname);
+
+        kickPlayerFromLobby(nickname);
 
         Player playerRemoved = listOfPlayers.remove(nickname);
 

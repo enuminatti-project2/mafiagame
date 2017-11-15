@@ -46,7 +46,8 @@ public class GameMasterDecoder {
             case NICK:
                 sender.writeToPlayer(EncodeDecode.NICK.encode(sender.getName()));
                 break;
-            case NICKOK:
+            case EXIT:
+                gameMaster.kickPlayer(nickname);
                 break;
             case TIMER:
                 break;
