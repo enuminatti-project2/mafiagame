@@ -16,5 +16,15 @@
 #flowChat {
     -fx-background-color: white;
     -fx-font-family: 'Fixedsys Excelsior 3.01';
-    -fx-font-size: 20;
+    -fx-font-size: 18px;
+}
+
+#clientPrompt {
+    -fx-font-family: 'Fixedsys Excelsior 3.01';
+    -fx-font-size: 18px;
+}
+
+#usersList {
+    -fx-font-family: 'Fixedsys Excelsior 3.01';
+    -fx-font-size: 18px;
 }

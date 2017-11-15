@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<Pane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController">
+<Pane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController">
    <children>
       <TextField fx:id="clientPrompt" layoutX="164.0" layoutY="609.0" prefHeight="45.0" prefWidth="604.0" />
       <TabPane id="rootChat" fx:id="rootChat" focusTraversable="false" layoutX="164.0" layoutY="46.0" prefHeight="535.0" prefWidth="604.0" style="-fx-border-color: black;" tabClosingPolicy="UNAVAILABLE">
@@ -36,10 +36,10 @@
       </TabPane>
       <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="80.0" prefHeight="502.0" prefWidth="200.0" style="-fx-background-color: transparent;" />
       <Button fx:id="sendButton" defaultButton="true" layoutX="785.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
-      <Button fx:id="voteButton" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" disable="true" />
+      <Button fx:id="voteButton" disable="true" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
       <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="785.0" layoutY="46.0" prefHeight="31.0" prefWidth="200.0" text="Users">
          <font>
-            <Font size="28.0" />
+            <Font name="Futura Condensed ExtraBold" size="28.0" />
          </font>
       </Label>
       <ImageView fx:id="endImage" fitHeight="150.0" fitWidth="200.0" layoutX="371.0" layoutY="238.0" pickOnBounds="true" preserveRatio="true" visible="false">

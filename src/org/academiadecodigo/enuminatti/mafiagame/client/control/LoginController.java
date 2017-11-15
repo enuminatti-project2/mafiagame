@@ -86,9 +86,15 @@ public class LoginController implements Controller {
     }
 
     private void doLogin() {
-        joinButton.setDisable(true);
-        guestButton.setDisable(true);
+
         String nick = nicksCombo.getValue();
+
+        guestButton.setDisable(true);
+        joinButton.setDisable(true);
+        nicksCombo.setDisable(true);
+        pwdField.setDisable(true);
+        serversCombo.setDisable(true);
+
         InputOutput.addNick(nick);
         client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + pwdField.getText().hashCode());
     }

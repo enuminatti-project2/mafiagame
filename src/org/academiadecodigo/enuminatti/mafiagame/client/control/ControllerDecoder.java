@@ -113,7 +113,7 @@ class ControllerDecoder {
                 chatController.writeNewLine("You are " + EncodeDecode.NICK.decode(message), Color.HOTPINK);
                 break;
             case ROLE:
-                chatController.writeNewLine("You are assigned to " + EncodeDecode.ROLE.decode(message), Color.ORANGERED);
+                chatController.writeNewLine(EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
                 Platform.runLater(() -> SceneNavigator.getInstance().back());
