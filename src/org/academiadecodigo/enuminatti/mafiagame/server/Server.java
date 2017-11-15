@@ -200,10 +200,6 @@ public class Server {
         }
 
 
-        public boolean checkWinCondition() {
-            return false;
-        }
-
     }
 }
 

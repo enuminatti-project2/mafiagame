@@ -292,6 +292,9 @@ public class GameMaster {
             player.endGameAction();
         }
 
+        listOfLobby.putAll(listOfPlayers);
+        listOfPlayers.clear();
+
         gameHasStarted = false;
         canGameStart();
 
