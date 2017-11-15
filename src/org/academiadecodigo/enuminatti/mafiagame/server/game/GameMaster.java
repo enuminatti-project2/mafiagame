@@ -101,10 +101,8 @@ public class GameMaster {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
                 String.format("Player %s was sentenced to death. %s",
                         nickname, listOfPlayers.get(nickname).getStrategyMessage()));
-        Player p = listOfPlayers.remove(nickname);
-        System.out.println("List of players on kill: " + listOfPlayers.size());
-        listOfLobby.put(nickname, p);
-        System.out.println("List of players on lobby: " + listOfLobby.size());
+
+        kickPlayer(nickname);
     }
 
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
@@ -147,8 +145,7 @@ public class GameMaster {
     }
 
     /**
-     * Remove the player with this nickname from all lists and maps
-     * and disconnect them.
+     * Remove the player with this nickname from all lists and maps.
      *
      * At the end, it updates everyone's nicklist to reflect this change.
      *
@@ -163,11 +160,12 @@ public class GameMaster {
 
         mafiosiNicks.remove(nickname);
         villagersNicks.remove(nickname);
+        thirdPartyNicks.remove(nickname);
 
         Player playerRemoved = listOfPlayers.remove(nickname);
 
         if (playerRemoved != null) {
-
+            listOfLobby.put(nickname, playerRemoved);
             System.out.println("kicking player " + playerRemoved.getName());
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
@@ -270,7 +268,7 @@ public class GameMaster {
         return thirdPartyNicks;
     }
 
-    public String getNickListOfLobby() {
+    String getNickListOfLobby() {
         return String.join(" ", listOfLobby.keySet());
     }
 
