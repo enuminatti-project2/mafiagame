@@ -40,7 +40,7 @@ class ControllerDecoder {
         EncodeDecode tag = EncodeDecode.getEnum(tempTag);
 
         switch (tag) {
-            case START:
+            case LOBBY:
                 loginController.saveLists();
                 Platform.runLater(() -> {
                     SceneNavigator.getInstance().loadScreen("Lobby");
@@ -131,25 +131,35 @@ class ControllerDecoder {
     }
 
 
-    static void chatControllerDecoder(LobbyController lobbyController, String message) {
+    static void lobbyControllerDecoder(LobbyController lobbyController, String message) {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
         if (tag == null) {
-
-            //lobbyController.writeNewLine(message, Color.DEEPPINK);
-            //System.out.println(message);
+            System.out.println(message);
             return;
         }
 
         switch (tag) {
-
-            case MESSAGE:
-                lobbyController.writeNewLine(EncodeDecode.MESSAGE.decode(message));
+            case START:
+                Platform.runLater(() -> {
+                    SceneNavigator.getInstance().loadScreen("ClientView");
+                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                            .setClient(lobbyController.getClient());
+                });
+            case LOBBYMESSAGE:
+                lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;
             case NICK:
                 System.out.println("Message" + message);
                 lobbyController.updateStats(EncodeDecode.NICK.decode(message));
+                break;
+            case LOBBYNICKLIST:
+                message = EncodeDecode.LOBBYNICKLIST.decode(message);
+                lobbyController.updateNickList(message);
+                break;
+            case TIMER:
+                lobbyController.writeNewLine(message);
                 break;
 
         }

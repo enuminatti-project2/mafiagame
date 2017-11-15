@@ -1,6 +1,8 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,7 +15,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
-import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class LobbyController implements Controller {
@@ -27,7 +28,7 @@ public class LobbyController implements Controller {
     private TextField clientPrompt;
 
     @FXML
-    private ListView<?> usersList;
+    private ListView<String> usersList;
 
     @FXML
     private Button sendButton;
@@ -67,9 +68,8 @@ public class LobbyController implements Controller {
     @FXML
     void sendMessageToClient(ActionEvent event) {
         if (clientPrompt.getText().matches(".*\\S.*")) {
-            //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
             String message = clientPrompt.getText();
-            client.encodeAndSend(EncodeDecode.MESSAGE, message);
+            this.client.encodeAndSend(EncodeDecode.LOBBYMESSAGE, message);
             clientPrompt.setText("");
             clientPrompt.requestFocus();
         }
@@ -94,12 +94,12 @@ public class LobbyController implements Controller {
     public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICK, "que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.LOBBYNICKLIST, "que sa foda este encode");
+
     }
 
     public void getMessage(String message) {
-
-        ControllerDecoder.chatControllerDecoder(this, message);
+        ControllerDecoder.lobbyControllerDecoder(this, message);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class LobbyController implements Controller {
 
     }
 
-    void  updateStats(String nickname){
+    void updateStats(String nickname) {
 
         Platform.runLater(
                 () -> {
@@ -131,6 +131,13 @@ public class LobbyController implements Controller {
         );
 
     }
+
+    public void updateNickList(String message) {
+        String allnick[] = message.split(" ");
+        ObservableList<String> names = FXCollections.observableArrayList(allnick);
+        Platform.runLater(() -> usersList.setItems(names));
+    }
+
 
 }
 
