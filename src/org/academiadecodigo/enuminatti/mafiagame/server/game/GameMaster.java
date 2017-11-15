@@ -164,7 +164,6 @@ public class GameMaster {
         if (playerRemoved != null) {
 
             System.out.println("kicking player " + playerRemoved.getName());
-            playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
         }
@@ -190,6 +189,13 @@ public class GameMaster {
     }
 
     private void startGame() {
+
+        if (listOfLobby.size() < Constants.MIN_PLAYERS) {
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.MESSAGE,
+                    "Not enough players to start the game");
+            return;
+        }
+
         System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.START, "begin");

@@ -26,6 +26,7 @@ public class Vote implements Stage {
 
     private ScheduledExecutorService calculateVotesRunner;
     private ScheduledFuture<?> calculateVotesTimer;
+    private int timesTimerRepeated;
 
     public Vote(GameMaster gameMaster) {
         this.gameMaster = gameMaster;
@@ -48,6 +49,7 @@ public class Vote implements Stage {
 
     private void goNext() {
         gameMaster.changeStage(Stages.GAMEOVERCHECK);
+        timesTimerRepeated = 0;
     }
 
     /**
@@ -66,7 +68,7 @@ public class Vote implements Stage {
                 Constants.SECONDS_TO_VOTE, TimeUnit.SECONDS);
 
         Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
-                EncodeDecode.TIMER, Integer.toString(Constants.SECONDS_TO_VOTE));
+                EncodeDecode.TIMER, String.format("You have %d seconds to vote on who you want to kill.", Constants.SECONDS_TO_VOTE));
     }
 
     /**
@@ -120,10 +122,15 @@ public class Vote implements Stage {
     private void endTimer() {
         String playerToKill = calculateVotes();
 
-        if (playerToKill != null) {
+        if (playerToKill != null || timesTimerRepeated >= 2 ) {
             calculateVotesTimer.cancel(true);
 
-            gameMaster.killPlayer(playerToKill);
+            if (playerToKill != null) {
+                gameMaster.killPlayer(playerToKill);
+            } else {
+                Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), voters,
+                        EncodeDecode.MESSAGE, "No one died.");
+            }
             goNext();
 
             return;
@@ -131,6 +138,7 @@ public class Vote implements Stage {
 
         // if no one voted
         startTimer();
+        timesTimerRepeated++;
     }
 
     /**

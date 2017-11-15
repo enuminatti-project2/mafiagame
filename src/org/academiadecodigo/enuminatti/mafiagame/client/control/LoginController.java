@@ -215,4 +215,10 @@ public class LoginController implements Controller {
         InputOutput.addNick(nicksCombo.getEditor().getText());
         InputOutput.addHost(serversCombo.getEditor().getText());
     }
+
+    public void setClient(Client client) {
+        this.client = client;
+        this.client.setController(this);
+
+    }
 }
