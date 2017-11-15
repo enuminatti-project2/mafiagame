@@ -66,6 +66,10 @@ public class Player {
         return gameStrategy.dieMessage();
     }
 
+    public String getDescriptionMessage(){
+        return gameStrategy.roleDescription();
+    }
+
 
     /**
      * Executes the respective GameStrategy win condition checker
