@@ -34,8 +34,8 @@ public class MafiaStrategy extends GenericGameStrategy {
 
     @Override
     public String roleDescription() {
-        return "As a mobster, during night you and your fellow mobsters can vote to kill one villager. " +
-                "During the day, the villagers vote to kill someone that they think is a mobster! " +
-                "You win when the mobsters outnumber the villagers, if the villagers kill all the mobsters, you loose!";
+        return "As a mobster, during nighttime you and your fellow mobsters can vote to kill one villager. " +
+                "During the day, convince the villagers to vote someone other than yourself! " +
+                "You win when the mobsters outnumber the villagers, if the villagers kill all the mobsters, you lose!";
     }
 }

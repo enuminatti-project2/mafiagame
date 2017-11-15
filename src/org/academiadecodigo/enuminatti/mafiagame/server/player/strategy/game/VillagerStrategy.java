@@ -31,8 +31,8 @@ public class VillagerStrategy extends GenericGameStrategy {
 
     @Override
     public String roleDescription() {
-        return "We have mobsters between us, during the day we can vote to kill who we think is a member of Mafia," +
-                " at night they enter in our houses and kill one of us. We have to kill every mobsters to make our village a safe place." +
-                " If they outnumber us, we loose the game!";
+        return "We have mobsters between us, during the day we can vote to lynch who we think is a member of Mafia." +
+                " At night they enter our houses and kill one of us. We have to kill every mobster to make our village great again." +
+                " If they outnumber us, we lose the game!";
     }
 }
