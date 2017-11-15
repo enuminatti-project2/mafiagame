@@ -82,7 +82,6 @@ public class ChatController implements Controller {
         String votedUser = usersList.getSelectionModel().getSelectedItem();
 
         if (votedUser != null) {
-            System.out.println("I voted in " + votedUser);
             client.encodeAndSend(EncodeDecode.VOTE, votedUser);
             usersList.getSelectionModel().clearSelection();
             voteButton.setDisable(true);

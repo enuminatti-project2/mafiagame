@@ -96,6 +96,7 @@ class ControllerDecoder {
                 chatController.getGunShotSound().play(true);
                 chatController.getVoteButton().setDisable(true);
                 chatController.getSendButton().setDisable(true);
+                Platform.runLater(() -> SceneNavigator.getInstance().back());
             case NICKOK:
                 break;
             case TIMER:
