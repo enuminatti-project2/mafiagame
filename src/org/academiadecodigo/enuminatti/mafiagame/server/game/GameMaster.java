@@ -101,7 +101,10 @@ public class GameMaster {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
                 String.format("Player %s was sentenced to death. %s",
                         nickname, listOfPlayers.get(nickname).getStrategyMessage()));
-        kickPlayer(nickname);
+        Player p = listOfPlayers.remove(nickname);
+        System.out.println("List of players on kill: " + listOfPlayers.size());
+        listOfLobby.put(nickname, p);
+        System.out.println("List of players on lobby: " + listOfLobby.size());
     }
 
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
@@ -126,6 +129,8 @@ public class GameMaster {
 
     private void canGameStart() {
 
+
+        System.out.println("On canGameStart with players in lobby " + listOfLobby.size());
         if (!gameHasStarted && listOfLobby.size() >= Constants.MIN_PLAYERS) {
 
             // Se o jogo ainda não começou, reset ao timer
