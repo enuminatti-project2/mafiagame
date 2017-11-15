@@ -23,6 +23,7 @@ public class GameMaster {
 
 
     private Map<String, Player> listOfPlayers;
+    private Map<String, Player> listOfLobby;
     private List<String> mafiosiNicks;
     private List<String> villagersNicks;
     private List<String> thirdPartyNicks;
@@ -41,6 +42,7 @@ public class GameMaster {
     public GameMaster() {
 
         listOfPlayers = new HashMap<>();
+        listOfLobby = new HashMap<>();
         startGame = Executors.newSingleThreadScheduledExecutor();
         mafiosiNicks = new LinkedList<>();
         villagersNicks = new LinkedList<>();
@@ -105,15 +107,17 @@ public class GameMaster {
     public boolean addNick(String nick, Server.ServerWorker serverWorker) {
 
 
-        if (listOfPlayers.get(nick) != null) {
+        if (listOfLobby.get(nick) != null) {
+
             return false;
         }
 
         Player newPlayer = new Player(serverWorker, nick, this);
-        listOfPlayers.put(nick, newPlayer);
+        listOfLobby.put(nick, newPlayer);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
-                nick + " has entered the game.");
+        Broadcaster.broadcastToPlayer(newPlayer ,EncodeDecode.LOBBY , nick + "You have sucessfuly logged in!" );
+
+        Broadcaster.broadcastToPlayers(listOfLobby,EncodeDecode.LOBBYNICKLIST,getNickListOfLobby());
 
         canGameStart();
 
@@ -122,7 +126,7 @@ public class GameMaster {
 
     private void canGameStart() {
 
-        if (!gameHasStarted && listOfPlayers.size() >= Constants.MIN_PLAYERS) {
+        if (!gameHasStarted && listOfLobby.size() >= Constants.MIN_PLAYERS) {
 
             // Se o jogo ainda não começou, reset ao timer
             if (schedule != null) {
@@ -132,7 +136,7 @@ public class GameMaster {
                     Constants.SECONDS_TO_START_GAME, TimeUnit.SECONDS);
 
             // Send broadcast to reset the timer
-            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.TIMER,
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.TIMER,
                     Integer.toString(Constants.SECONDS_TO_START_GAME));
         }
     }
@@ -167,10 +171,30 @@ public class GameMaster {
 
     }
 
+    public void kickPlayerFromLobby(String nickname) {
+
+        if (nickname == null) {
+            return;
+        }
+
+        Player playerRemoved = listOfLobby.remove(nickname);
+
+        if (playerRemoved != null) {
+
+            System.out.println("kicking player " + playerRemoved.getName());
+            playerRemoved.disconnect();
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
+
+        }
+
+    }
+
     private void startGame() {
         System.out.println("Let the game Begin");
         gameHasStarted = true;
-        Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.START, "begin");
+        Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.START, "begin");
+        listOfPlayers.putAll(listOfLobby);
+        listOfLobby.clear();
         RoleFactory.setRolesToAllPlayers(listOfPlayers, mafiosiNicks, villagersNicks);
 
         // Stage initiation
@@ -185,6 +209,10 @@ public class GameMaster {
 
     public Map<String, Player> getListOfPlayers() {
         return listOfPlayers;
+    }
+
+    public Map<String, Player> getListOfLobby() {
+        return listOfLobby;
     }
 
     private void startCurrentStage() {
@@ -204,12 +232,8 @@ public class GameMaster {
         if (currentStage != null) {
             System.out.println("running stage " + currentGameStage);
 
-
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
-            if (night){
-
-            }
             currentStage.runStage(getActiveNicks(), listOfPlayers.keySet());
             return;
         }
@@ -233,6 +257,10 @@ public class GameMaster {
 
     public List<String> getThirdParties() {
         return thirdPartyNicks;
+    }
+
+    public String getNickListOfLobby() {
+        return String.join(" ", listOfLobby.keySet());
     }
 
     Set<String> getActiveNicks() {

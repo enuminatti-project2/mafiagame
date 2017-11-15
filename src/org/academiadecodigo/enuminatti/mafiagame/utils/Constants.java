@@ -9,7 +9,7 @@ public class Constants {
     public static final int PORT = 13338;
     public static final int MAX_PLAYERS = 22;
 
-    public static final int MIN_PLAYERS = 1; //1 PLAYER
+    public static final int MIN_PLAYERS = 2; //1 PLAYER
 
     public static final int SECONDS_TO_START_GAME = 10;
     public static final int SECONDS_TO_TALK = 10;

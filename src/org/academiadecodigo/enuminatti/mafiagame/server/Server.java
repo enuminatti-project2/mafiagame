@@ -1,8 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
-import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
-import org.academiadecodigo.enuminatti.mafiagame.server.game.RoleFactory;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -12,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -109,7 +106,7 @@ public class Server {
         }
 
         public void receiveMessage(String message) {
-            System.out.println("Sending to player the message: " + message);
+            System.out.println("Receiving player message: " + message);
             player.getFromPlayer(message);
             System.out.println("Server sent.");
         }
@@ -179,12 +176,15 @@ public class Server {
 
         public void disconnectPlayer() {
             try {
+
                 if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
                     System.out.println("disconnected player: " + player.getName());
-
                     gameMaster.kickPlayer(player.getName());
+                }else if(gameMaster.getListOfLobby().containsKey(player.getName())){
+                    gameMaster.kickPlayerFromLobby(player.getName());
                 }
                 clientSocket.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -192,7 +192,8 @@ public class Server {
 
         private boolean tryRegister(String nick) {
             if (gameMaster.addNick(nick, this)) {
-                player = gameMaster.getListOfPlayers().get(nick);
+
+                player = gameMaster.getListOfLobby().get(nick);
                 return true;
             }
             return false;

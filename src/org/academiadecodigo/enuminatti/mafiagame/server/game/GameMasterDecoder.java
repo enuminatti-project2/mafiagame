@@ -1,6 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
-import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -24,29 +23,28 @@ public class GameMasterDecoder {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
+        Player sender;
+        String messageDecoded;
+
         if (enumTag == null) {
             return;
         }
-        Player sender = gameMaster.getListOfPlayers().get(nickname);
+        sender = gameMaster.getListOfPlayers().get(nickname);
 
         switch (enumTag) {
             //Implement EncodeDecode.SERVER to be sent in a different color
             case MESSAGE:
-                String messageDecoded = EncodeDecode.MESSAGE.decode(message);
+                messageDecoded = EncodeDecode.MESSAGE.decode(message);
                 Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(), gameMaster.getActiveNicks(),
                         EncodeDecode.MESSAGE, String.format("<%s> %s", nickname, messageDecoded));
                 break;
+            case LOBBYMESSAGE:
+                messageDecoded = EncodeDecode.LOBBYMESSAGE.decode(message);
+                Broadcaster.broadcastToPlayers(gameMaster.getListOfLobby(), EncodeDecode.LOBBYMESSAGE,
+                        String.format("<%s> %s", nickname, messageDecoded));
+                break;
             case NICK:
-                System.out.println("Sender is asking to change nick to: " + EncodeDecode.NICK.decode(message));
-                String newNickname = EncodeDecode.NICK.decode(message);
-
-                if (gameMaster.getListOfPlayers().containsKey(newNickname)) {
-                    sender.writeToPlayer(EncodeDecode.MESSAGE.encode("The name you chose is already in use"));
-                    return;
-                }
-                sender.setName(newNickname);
-                gameMaster.getListOfPlayers().put(newNickname, sender);
-                gameMaster.getListOfPlayers().remove(nickname);
+                sender.writeToPlayer(EncodeDecode.NICK.encode(sender.getName()));
                 break;
             case NICKOK:
                 break;
@@ -56,8 +54,11 @@ public class GameMasterDecoder {
                 gameMaster.addVote(EncodeDecode.VOTE.decode(message));
                 break;
             case NICKLIST:
-                System.out.println("Asking for a nicklist. The current list is: " + gameMaster.getNickList());
                 sender.writeToPlayer(EncodeDecode.NICKLIST.encode(gameMaster.getNickList()));
+                break;
+            case LOBBYNICKLIST:
+                sender = gameMaster.getListOfLobby().get(nickname);
+                sender.writeToPlayer(EncodeDecode.LOBBYNICKLIST.encode(gameMaster.getNickListOfLobby()));
                 break;
             case ROLE:
                 String msg = String.format("%s, and you're assigned to %s",

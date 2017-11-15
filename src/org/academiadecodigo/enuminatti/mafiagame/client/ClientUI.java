@@ -1,7 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import javafx.application.Application;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.academiadecodigo.enuminatti.mafiagame.client.control.LoginController;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
@@ -31,7 +30,6 @@ public class ClientUI extends Application {
 
         SceneNavigator.getInstance().loadScreen("LoginScreen");
         LoginController loginController = SceneNavigator.getInstance().getController("LoginScreen");
-
         primaryStage.setOnCloseRequest(event -> loginController.shutdown());
 
     }

@@ -59,6 +59,7 @@ public class Client {
             String message;
             try {
                 while ((message = reader.readLine()) != null) {
+
                     controller.getMessage(message);
                 }
             } catch (IOException e) {

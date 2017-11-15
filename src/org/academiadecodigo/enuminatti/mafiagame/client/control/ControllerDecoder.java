@@ -40,11 +40,11 @@ class ControllerDecoder {
         EncodeDecode tag = EncodeDecode.getEnum(tempTag);
 
         switch (tag) {
-            case START:
+            case LOBBY:
                 loginController.saveLists();
                 Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                    SceneNavigator.getInstance().loadScreen("Lobby");
+                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
                             .setClient(loginController.getClient());
                 });
                 break;
@@ -133,6 +133,41 @@ class ControllerDecoder {
             default:
                 chatController.writeNewLine(message, Color.BLUE);
                 System.out.println("Deu merda");
+        }
+    }
+
+
+    static void lobbyControllerDecoder(LobbyController lobbyController, String message) {
+
+        EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+
+        if (tag == null) {
+            System.out.println(message);
+            return;
+        }
+
+        switch (tag) {
+            case START:
+                Platform.runLater(() -> {
+                    SceneNavigator.getInstance().loadScreen("ClientView");
+                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                            .setClient(lobbyController.getClient());
+                });
+            case LOBBYMESSAGE:
+                lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
+                break;
+            case NICK:
+                System.out.println("Message" + message);
+                lobbyController.updateStats(EncodeDecode.NICK.decode(message));
+                break;
+            case LOBBYNICKLIST:
+                message = EncodeDecode.LOBBYNICKLIST.decode(message);
+                lobbyController.updateNickList(message);
+                break;
+            case TIMER:
+                lobbyController.writeNewLine(message);
+                break;
+
         }
     }
 }

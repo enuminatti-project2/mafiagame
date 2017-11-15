@@ -34,6 +34,7 @@ public class Player {
     }
 
     public void getFromPlayer(String message) {
+
         gameMaster.receiveMessage(message, name);
     }
 

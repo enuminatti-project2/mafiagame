@@ -1,20 +1,24 @@
 package org.academiadecodigo.enuminatti.mafiagame.utils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Samuel Laço on 07/11/17.
  */
 public enum EncodeDecode {
     MESSAGE("MSG"),
+    LOBBYMESSAGE("LOBBYMESSAGE"),
     NICK("NICK"),
     GUESTLOGIN("GUEST"),
     LOGIN("LOGIN"),
     NICKOK("NICKOK"),
+    LOBBY ("LOBBY"),
     TIMER("TIMER"),
     NIGHT("NIGHT"),
     VOTE("VOTE"),
     NICKLIST("NICKLIST"),
+    LOBBYNICKLIST("LOBBYNICKLIST"),
     START("START"),
     KILL("KILL"),
     ROLE("ROLE"),
