@@ -1,8 +1,8 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
-import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.MafiaStrategy;
+import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.TheSilentPartner;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.VillagerStrategy;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.visit.NoVisitStrategy;
 
@@ -29,6 +29,14 @@ public class RoleFactory {
 
             int roll = (int) (Math.random() * players.size());
             String selected = players.remove(roll);
+
+            if(i == 1){
+                listOfPlayers.get(selected).setStrategies(new TheSilentPartner(), new NoVisitStrategy());
+                mafiaListOfPlayers.add(selected);
+                continue;
+            }
+
+
             listOfPlayers.get(selected).setStrategies(new MafiaStrategy(), new NoVisitStrategy());
 
             mafiaListOfPlayers.add(selected);
