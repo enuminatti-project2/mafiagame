@@ -127,7 +127,7 @@ public class ChatController implements Controller {
     void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.NICKLIST, "que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.NICKLIST, "asking for my nick");
         client.encodeAndSend(EncodeDecode.ROLE, "asking for my role");
         setNight("false");
     }
@@ -220,5 +220,9 @@ public class ChatController implements Controller {
 
     private boolean isNight() {
         return night;
+    }
+
+    public Client getClient() {
+        return client;
     }
 }

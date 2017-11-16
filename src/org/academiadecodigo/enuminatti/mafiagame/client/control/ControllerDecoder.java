@@ -7,6 +7,8 @@ import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
+import static org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode.ALLOW_TALK;
+
 /**
  * Created by Daniel Baeta on 11/11/17.
  *
@@ -110,6 +112,11 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
+                Platform.runLater(() -> {
+                SceneNavigator.getInstance().loadScreen("Lobby");
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                        .setClient(chatController.getClient());
+            });
                 chatController.bye();
                 break;
             case ALLOW_TALK:
@@ -124,9 +131,6 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.SCORE.decode(message), Color.BLUEVIOLET);
                 //Will receive a String "points rounds" to be split
                 break;
-            default:
-                chatController.writeNewLine(message, Color.BLUE);
-                System.out.println("Deu merda");
         }
     }
 

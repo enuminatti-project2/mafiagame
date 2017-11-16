@@ -167,6 +167,7 @@ public class GameMaster {
 
         if (playerRemoved != null) {
             listOfLobby.put(nickname, playerRemoved);
+            System.out.println(nickname + " was added on lobby, now has " + listOfLobby.size());
             System.out.println("kicking player " + playerRemoved.getName());
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
 
@@ -270,6 +271,7 @@ public class GameMaster {
     }
 
     String getNickListOfLobby() {
+        System.out.println(listOfLobby.size() + " is # players in lobby");
         return String.join(" ", listOfLobby.keySet());
     }
 
@@ -293,9 +295,10 @@ public class GameMaster {
 
         listOfLobby.putAll(listOfPlayers);
         listOfPlayers.clear();
+        System.err.println("listofplayers size: " + listOfPlayers.size() + " lobbylist " + listOfLobby.size());
 
         gameHasStarted = false;
-        canGameStart();
+        //canGameStart();
 
     }
 }

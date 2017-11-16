@@ -159,6 +159,7 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
+                System.err.println("Player disconnected.");
                 disconnectPlayer();
             }
         }
