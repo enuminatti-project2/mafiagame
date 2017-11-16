@@ -76,6 +76,16 @@ public class LoginController implements Controller {
             nickError.setVisible(false);
         }
 
+        if (pwdField.getText() == null) {
+            pwdError.setText("Password too short");
+            pwdError.setVisible(true);
+            flag = true;
+        } else {
+            pwdError.setVisible(false);
+        }
+
+
+
         if (flag) {
             return;
         }
@@ -209,6 +219,7 @@ public class LoginController implements Controller {
     }
 
     void wrongPWD() {
+        pwdError.setText("Wrong password");
         pwdError.setVisible(true);
         client.shutdown();
         //client = null;

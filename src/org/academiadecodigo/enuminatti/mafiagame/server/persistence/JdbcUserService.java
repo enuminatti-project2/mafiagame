@@ -40,6 +40,12 @@ public class JdbcUserService {
             return statement.executeQuery(query).next();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
@@ -56,6 +62,12 @@ public class JdbcUserService {
             System.out.println("User allready exists");
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return authenticate(user, pwd);
     }
