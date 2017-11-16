@@ -76,6 +76,20 @@ public class SceneNavigator {
         setScene(scenes.peekFirst());
     }
 
+    public void backToLogin() {
+        if (scenes.isEmpty()) {
+            return;
+        }
+
+//        controllers.get("LoginView").shutdown();
+
+        while (scenes.size() != 1) {
+            scenes.pop();
+        }
+
+        setScene(scenes.peek());
+    }
+
     public void back() {
 
         if (scenes.isEmpty()) {

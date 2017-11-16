@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.client;
 
 import org.academiadecodigo.enuminatti.mafiagame.client.control.Controller;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
@@ -65,6 +66,7 @@ public class Client {
                 }
             } catch (IOException e) {
                 System.out.println("Socket was closed.");
+                SceneNavigator.getInstance().backToLogin();
             }
         }
 

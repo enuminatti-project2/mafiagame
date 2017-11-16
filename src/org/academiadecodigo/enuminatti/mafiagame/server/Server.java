@@ -11,8 +11,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Connection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,10 +28,12 @@ public class Server {
     private Map<String, String> hostsMap;
     private Connection connectionManager;
     private JdbcLogin jdbc;
+    private List<ServerWorker> serverWorkers;
 
     public static void main(String[] args) {
         Server server = new Server();
         server.start();
+        System.out.println("cenas");
     }
 
     public Server() {
@@ -41,14 +42,31 @@ public class Server {
         hostsMap = new LinkedHashMap<>();
         this.connectionManager = new ConnectionManager().getConnection();
         jdbc = new JdbcLogin(connectionManager);
+        serverWorkers = new LinkedList<>();
     }
 
     private void closeServer() {
+        if (server.isClosed()) {
+            return;
+        }
+
+        shutdownAllWorkers();
+        System.out.println("closing server");
         executorService.shutdown();
+        System.out.println("closed threads");
+
         try {
             server.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void shutdownAllWorkers() {
+        System.out.println(serverWorkers.size());
+        for (ServerWorker worker : serverWorkers) {
+            System.out.println("shutting down worker");
+            worker.shutdown();
         }
     }
 
@@ -58,6 +76,12 @@ public class Server {
 
         try {
             server = new ServerSocket(Constants.PORT);
+            new Thread(() -> {
+                System.out.println("pilas");
+                Scanner scanner = new Scanner(System.in);
+                System.out.println(scanner.nextLine());
+                closeServer();
+            }).start();
             System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();
@@ -77,6 +101,7 @@ public class Server {
         try {
             newPlayer = new ServerWorker(client);
             newPlayer.init();
+            serverWorkers.add(newPlayer);
             executorService.submit(newPlayer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -191,39 +216,30 @@ public class Server {
                     return;
                 }
 
-                if (jdbc.authenticate(splitUserPass[0],splitUserPass[1])) {
-                    if(!tryRegister(splitUserPass[0])){
+                if (jdbc.authenticate(splitUserPass[0], splitUserPass[1])) {
+                    if (!tryRegister(splitUserPass[0])) {
                         sendMessage(EncodeDecode.NICKOK.encode("false"));
                     }
                     return;
                 }
 
-                if(jdbc.userExists(splitUserPass[0])) {
+                if (jdbc.userExists(splitUserPass[0])) {
                     sendMessage(EncodeDecode.PWDERROR.encode("true"));
                     return;
                 }
 
-                if (jdbc.addUser(splitUserPass[0],splitUserPass[1])){
+                if (jdbc.addUser(splitUserPass[0], splitUserPass[1])) {
                     tryRegister(splitUserPass[0]);
                 }
             }
         }
 
         public void disconnectPlayer() {
-            try {
-
-                if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
-                    System.out.println("disconnected player: " + player.getName());
-                    gameMaster.kickPlayer(player.getName());
-                } else if (gameMaster.getListOfLobby().containsKey(player.getName())) {
-                    System.out.println("disconnected player from lobby: " + player.getName());
-                    gameMaster.kickPlayerFromLobby(player.getName());
-                }
-                clientSocket.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (clientSocket.isClosed()) {
+                return;
             }
+            gameMaster.removePlayerFromLists(player);
+            shutdown();
         }
 
         private boolean tryRegister(String nick) {
@@ -236,6 +252,19 @@ public class Server {
         }
 
 
+        public void shutdown() {
+            if (clientSocket == null) {
+                return;
+            }
+            try {
+                System.out.println("started closing server worker");
+                clientSocket.shutdownInput();
+                clientSocket.close();
+                System.out.println("finished closing server worker");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

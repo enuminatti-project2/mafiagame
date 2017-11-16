@@ -193,6 +193,23 @@ public class GameMaster {
 
     }
 
+    public void removePlayerFromLists(Player player) {
+        String nickname = player.getName();
+
+        mafiosiNicks.remove(nickname);
+        villagersNicks.remove(nickname);
+        thirdPartyNicks.remove(nickname);
+
+        Player playerRemovedFromGame = listOfPlayers.remove(nickname);
+        Player playerRemovedFromLobby = listOfLobby.remove(nickname);
+
+        if (playerRemovedFromGame != null || playerRemovedFromLobby != null) {
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
+        }
+
+    }
+
     private void startGame() {
 
         if (listOfLobby.size() < Constants.MIN_PLAYERS) {
