@@ -15,7 +15,7 @@ public class ConnectionManager {
 
         try {
             if (connection == null) {
-                String dbUrl = "jdbc:mysql://192.168.1.18/Mafia";
+                String dbUrl = "jdbc:mysql://192.168.1.18/Mafia?useSSL=false";
                 String user = "mafiagame";
                 String pwd = "cenas";
                 connection = DriverManager.getConnection(dbUrl, user, pwd);
