@@ -1,13 +1,9 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
-import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
-
-import static org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode.ALLOW_TALK;
 
 /**
  * Created by Daniel Baeta on 11/11/17.
@@ -162,7 +158,6 @@ class ControllerDecoder {
                 lobbyController.updateNickList(message);
                 break;
             case SCORE:
-
                 message = EncodeDecode.SCORE.decode(message);
                 System.out.println("Message in lobby stats: " +  message);
                 lobbyController.getStats(message);

@@ -25,7 +25,6 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ChatController implements Controller {
