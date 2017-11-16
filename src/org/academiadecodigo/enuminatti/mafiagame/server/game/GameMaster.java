@@ -170,7 +170,7 @@ public class GameMaster {
             System.out.println(nickname + " was added on lobby, now has " + listOfLobby.size());
             System.out.println("kicking player " + playerRemoved.getName());
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
-
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         }
 
     }
@@ -294,6 +294,7 @@ public class GameMaster {
         }
 
         listOfLobby.putAll(listOfPlayers);
+        Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         listOfPlayers.clear();
         System.err.println("listofplayers size: " + listOfPlayers.size() + " lobbylist " + listOfLobby.size());
 
