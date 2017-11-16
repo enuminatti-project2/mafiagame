@@ -104,7 +104,6 @@ public class LoginController implements Controller {
     }
 
     private void doLogin() {
-
         String nick = nicksCombo.getValue();
 
         InputOutput.addNick(nick);

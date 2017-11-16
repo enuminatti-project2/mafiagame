@@ -10,8 +10,9 @@ import java.util.regex.Pattern;
 
 public final class InputOutput {
 
-    private static final String hostPath = "savedfiles/Hosts.txt";
-    private static final String nicksPath = "savedfiles/Nicks.txt";
+    private static final String PARENT_DIR = "savedfiles";
+    private static final String hostPath = PARENT_DIR + "/Hosts.txt";
+    private static final String nicksPath = PARENT_DIR + "/Nicks.txt";
 
     private static String validIpRegex =
             "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
@@ -205,8 +206,8 @@ public final class InputOutput {
         final String lineSeparator = System.getProperty("line.separator");
 
 
-        Pattern pattern = Pattern.compile("(?<name>\\w+)?[\\s(]*(?<ip>" +
-                validIpRegex + ")");
+        Pattern pattern = Pattern.compile("(?<name>[a-zA-Z]+)?[\\s(]*(?<ip>" +
+                validIpRegex + ")[\\s)]*");
 
         Matcher matcher = pattern.matcher(host);
 
@@ -215,9 +216,7 @@ public final class InputOutput {
         }
 
         String ip = matcher.group("ip");
-        System.out.println(ip);
         String name = matcher.group("name");
-        System.out.println(name);
 
         if (ip == null) {
             return;
