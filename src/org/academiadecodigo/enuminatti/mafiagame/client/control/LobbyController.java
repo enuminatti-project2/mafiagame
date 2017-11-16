@@ -67,7 +67,7 @@ public class LobbyController implements Controller {
     @FXML
     void logout(ActionEvent event) {
         shutdown();
-        SceneNavigator.getInstance().back();
+        SceneNavigator.getInstance().loadScreen("LoginScreen");
     }
 
     @FXML

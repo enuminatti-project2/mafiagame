@@ -7,9 +7,11 @@ import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
+import static org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode.ALLOW_TALK;
+
 /**
  * Created by Daniel Baeta on 11/11/17.
- *
+ * <p>
  * A support utilitary class for JavaFX views' controllers to have messages decoded.
  */
 class ControllerDecoder {
@@ -120,7 +122,11 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
-                Platform.runLater(() -> SceneNavigator.getInstance().back());
+                Platform.runLater(() -> {
+                    SceneNavigator.getInstance().loadScreen("Lobby");
+                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                            .setClient(chatController.getClient());
+                });
                 break;
             case ALLOW_TALK:
                 chatController.getSendButton().setDisable(false);
@@ -134,9 +140,6 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.SCORE.decode(message), Color.BLUEVIOLET);
                 //Will receive a String "points rounds" to be split
                 break;
-            default:
-                chatController.writeNewLine(message, Color.BLUE);
-                System.out.println("Deu merda");
         }
     }
 
