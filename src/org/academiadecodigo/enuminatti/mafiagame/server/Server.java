@@ -1,6 +1,8 @@
 package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
+import org.academiadecodigo.enuminatti.mafiagame.server.persistence.ConnectionManager;
+import org.academiadecodigo.enuminatti.mafiagame.server.persistence.JdbcLogin;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -8,6 +10,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +27,8 @@ public class Server {
     private ServerSocket server;
     private ExecutorService executorService;
     private Map<String, String> hostsMap;
+    private Connection connectionManager;
+    private JdbcLogin jdbc;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -34,6 +39,8 @@ public class Server {
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
+        this.connectionManager = new ConnectionManager().getConnection();
+        jdbc = new JdbcLogin(connectionManager);
     }
 
     private void closeServer() {
@@ -172,11 +179,31 @@ public class Server {
             }
 
             String[] splitUserPass = nickAndPass.split(",");
-            // pwd is encoded with String.hash();
 
             if (player == null) {
-                if (!tryRegister(splitUserPass[0])) {
-                    sendMessage(EncodeDecode.NICKOK.encode("false"));
+
+                if (connectionManager == null) {
+                    System.out.println("Database is down, using Local Storage");
+                    if (!tryRegister(splitUserPass[0])) {
+                        sendMessage(EncodeDecode.NICKOK.encode("false"));
+                    }
+                    return;
+                }
+
+                if (jdbc.authenticate(splitUserPass[0],splitUserPass[1])) {
+                    if(!tryRegister(splitUserPass[0])){
+                        sendMessage(EncodeDecode.NICKOK.encode("false"));
+                    }
+                    return;
+                }
+
+                if(jdbc.userExists(splitUserPass[0])) {
+                    sendMessage(EncodeDecode.PWDERROR.encode("true"));
+                    return;
+                }
+
+                if (jdbc.addUser(splitUserPass[0],splitUserPass[1])){
+                    tryRegister(splitUserPass[0]);
                 }
             }
         }

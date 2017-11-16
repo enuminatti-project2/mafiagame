@@ -1,5 +1,9 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,6 +21,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Security;
 
 
 public class LoginController implements Controller {
@@ -57,6 +62,8 @@ public class LoginController implements Controller {
 
     private Set<String> nicksList;
 
+    private boolean gone;
+
     @FXML
     void connectToServer(ActionEvent event) {
 
@@ -77,6 +84,15 @@ public class LoginController implements Controller {
             nickError.setVisible(false);
         }
 
+        if (pwdField.getText().length() < 4) {
+            pwdError.setText("Password too short");
+            pwdError.setVisible(true);
+            flag = true;
+        } else {
+            pwdError.setVisible(false);
+        }
+
+
 
         if (flag) {
             return;
@@ -94,7 +110,7 @@ public class LoginController implements Controller {
         String nick = nicksCombo.getValue();
 
         InputOutput.addNick(nick);
-        client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + pwdField.getText().hashCode());
+        client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + Security.getHash(pwdField.getText()));
     }
 
     private void sendHosts() {
@@ -107,14 +123,6 @@ public class LoginController implements Controller {
 
     @FXML
     void initialize() {
-        assert joinButton != null : "fx:id=\"joinButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert pwdField != null : "fx:id=\"pwdField\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert serverError != null : "fx:id=\"serverError\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert pwdError != null : "fx:id=\"pwdError\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert nicksCombo != null : "fx:id=\"nicksCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert serversCombo != null : "fx:id=\"serversCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-        assert guestButton != null : "fx:id=\"guestButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-
         populateHosts();
         populateNicks();
     }
@@ -128,6 +136,13 @@ public class LoginController implements Controller {
     }
 
     private boolean connect() {
+
+        if (gone) {
+            client.shutdown();
+            client = null;
+            gone = false;
+        }
+
         if (client != null) {
             return false;
         }
@@ -158,9 +173,10 @@ public class LoginController implements Controller {
     @Override
     public void shutdown() {
         saveLists();
-        if (client != null) {
+        if (client != null && gone) {
             client.shutdown();
         }
+        client = null;
     }
 
     @Override
@@ -198,10 +214,13 @@ public class LoginController implements Controller {
     void nickInUse() {
         nickError.setText("Nick already in use");
         nickError.setVisible(true);
+        shutdown();
     }
 
     void wrongPWD() {
+        pwdError.setText("Wrong password");
         pwdError.setVisible(true);
+        shutdown();
     }
 
     void updateHostList(String message) {
@@ -220,12 +239,7 @@ public class LoginController implements Controller {
         InputOutput.addHost(serversCombo.getEditor().getText());
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-
-        if (client != null) {
-            this.client.setController(this);
-        }
-
+    void setGone(boolean gone) {
+        this.gone = gone;
     }
 }

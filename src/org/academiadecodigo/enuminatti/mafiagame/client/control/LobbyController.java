@@ -66,10 +66,8 @@ public class LobbyController implements Controller {
 
     @FXML
     void logout(ActionEvent event) {
-        SceneNavigator.getInstance().loadScreen("LoginScreen");
-        client.shutdown();
-        SceneNavigator.getInstance().<LoginController>getController("LoginScreen")
-                .setClient(null);
+        shutdown();
+        SceneNavigator.getInstance().back();
     }
 
     @FXML
@@ -101,7 +99,7 @@ public class LobbyController implements Controller {
     public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
-        client.encodeAndSend(EncodeDecode.LOBBYNICKLIST, "que sa foda este encode");
+        client.encodeAndSend(EncodeDecode.LOBBYNICKLIST, "");
 
     }
 
@@ -113,6 +111,7 @@ public class LobbyController implements Controller {
     public void shutdown() {
         if (client != null) {
             client.shutdown();
+            client = null;
         }
     }
 
