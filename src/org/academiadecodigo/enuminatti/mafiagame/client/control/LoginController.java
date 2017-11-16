@@ -3,7 +3,6 @@ package org.academiadecodigo.enuminatti.mafiagame.client.control;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Security;
-import sun.net.util.IPAddressUtil;
 
 
 public class LoginController implements Controller {
@@ -76,7 +74,7 @@ public class LoginController implements Controller {
             nickError.setVisible(false);
         }
 
-        if (pwdField.getText() == null) {
+        if (pwdField.getText().length() < 4) {
             pwdError.setText("Password too short");
             pwdError.setVisible(true);
             flag = true;
@@ -172,7 +170,7 @@ public class LoginController implements Controller {
     @Override
     public void shutdown() {
         saveLists();
-        if (client != null) {
+        if (client != null && gone) {
             client.shutdown();
         }
         client = null;
@@ -213,7 +211,7 @@ public class LoginController implements Controller {
     void nickInUse() {
         nickError.setText("Nick already in use");
         nickError.setVisible(true);
-        client.shutdown();
+        shutdown();
         //client = null;
 
     }
@@ -221,7 +219,7 @@ public class LoginController implements Controller {
     void wrongPWD() {
         pwdError.setText("Wrong password");
         pwdError.setVisible(true);
-        client.shutdown();
+        shutdown();
         //client = null;
     }
 
