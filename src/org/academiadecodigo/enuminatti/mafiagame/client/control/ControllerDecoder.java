@@ -45,11 +45,11 @@ class ControllerDecoder {
         switch (tag) {
             case LOBBY:
                 loginController.saveLists();
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("Lobby");
-                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
-                            .setClient(loginController.getClient());
-                });
+                SceneNavigator.getInstance().preLoadScreen("Lobby");
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                        .setClient(loginController.getClient());
+
+                Platform.runLater(() -> SceneNavigator.getInstance().loadPreLoadedScreen());
                 break;
             case NICKOK:
                 loginController.nickInUse();
@@ -149,12 +149,13 @@ class ControllerDecoder {
 
         switch (tag) {
             case START:
-                Platform.runLater(() -> {
-                    lobbyController.clearChat();
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
-                            .setClient(lobbyController.getClient());
-                });
+                lobbyController.clearChat();
+                SceneNavigator.getInstance().preLoadScreen("ClientView");
+                SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                        .setClient(lobbyController.getClient());
+
+                Platform.runLater(() -> SceneNavigator.getInstance().loadPreLoadedScreen());
+                break;
             case LOBBYMESSAGE:
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;

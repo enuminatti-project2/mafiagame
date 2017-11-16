@@ -36,7 +36,7 @@ public final class InputOutput {
         FileReader fReader = null;
         BufferedReader bReader = null;
 
-        String line = null;
+        String line;
 
         try {
             fReader = new FileReader(file);
@@ -52,8 +52,7 @@ public final class InputOutput {
             e.printStackTrace();
         } finally {
             try {
-                fReader.close();
-                bReader.close();
+                closeReaders(fReader, bReader);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -78,7 +77,7 @@ public final class InputOutput {
         FileReader fReader = null;
         BufferedReader bReader = null;
 
-        String line = null;
+        String line;
 
         try {
             fReader = new FileReader(file);
@@ -96,13 +95,21 @@ public final class InputOutput {
             e.printStackTrace();
         } finally {
             try {
-                fReader.close();
-                bReader.close();
+                closeReaders(fReader, bReader);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return listOfSN;
+    }
+
+    private static void closeReaders(FileReader fReader, BufferedReader bReader) throws IOException {
+        if (fReader != null) {
+            fReader.close();
+        }
+        if (bReader != null) {
+            bReader.close();
+        }
     }
 
     /**
@@ -126,7 +133,7 @@ public final class InputOutput {
      * @param ip of the host
      * @param name new name to the host
      */
-    public static void editHost(String ip, String name) {
+    private static void editHost(String ip, String name) {
         createIfNotExists(hostPath);
 
         LinkedHashMap<String, String> hosts = readHosts();
@@ -246,7 +253,7 @@ public final class InputOutput {
 
         Set<String> nicks = readNicks();
 
-        if (!nicks.add(nick) || nick == null){
+        if (nick == null || nick.equals("") || !nicks.add(nick)) {
             return;
         }
 
@@ -260,7 +267,7 @@ public final class InputOutput {
 
         try {
             Files.write(Paths.get(nicksPath), (nick + lineSeparator).getBytes(), StandardOpenOption.APPEND);
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -324,7 +331,7 @@ public final class InputOutput {
     private static void createIfNotExists(String pathToFile) {
         File file = new File(pathToFile);
         try {
-            file.createNewFile();
+            boolean fileCreated = file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
