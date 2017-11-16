@@ -175,6 +175,14 @@ public class Server {
 
             if (player == null) {
 
+                if (connectionManager == null) {
+                    System.out.println("Database is down, using Local Storage");
+                    if (!tryRegister(splitUserPass[0])) {
+                        sendMessage(EncodeDecode.NICKOK.encode("false"));
+                    }
+                    return;
+                }
+
                 if (jdbc.authenticate(splitUserPass[0],splitUserPass[1])) {
                     if(!tryRegister(splitUserPass[0])){
                         sendMessage(EncodeDecode.NICKOK.encode("false"));

@@ -15,9 +15,9 @@ public class ConnectionManager {
 
         try {
             if (connection == null) {
-                String dbUrl = "jdbc:mysql://localhost:3306/Mafia";
-                String user = "root";
-                String pwd = "";
+                String dbUrl = "jdbc:mysql://192.168.1.18/Mafia";
+                String user = "mafiagame";
+                String pwd = "cenas";
                 connection = DriverManager.getConnection(dbUrl, user, pwd);
             }
         } catch (SQLException ex) {
