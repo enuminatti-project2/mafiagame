@@ -102,7 +102,7 @@ class ControllerDecoder {
             case NICKOK:
                 break;
             case TIMER:
-                chatController.writeNewLine("Timer message: " + EncodeDecode.TIMER.decode(message), Color.CHOCOLATE);
+                chatController.writeNewLine(EncodeDecode.TIMER.decode(message), Color.CHOCOLATE);
                 break;
             case NIGHT:
                 chatController.setNight(EncodeDecode.NIGHT.decode(message));
@@ -160,6 +160,9 @@ class ControllerDecoder {
                     SceneNavigator.getInstance().loadPreLoadedScreen();
                 });
                 break;
+            case TIMER:
+                lobbyController.writeNewLine(EncodeDecode.TIMER.decode(message));
+                break;
             case LOBBYMESSAGE:
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;
@@ -171,10 +174,6 @@ class ControllerDecoder {
                 message = EncodeDecode.LOBBYNICKLIST.decode(message);
                 lobbyController.updateNickList(message);
                 break;
-            case TIMER:
-                lobbyController.writeNewLine(message);
-                break;
-
         }
     }
 }

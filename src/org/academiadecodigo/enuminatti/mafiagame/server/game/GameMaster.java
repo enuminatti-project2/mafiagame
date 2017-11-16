@@ -141,7 +141,7 @@ public class GameMaster {
 
             // Send broadcast to reset the timer
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.TIMER,
-                    Integer.toString(Constants.SECONDS_TO_START_GAME));
+                    String.format("Game will start in %d seconds.", Constants.SECONDS_TO_START_GAME));
         }
     }
 
