@@ -67,7 +67,7 @@ public class JdbcScore {
             }
 
             preparedStatement.setInt(1,0 );
-            preparedStatement.setInt(2,0);
+            preparedStatement.setInt(2,1);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
