@@ -298,7 +298,8 @@ public class GameMaster {
         System.err.println("listofplayers size: " + listOfPlayers.size() + " lobbylist " + listOfLobby.size());
 
         gameHasStarted = false;
-        //canGameStart();
 
+        schedule = startGame.schedule(this::canGameStart,
+                Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
     }
 }

@@ -14,7 +14,7 @@ public class Constants {
     public static final int SECONDS_TO_START_GAME = 10;
     public static final int SECONDS_TO_TALK = 10;
     public static final int SECONDS_TO_VOTE = 10;
-    public static final int SECONDS_ENDGAME = 2;
+    public static final int SECONDS_ENDGAME = 3;
 
     public static final String GUN_SHOT_SOUND_PATH = "/resources/Gun_Shot_Sound.wav";
     public static final String ROPE_IMAGE_PATH = "/endImageRope.png";

@@ -23,6 +23,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,7 @@ public class ChatController implements Controller {
     private boolean night;
     private Sound gunShotSound;
     private SimpleDateFormat dateFormat;
-    private ScheduledExecutorService timerExecutor = null;
+    private ScheduledExecutorService die = null;
 
     @FXML
     private TextFlow flowChat;
@@ -74,9 +75,10 @@ public class ChatController implements Controller {
         scrollPane.vvalueProperty().bind(flowChat.heightProperty());
         System.out.println("Disabling vote button");
         voteButton.setDisable(true);
-        timerExecutor = null;
         dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
         gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
+        die = Executors.newSingleThreadScheduledExecutor();
+
     }
 
     @FXML
@@ -196,7 +198,7 @@ public class ChatController implements Controller {
         return endImage;
     }
 
-    void killed(){
+    void killed() {
         if (!isNight()) {
             getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
             getEndImage().setFitWidth(240.0);
@@ -206,12 +208,20 @@ public class ChatController implements Controller {
         getEndImage().setVisible(true);
         getGunShotSound().play(true);
         getSendButton().setDisable(false);
-        ScheduledFuture<?> schedule = timerExecutor.schedule(this::bye,
+        backToLobby();
+    }
+
+    void backToLobby(){
+        die.schedule(this::bye,
                 Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
     }
 
-    void bye(){
-        Platform.runLater(() -> SceneNavigator.getInstance().back());
+    private void bye() {
+
+        Platform.runLater(() -> {
+            SceneNavigator.getInstance().loadScreen("Lobby");
+            SceneNavigator.getInstance().<LobbyController>getController("Lobby").setClient(getClient());
+        });
     }
 
     private Sound getGunShotSound() {
