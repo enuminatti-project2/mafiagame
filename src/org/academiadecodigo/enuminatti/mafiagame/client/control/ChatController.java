@@ -6,7 +6,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -18,6 +21,8 @@ import org.academiadecodigo.enuminatti.mafiagame.client.utils.Sound;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
+import java.text.SimpleDateFormat;
+
 public class ChatController implements Controller {
 
     private Client client;
@@ -25,6 +30,7 @@ public class ChatController implements Controller {
     private String dayCSS;
     private boolean night;
     private Sound gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
 
     @FXML
     private TextFlow flowChat;
@@ -158,7 +164,7 @@ public class ChatController implements Controller {
 
                     Text newText = new Text();
                     newText.setFill(textColor);
-                    newText.setText(finalMessage + "\n");
+                    newText.setText(dateFormat.format(new java.util.Date()) + finalMessage + "\n");
                     flowChat.getChildren().add(newText);
                 }
         );

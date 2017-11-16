@@ -71,12 +71,9 @@ class ControllerDecoder {
     static void chatControllerDecoder(ChatController chatController, String message) {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
-        System.out.println(message + " on chat");
 
+        // Ignore untagged messages
         if (tag == null) {
-
-            chatController.writeNewLine(message, Color.DEEPPINK);
-            System.out.println(message);
             return;
         }
 

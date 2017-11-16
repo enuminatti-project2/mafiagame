@@ -17,9 +17,13 @@ import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
+import java.text.SimpleDateFormat;
+
 public class LobbyController implements Controller {
 
     private Client client;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
+
 
     @FXML
     private Pane pane;
@@ -117,7 +121,7 @@ public class LobbyController implements Controller {
         Platform.runLater(
                 () -> {
                     Text newText = new Text();
-                    newText.setText(message + "\n");
+                    newText.setText(dateFormat.format(new java.util.Date()) + message + "\n");
                     flowChat.getChildren().add(newText);
                 }
         );
@@ -135,7 +139,7 @@ public class LobbyController implements Controller {
 
     }
 
-    public void updateNickList(String message) {
+    void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
         Platform.runLater(() -> usersList.setItems(names));
