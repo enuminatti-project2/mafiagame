@@ -106,7 +106,6 @@ public class GameOverCheck implements Stage {
     }
 
     private void goNext() {
-        System.out.println("goNext");
         gameMaster.toggleDayAndNight();
         gameMaster.changeStage(Stages.TALK);
     }

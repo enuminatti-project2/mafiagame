@@ -13,6 +13,9 @@ import java.io.IOException;
  */
 
 public class ClientUI extends Application {
+
+    private LoginController loginController;
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -29,8 +32,12 @@ public class ClientUI extends Application {
         primaryStage.setTitle("Mafia: The Game");
 
         SceneNavigator.getInstance().loadScreen("LoginScreen");
-        LoginController loginController = SceneNavigator.getInstance().getController("LoginScreen");
-        primaryStage.setOnCloseRequest(event -> loginController.shutdown());
+        loginController = SceneNavigator.getInstance().getController("LoginScreen");
 
+    }
+
+    @Override
+    public void stop() throws Exception {
+        loginController.shutdown();
     }
 }

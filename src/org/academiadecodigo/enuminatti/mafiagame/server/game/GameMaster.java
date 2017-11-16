@@ -168,7 +168,7 @@ public class GameMaster {
             listOfLobby.put(nickname, playerRemoved);
             System.out.println("kicking player " + playerRemoved.getName());
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
-
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         }
 
     }
@@ -291,11 +291,13 @@ public class GameMaster {
         }
 
         listOfLobby.putAll(listOfPlayers);
+        Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         listOfPlayers.clear();
-
         gameHasStarted = false;
         ScoreCalculator.resetCalculator();
         canGameStart();
 
+        schedule = startGame.schedule(this::canGameStart,
+                Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
     }
 }

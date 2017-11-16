@@ -1,9 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,6 +10,7 @@ import javafx.scene.control.PasswordField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Security;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +18,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import org.academiadecodigo.enuminatti.mafiagame.utils.Security;
 
 
 public class LoginController implements Controller {
@@ -92,8 +88,6 @@ public class LoginController implements Controller {
             pwdError.setVisible(false);
         }
 
-
-
         if (flag) {
             return;
         }
@@ -110,7 +104,6 @@ public class LoginController implements Controller {
     }
 
     private void doLogin() {
-
         String nick = nicksCombo.getValue();
 
         InputOutput.addNick(nick);
@@ -118,6 +111,9 @@ public class LoginController implements Controller {
     }
 
     private void sendHosts() {
+        if (hostsMap.isEmpty()) {
+            return;
+        }
         StringBuilder serversList = new StringBuilder("");
         for (Map.Entry<String, String> entry : hostsMap.entrySet()) {
             serversList.append(String.format("%s|%s,", entry.getKey(), entry.getValue()));
@@ -177,7 +173,7 @@ public class LoginController implements Controller {
     @Override
     public void shutdown() {
         saveLists();
-        if (client != null && gone) {
+        if (client != null) {
             client.shutdown();
         }
         client = null;
@@ -246,7 +242,7 @@ public class LoginController implements Controller {
         InputOutput.addHost(serversCombo.getEditor().getText());
     }
 
-    void setGone(boolean gone) {
-        this.gone = gone;
+    void setGone() {
+        this.gone = true;
     }
 }

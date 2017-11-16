@@ -22,7 +22,6 @@ public class Client {
     private PrintWriter writer;
     private BufferedReader reader;
     private Controller controller;
-    private Thread readerThread;
 
     public Client(Controller controller) {
         this.controller = controller;
@@ -33,8 +32,7 @@ public class Client {
         writer = new PrintWriter(socket.getOutputStream(), true);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         ServerListener serverListener = new ServerListener();
-        readerThread = new Thread(serverListener);
-        readerThread.start();
+        new Thread(serverListener).start();
     }
 
     public void encodeAndSend(EncodeDecode tag, String message) {
@@ -43,6 +41,9 @@ public class Client {
 
     public void shutdown() {
         try {
+            if (!socket.isClosed()) {
+                socket.shutdownInput();
+            }
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,11 +73,5 @@ public class Client {
             receiveAndDecode();
         }
     }
-
-    public boolean isConnected(){
-        System.out.println(socket.toString());
-        return socket != null;
-    }
-
 
 }

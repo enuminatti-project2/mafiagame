@@ -85,7 +85,7 @@ public class Server {
 
         String decodedMessage = EncodeDecode.HOSTSLIST.decode(message);
 
-        if (decodedMessage == null) {
+        if (decodedMessage == null || decodedMessage.equals("")) {
             return;
         }
 
@@ -158,6 +158,7 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
+                System.err.println("Player disconnected.");
                 disconnectPlayer();
             }
         }
