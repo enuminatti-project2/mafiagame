@@ -10,8 +10,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +26,7 @@ public class Server {
     private ExecutorService executorService;
     private Map<String, String> hostsMap;
     private JdbcLogin jdbc;
+    private List<ServerWorker> serverWorkers;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -38,14 +38,27 @@ public class Server {
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
         jdbc = new JdbcLogin(ConnectionManager.getConnection());
+        serverWorkers = new LinkedList<>();
     }
 
     private void closeServer() {
+        if (server.isClosed()) {
+            return;
+        }
+
+        shutdownAllWorkers();
         executorService.shutdown();
         try {
             server.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void shutdownAllWorkers() {
+        System.out.println(serverWorkers.size());
+        for (ServerWorker worker : serverWorkers) {
+            worker.shutdown();
         }
     }
 
@@ -55,15 +68,23 @@ public class Server {
 
         try {
             server = new ServerSocket(Constants.PORT);
+
+            // type anything in server to cleanly exit
+            new Thread(() -> {
+                Scanner scanner = new Scanner(System.in);
+                scanner.nextLine();
+                closeServer();
+            }).start();
+
             System.out.println("listening to new connections");
             while (true) {
                 Socket client = server.accept();
-                System.out.println("New Connection was accept.Socket number: " + client.getPort());
+                System.out.println("New Connection was accepted. Socket number: " + client.getPort());
                 acceptConnection(client);
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Closed server socket");
         } finally {
             closeServer();
         }
@@ -74,6 +95,7 @@ public class Server {
         try {
             newPlayer = new ServerWorker(client);
             newPlayer.init();
+            serverWorkers.add(newPlayer);
             executorService.submit(newPlayer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -117,14 +139,10 @@ public class Server {
         }
 
         void receiveMessage(String message) {
-            System.out.println("Receiving player message: " + message);
             player.getFromPlayer(message);
-            System.out.println("finished receiving player message");
-
         }
 
         public void sendMessage(String message) {
-            System.out.println("Server sent. " + message);
             out.println(message);
         }
 
@@ -190,39 +208,30 @@ public class Server {
                     return;
                 }
 
-                if (jdbc.authenticate(splitUserPass[0],splitUserPass[1])) {
-                    if(!tryRegister(splitUserPass[0])){
+                if (jdbc.authenticate(splitUserPass[0], splitUserPass[1])) {
+                    if (!tryRegister(splitUserPass[0])) {
                         sendMessage(EncodeDecode.NICKOK.encode("false"));
                     }
                     return;
                 }
 
-                if(jdbc.userExists(splitUserPass[0])) {
+                if (jdbc.userExists(splitUserPass[0])) {
                     sendMessage(EncodeDecode.PWDERROR.encode("true"));
                     return;
                 }
 
-                if (jdbc.addUser(splitUserPass[0],splitUserPass[1])){
+                if (jdbc.addUser(splitUserPass[0], splitUserPass[1])) {
                     tryRegister(splitUserPass[0]);
                 }
             }
         }
 
         public void disconnectPlayer() {
-            try {
-
-                if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
-                    System.out.println("disconnected player: " + player.getName());
-                    gameMaster.kickPlayer(player.getName());
-                } else if (gameMaster.getListOfLobby().containsKey(player.getName())) {
-                    System.out.println("disconnected player from lobby: " + player.getName());
-                    gameMaster.kickPlayerFromLobby(player.getName());
-                }
-                clientSocket.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (clientSocket.isClosed()) {
+                return;
             }
+            gameMaster.removePlayerFromLists(player);
+            shutdown();
         }
 
         private boolean tryRegister(String nick) {
@@ -235,6 +244,17 @@ public class Server {
         }
 
 
+        public void shutdown() {
+            if (clientSocket == null) {
+                return;
+            }
+            try {
+                clientSocket.shutdownInput();
+                clientSocket.close();
+            } catch (IOException e) {
+                System.out.println("Client socket closed");
+            }
+        }
     }
 }
 
