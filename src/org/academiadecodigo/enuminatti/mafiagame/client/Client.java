@@ -43,6 +43,9 @@ public class Client {
 
     public void shutdown() {
         try {
+            if (!socket.isClosed()) {
+                socket.shutdownInput();
+            }
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -177,7 +177,7 @@ public class LoginController implements Controller {
     @Override
     public void shutdown() {
         saveLists();
-        if (client != null && gone) {
+        if (client != null) {
             client.shutdown();
         }
         client = null;
@@ -246,7 +246,7 @@ public class LoginController implements Controller {
         InputOutput.addHost(serversCombo.getEditor().getText());
     }
 
-    void setGone(boolean gone) {
-        this.gone = gone;
+    void setGone() {
+        this.gone = true;
     }
 }
