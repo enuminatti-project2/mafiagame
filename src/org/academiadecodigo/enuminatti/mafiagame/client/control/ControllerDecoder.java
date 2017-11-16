@@ -46,17 +46,19 @@ class ControllerDecoder {
             case LOBBY:
                 loginController.saveLists();
                 loginController.setGone(true);
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("Lobby");
-                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
-                            .setClient(loginController.getClient());
-                });
+                SceneNavigator.getInstance().preLoadScreen("Lobby");
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                        .setClient(loginController.getClient());
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                        .writeNewLine(tag.decode(message));
+
+                Platform.runLater(() -> SceneNavigator.getInstance().loadPreLoadedScreen());
                 break;
             case NICKOK:
-                loginController.nickInUse();
+                Platform.runLater(loginController::nickInUse);
                 break;
             case PWDERROR:
-                loginController.wrongPWD();
+                Platform.runLater(loginController::wrongPWD);
                 break;
             case HOSTSLIST:
                 loginController.updateHostList(message);
@@ -101,7 +103,7 @@ class ControllerDecoder {
             case NICKOK:
                 break;
             case TIMER:
-                chatController.writeNewLine("Timer message: " + EncodeDecode.TIMER.decode(message), Color.CHOCOLATE);
+                chatController.writeNewLine(EncodeDecode.TIMER.decode(message), Color.CHOCOLATE);
                 break;
             case NIGHT:
                 chatController.setNight(EncodeDecode.NIGHT.decode(message));
@@ -150,12 +152,18 @@ class ControllerDecoder {
 
         switch (tag) {
             case START:
+                SceneNavigator.getInstance().preLoadScreen("ClientView");
+                SceneNavigator.getInstance().<ChatController>getController("ClientView")
+                        .setClient(lobbyController.getClient());
+
                 Platform.runLater(() -> {
                     lobbyController.clearChat();
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
-                            .setClient(lobbyController.getClient());
+                    SceneNavigator.getInstance().loadPreLoadedScreen();
                 });
+                break;
+            case TIMER:
+                lobbyController.writeNewLine(EncodeDecode.TIMER.decode(message));
+                break;
             case LOBBYMESSAGE:
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;
@@ -167,10 +175,6 @@ class ControllerDecoder {
                 message = EncodeDecode.LOBBYNICKLIST.decode(message);
                 lobbyController.updateNickList(message);
                 break;
-            case TIMER:
-                lobbyController.writeNewLine(message);
-                break;
-
         }
     }
 }

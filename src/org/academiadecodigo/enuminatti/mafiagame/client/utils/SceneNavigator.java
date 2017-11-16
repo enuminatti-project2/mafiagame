@@ -45,7 +45,7 @@ public class SceneNavigator {
         controllers = new LinkedHashMap<>();
     }
 
-    public void loadScreen(String view) {
+    public void preLoadScreen(String view) {
         try {
 
             // Instantiate the view and the controller
@@ -60,12 +60,20 @@ public class SceneNavigator {
             Scene scene = new Scene(root, MIN_WIDTH, MIN_HEIGHT);
             scenes.push(scene);
 
-            // Put the scene on the stage
-            setScene(scene);
-
         } catch (IOException e) {
             System.out.println("Failure to load view " + view + " : " + e.getMessage());
         }
+    }
+
+    public void loadScreen(String view) {
+        preLoadScreen(view);
+        setScene(scenes.peekFirst());
+    }
+
+    public void loadPreLoadedScreen() {
+
+        // Put the scene on the stage
+        setScene(scenes.peekFirst());
     }
 
     public void back() {

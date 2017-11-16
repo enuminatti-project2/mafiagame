@@ -116,9 +116,10 @@ public class GameMaster {
         Player newPlayer = new Player(serverWorker, nick, this);
         listOfLobby.put(nick, newPlayer);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayer(newPlayer ,EncodeDecode.LOBBY , nick + "You have sucessfuly logged in!" );
+        Broadcaster.broadcastToPlayer(newPlayer, EncodeDecode.LOBBY,
+                "Welcome, " + nick + ". You have successfully logged in!");
 
-        Broadcaster.broadcastToPlayers(listOfLobby,EncodeDecode.LOBBYNICKLIST,getNickListOfLobby());
+        Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
 
         canGameStart();
 
@@ -140,7 +141,7 @@ public class GameMaster {
 
             // Send broadcast to reset the timer
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.TIMER,
-                    Integer.toString(Constants.SECONDS_TO_START_GAME));
+                    String.format("Game will start in %d seconds.", Constants.SECONDS_TO_START_GAME));
         }
     }
 

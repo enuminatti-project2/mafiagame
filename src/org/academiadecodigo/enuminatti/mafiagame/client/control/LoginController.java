@@ -76,8 +76,8 @@ public class LoginController implements Controller {
             serverError.setVisible(false);
         }
 
-        if (nicksCombo.getValue() == null) {
-            nickError.setText("Invalid Nick");
+        if (nicksCombo.getValue() == null || !isValidNick(nicksCombo.getEditor().getText())) {
+            nickError.setText("Invalid nick, use at least 1 and at most 15 alpha characters");
             nickError.setVisible(true);
             flag = true;
         } else {
@@ -103,6 +103,10 @@ public class LoginController implements Controller {
         }
 
         doLogin();
+    }
+
+    private boolean isValidNick(String text) {
+        return text.matches("\\w{1,15}");
     }
 
     private void doLogin() {
@@ -209,6 +213,9 @@ public class LoginController implements Controller {
         nicksList = InputOutput.readNicks();
         nicksCombo.setItems(FXCollections.observableArrayList(nicksList));
         nicksCombo.setEditable(true);
+        if (!nicksList.isEmpty()) {
+            nicksCombo.getSelectionModel().select(0);
+        }
     }
 
     void nickInUse() {
