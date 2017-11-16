@@ -74,14 +74,18 @@ public class ChatController implements Controller {
     @FXML
     void sendMessageToClient(ActionEvent event) {
 
-        if (sendButton.getText().equals("Back")){
-            Platform.runLater(() -> {SceneNavigator.getInstance().loadScreen("Lobby");
-            SceneNavigator.getInstance().<LobbyController>getController("Lobby").setClient(client);});
+        if (sendButton.getText().equals("Back")) {
+            Platform.runLater(() -> {
+                SceneNavigator.getInstance().loadScreen("Lobby");
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby").setClient(client);
+            });
         }
 
+        // don't send anything if there's not at least one non-whitespace character
         if (clientPrompt.getText().matches(".*\\S.*")) {
-            //chatWindow.appendText(clientPrompt.getText().replaceAll("\\s+", " ") + "\n");
-            String message = clientPrompt.getText();
+            // sanitize too many whitespaces to just a single space
+            String message = clientPrompt.getText().replaceAll("\\s+", " ");
+
             client.encodeAndSend(EncodeDecode.MESSAGE, message);
             clientPrompt.setText("");
             clientPrompt.requestFocus();
