@@ -67,9 +67,9 @@ public class LobbyController implements Controller {
     @FXML
     void logout(ActionEvent event) {
         SceneNavigator.getInstance().loadScreen("LoginScreen");
-        SceneNavigator.getInstance().<LoginController>getController("LoginScreen")
-                .setClient(getClient());
         client.shutdown();
+        SceneNavigator.getInstance().<LoginController>getController("LoginScreen")
+                .setClient(null);
     }
 
     @FXML
@@ -145,7 +145,9 @@ public class LobbyController implements Controller {
         Platform.runLater(() -> usersList.setItems(names));
     }
 
-
+    void clearChat() {
+        flowChat.getChildren().clear();
+    }
 }
 
 

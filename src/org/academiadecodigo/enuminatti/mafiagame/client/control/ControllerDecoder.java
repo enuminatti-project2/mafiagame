@@ -9,9 +9,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 /**
  * Created by Daniel Baeta on 11/11/17.
- */
-
-/**
+ *
  * A support utilitary class for JavaFX views' controllers to have messages decoded.
  */
 class ControllerDecoder {
@@ -38,6 +36,11 @@ class ControllerDecoder {
         }
 
         EncodeDecode tag = EncodeDecode.getEnum(tempTag);
+
+        if (tag == null) {
+            // invalid tag
+            return;
+        }
 
         switch (tag) {
             case LOBBY:
@@ -147,6 +150,7 @@ class ControllerDecoder {
         switch (tag) {
             case START:
                 Platform.runLater(() -> {
+                    lobbyController.clearChat();
                     SceneNavigator.getInstance().loadScreen("ClientView");
                     SceneNavigator.getInstance().<ChatController>getController("ClientView")
                             .setClient(lobbyController.getClient());

@@ -66,7 +66,7 @@ public class Server {
     }
 
     private void acceptConnection(Socket client) {
-        ServerWorker newPlayer = null;
+        ServerWorker newPlayer;
         try {
             newPlayer = new ServerWorker(client);
             newPlayer.init();
@@ -78,9 +78,16 @@ public class Server {
 
     private synchronized void updateHostList(String message) {
         Map<String, String> tempMap = new LinkedHashMap<>();
-        String[] hostslist = EncodeDecode.HOSTSLIST.decode(message).split(",");
 
-        for(String host: hostslist){
+        String decodedMessage = EncodeDecode.HOSTSLIST.decode(message);
+
+        if (decodedMessage == null) {
+            return;
+        }
+
+        String[] hostslist = decodedMessage.split(",");
+
+        for (String host : hostslist) {
             String[] s = host.split("\\|");
             tempMap.put(s[0], s[1]);
         }
@@ -96,7 +103,7 @@ public class Server {
         private PrintWriter out;
         private Player player;
 
-        public ServerWorker(Socket clientSocket) {
+        ServerWorker(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
 
@@ -105,7 +112,7 @@ public class Server {
             this.out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()), true);
         }
 
-        public void receiveMessage(String message) {
+        void receiveMessage(String message) {
             System.out.println("Receiving player message: " + message);
             player.getFromPlayer(message);
             System.out.println("Server sent.");
@@ -118,7 +125,7 @@ public class Server {
         @Override
         public void run() {
             try {
-                String message = "";
+                String message;
                 while ((message = in.readLine()) != null) {
 
                     EncodeDecode parsedEncoding = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
@@ -150,10 +157,10 @@ public class Server {
         }
 
         private void guestLogin() {
-            String nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
+            String nick = "Guest" + (int) (Math.floor(Math.random() * (1000)));
 
-            while(!tryRegister(nick)){
-                nick = "Guest" + (int)(Math.floor(Math.random() * (1000)));
+            while (!tryRegister(nick)) {
+                nick = "Guest" + (int) (Math.floor(Math.random() * (1000)));
             }
         }
 
@@ -180,7 +187,8 @@ public class Server {
                 if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
                     System.out.println("disconnected player: " + player.getName());
                     gameMaster.kickPlayer(player.getName());
-                }else if(gameMaster.getListOfLobby().containsKey(player.getName())){
+                } else if (gameMaster.getListOfLobby().containsKey(player.getName())) {
+                    System.out.println("disconnected player from lobby: " + player.getName());
                     gameMaster.kickPlayerFromLobby(player.getName());
                 }
                 clientSocket.close();

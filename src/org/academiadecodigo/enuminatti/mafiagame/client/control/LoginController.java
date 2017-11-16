@@ -1,18 +1,22 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
-import sun.net.util.IPAddressUtil;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 
 public class LoginController implements Controller {
@@ -94,11 +98,11 @@ public class LoginController implements Controller {
     }
 
     private void sendHosts() {
-        String serversList = "";
+        StringBuilder serversList = new StringBuilder("");
         for (Map.Entry<String, String> entry : hostsMap.entrySet()) {
-            serversList += entry.getKey() + "|" + entry.getValue() + ",";
+            serversList.append(String.format("%s|%s,", entry.getKey(), entry.getValue()));
         }
-        client.encodeAndSend(EncodeDecode.HOSTSLIST, serversList);
+        client.encodeAndSend(EncodeDecode.HOSTSLIST, serversList.toString());
     }
 
     @FXML
@@ -211,14 +215,17 @@ public class LoginController implements Controller {
         }
     }
 
-    public void saveLists() {
+    void saveLists() {
         InputOutput.addNick(nicksCombo.getEditor().getText());
         InputOutput.addHost(serversCombo.getEditor().getText());
     }
 
     public void setClient(Client client) {
         this.client = client;
-        this.client.setController(this);
+
+        if (client != null) {
+            this.client.setController(this);
+        }
 
     }
 }
