@@ -40,10 +40,12 @@ public class Client {
     }
 
     public void shutdown() {
+        writer.println((String) null);
         try {
             if (!socket.isClosed()) {
                 socket.shutdownInput();
             }
+            writer.println();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -295,4 +295,12 @@ public class GameMaster {
         schedule = startGame.schedule(this::canGameStart,
                 Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
     }
+
+    public void removeFromAll(Player player) {
+        listOfLobby.remove(player.getName());
+        listOfPlayers.remove(player.getName());
+        mafiosiNicks.remove(player.getName());
+        thirdPartyNicks.remove(player.getName());
+        villagersNicks.remove(player.getName());
+    }
 }

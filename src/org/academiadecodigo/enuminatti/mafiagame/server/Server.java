@@ -157,6 +157,7 @@ public class Server {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
+                out.println((String) null);
                 System.err.println("Player disconnected.");
                 disconnectPlayer();
             }
@@ -208,6 +209,7 @@ public class Server {
         }
 
         public void disconnectPlayer() {
+            gameMaster.removeFromAll(player);
             try {
 
                 if (gameMaster.getListOfPlayers().containsKey(player.getName())) {

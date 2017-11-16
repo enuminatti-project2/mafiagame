@@ -1,5 +1,6 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -176,6 +177,12 @@ public class LoginController implements Controller {
             client.shutdown();
         }
         client = null;
+    }
+
+    @FXML
+    public void exitApplication(ActionEvent event) {
+
+        Platform.exit();
     }
 
     @Override

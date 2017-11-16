@@ -39,5 +39,6 @@ public class ClientUI extends Application {
     @Override
     public void stop() throws Exception {
         loginController.shutdown();
+        System.exit(0);
     }
 }
