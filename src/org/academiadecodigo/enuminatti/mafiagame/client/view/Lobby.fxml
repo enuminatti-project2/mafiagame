@@ -5,9 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<Pane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.LobbyController">
+<Pane id="pane" fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.academiadecodigo.enuminatti.mafiagame.client.control.LobbyController">
    <children>
       <ImageView fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true">
          <image>
@@ -15,8 +13,7 @@
          </image>
       </ImageView>
       <TextField fx:id="clientPrompt" layoutX="164.0" layoutY="609.0" opacity="0.65" prefHeight="45.0" prefWidth="604.0" />
-       <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="93.0" opacity="0.65"
-                 prefHeight="489.0" prefWidth="200.0"/>
+       <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="93.0" opacity="0.65" prefHeight="489.0" prefWidth="200.0" />
       <Button fx:id="sendButton" defaultButton="true" layoutX="785.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
       <Button fx:id="statsButton" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#showStats" prefHeight="45.0" prefWidth="94.0" text="Stats" />
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="785.0" layoutY="31.0" prefHeight="31.0" prefWidth="200.0" text="Lobby" textFill="#1783a8">
@@ -60,12 +57,12 @@
          <children>
             <ImageView fitHeight="108.0" fitWidth="90.0" layoutX="234.0" layoutY="419.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2">
                <image>
-                  <Image url="@../../../../../../../../blood1.png" />
+                  <Image url="@blood1.png" />
                </image>
             </ImageView>
             <ImageView fitHeight="136.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="9">
                <image>
-                  <Image url="@../../../../../../../../Mafia.png" />
+                  <Image url="@Mafia.png" />
                </image>
                <GridPane.margin>
                   <Insets bottom="18.0" />
@@ -79,7 +76,7 @@
                   <Insets />
                </GridPane.margin>
             </Label>
-            <Label fx:id="gamesWon" layoutX="35.0" layoutY="29.0" prefHeight="63.0" prefWidth="198.0" text="Games Won:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
+            <Label layoutX="35.0" layoutY="29.0" prefHeight="63.0" prefWidth="198.0" text="Games Won:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="2">
                <font>
                   <Font name="Chalkduster" size="16.0" />
                </font>
@@ -90,7 +87,7 @@
                   <Insets />
                </GridPane.margin>
             </Label>
-            <Label fx:id="gamesLost" layoutX="10.0" layoutY="130.0" prefHeight="63.0" prefWidth="198.0" text="Games Lost:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="3">
+            <Label layoutX="10.0" layoutY="130.0" prefHeight="63.0" prefWidth="198.0" text="Games Lost:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="3">
                <font>
                   <Font name="Chalkduster" size="16.0" />
                </font>
@@ -98,7 +95,7 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label fx:id="turnsSurvived" layoutX="10.0" layoutY="231.0" prefHeight="39.0" prefWidth="195.0" text="Turns Played:" textFill="#fffdfd" GridPane.columnSpan="2" GridPane.rowIndex="4">
+            <Label layoutX="10.0" layoutY="231.0" prefHeight="39.0" prefWidth="195.0" text="Turns Played:" textFill="#fffdfd" GridPane.columnSpan="2" GridPane.rowIndex="4">
                <font>
                   <Font name="Chalkduster" size="16.0" />
                </font>
@@ -106,7 +103,39 @@
                   <Insets left="10.0" />
                </padding>
             </Label>
-            <Label fx:id="totalPoints" layoutX="10.0" layoutY="358.0" prefHeight="63.0" prefWidth="198.0" text="Total Points:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="5">
+            <Label layoutX="10.0" layoutY="358.0" prefHeight="63.0" prefWidth="198.0" text="Total Points:" textFill="WHITE" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="gamesWon" layoutX="20.0" layoutY="120.0" prefHeight="63.0" prefWidth="198.0" textFill="WHITE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="gamesLost" layoutX="20.0" layoutY="169.0" prefHeight="63.0" prefWidth="198.0" textFill="WHITE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="turnsSurvived" layoutX="20.0" layoutY="218.0" prefHeight="39.0" prefWidth="195.0" textFill="#fffdfd" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Chalkduster" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label fx:id="totalPoints" layoutX="20.0" layoutY="267.0" prefHeight="63.0" prefWidth="198.0" textFill="WHITE" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5">
                <font>
                   <Font name="Chalkduster" size="16.0" />
                </font>
@@ -116,7 +145,6 @@
             </Label>
          </children>
       </GridPane>
-       <Button fx:id="logoutButton" cancelButton="true" layoutX="28.0" layoutY="23.0" mnemonicParsing="false"
-               onAction="#logout" prefHeight="39.0" prefWidth="90.0" text="Logout"/>
+       <Button fx:id="logoutButton" cancelButton="true" layoutX="28.0" layoutY="23.0" mnemonicParsing="false" onAction="#logout" prefHeight="39.0" prefWidth="90.0" text="Logout" />
    </children>
 </Pane>

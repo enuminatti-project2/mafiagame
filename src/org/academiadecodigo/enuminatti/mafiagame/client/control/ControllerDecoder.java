@@ -154,6 +154,11 @@ class ControllerDecoder {
                 message = EncodeDecode.LOBBYNICKLIST.decode(message);
                 lobbyController.updateNickList(message);
                 break;
+            case SCORE:
+                message = EncodeDecode.SCORE.decode(message);
+                System.out.println("Message in lobby stats: " +  message);
+                lobbyController.getStats(message);
+                break;
         }
     }
 }

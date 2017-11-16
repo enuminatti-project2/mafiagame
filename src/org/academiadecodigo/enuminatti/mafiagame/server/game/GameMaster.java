@@ -101,7 +101,6 @@ public class GameMaster {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
                 String.format("Player %s was sentenced to death. %s",
                         nickname, listOfPlayers.get(nickname).getStrategyMessage()));
-
         kickPlayer(nickname);
     }
 
@@ -151,7 +150,7 @@ public class GameMaster {
      * @param nickname player to be kicked from the game
      */
 
-    public void kickPlayer(String nickname) {
+    private void kickPlayer(String nickname) {
 
         if (nickname == null) {
             return;
@@ -184,6 +183,23 @@ public class GameMaster {
             playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
 
+        }
+
+    }
+
+    public void removePlayerFromLists(Player player) {
+        String nickname = player.getName();
+
+        mafiosiNicks.remove(nickname);
+        villagersNicks.remove(nickname);
+        thirdPartyNicks.remove(nickname);
+
+        Player playerRemovedFromGame = listOfPlayers.remove(nickname);
+        Player playerRemovedFromLobby = listOfLobby.remove(nickname);
+
+        if (playerRemovedFromGame != null || playerRemovedFromLobby != null) {
+            Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
+            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         }
 
     }
@@ -288,19 +304,11 @@ public class GameMaster {
         listOfLobby.putAll(listOfPlayers);
         Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         listOfPlayers.clear();
-        System.err.println("listofplayers size: " + listOfPlayers.size() + " lobbylist " + listOfLobby.size());
-
         gameHasStarted = false;
+        ScoreCalculator.resetCalculator();
+        canGameStart();
 
         schedule = startGame.schedule(this::canGameStart,
                 Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
-    }
-
-    public void removeFromAll(Player player) {
-        listOfLobby.remove(player.getName());
-        listOfPlayers.remove(player.getName());
-        mafiosiNicks.remove(player.getName());
-        thirdPartyNicks.remove(player.getName());
-        villagersNicks.remove(player.getName());
     }
 }
