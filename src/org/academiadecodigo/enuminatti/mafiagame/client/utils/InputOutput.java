@@ -23,6 +23,7 @@ public final class InputOutput {
      * @return a Set with the nicks
      */
     public static Set<String> readNicks() {
+        createIfNotExists(hostPath);
 
         Set<String> listOfNicks = new HashSet<>();
 
@@ -30,8 +31,6 @@ public final class InputOutput {
         if (!file.exists()){
             return listOfNicks;
         }
-
-
 
         FileReader fReader = null;
         BufferedReader bReader = null;
@@ -65,6 +64,7 @@ public final class InputOutput {
      * @return the LinkedHashMap with the hosts
      */
     public static LinkedHashMap<String, String> readHosts() {
+        createIfNotExists(hostPath);
 
         LinkedHashMap<String, String> listOfSN = new LinkedHashMap<>();
 
@@ -331,7 +331,10 @@ public final class InputOutput {
     private static void createIfNotExists(String pathToFile) {
         File file = new File(pathToFile);
         try {
-            boolean fileCreated = file.createNewFile();
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdir();
+            }
+            file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }

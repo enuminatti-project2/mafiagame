@@ -88,7 +88,7 @@ public class Server {
 
         String decodedMessage = EncodeDecode.HOSTSLIST.decode(message);
 
-        if (decodedMessage == null) {
+        if (decodedMessage == null || decodedMessage.equals("")) {
             return;
         }
 
