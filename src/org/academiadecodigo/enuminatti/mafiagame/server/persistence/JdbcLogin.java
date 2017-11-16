@@ -9,13 +9,13 @@ import java.sql.*;
 /**
  * Created by Samuel Laço on 15/11/17.
  */
-public class JdbcUserService {
+public class JdbcLogin {
 
     private Connection dbConnection;
 
     private String table;
 
-    public JdbcUserService(Connection dbConnection) {
+    public JdbcLogin(Connection dbConnection) {
         this.dbConnection = dbConnection;
         this.table = "Players";
     }

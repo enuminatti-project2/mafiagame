@@ -2,7 +2,7 @@ package org.academiadecodigo.enuminatti.mafiagame.server;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.persistence.ConnectionManager;
-import org.academiadecodigo.enuminatti.mafiagame.server.persistence.JdbcUserService;
+import org.academiadecodigo.enuminatti.mafiagame.server.persistence.JdbcLogin;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -28,7 +28,7 @@ public class Server {
     private ExecutorService executorService;
     private Map<String, String> hostsMap;
     private Connection connectionManager;
-    private JdbcUserService jdbc;
+    private JdbcLogin jdbc;
 
     public static void main(String[] args) {
         Server server = new Server();
@@ -40,7 +40,7 @@ public class Server {
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
         this.connectionManager = new ConnectionManager().getConnection();
-        jdbc = new JdbcUserService(connectionManager);
+        jdbc = new JdbcLogin(connectionManager);
     }
 
     private void closeServer() {
