@@ -215,9 +215,7 @@ public final class InputOutput {
         }
 
         String ip = matcher.group("ip");
-        System.out.println(ip);
         String name = matcher.group("name");
-        System.out.println(name);
 
         if (ip == null) {
             return;
@@ -279,7 +277,6 @@ public final class InputOutput {
         Matcher matcher = pattern.matcher(host);
 
         if (!matcher.find()) {
-            System.out.println("no match for ip");
             return null;
         }
 

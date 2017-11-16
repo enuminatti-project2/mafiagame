@@ -1,5 +1,0 @@
-127.0.0.1|localhost
-192.168.1.13|Samuel
-192.168.1.25|Rodrigo
-192.168.1.18|Ricardo
-192.168.1.17|Daniel

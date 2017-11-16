@@ -25,7 +25,6 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ChatController implements Controller {
@@ -73,7 +72,6 @@ public class ChatController implements Controller {
         assert voteButton != null : "fx:id=\"voteButton\" was not injected: check your FXML file 'ClientView.fxml'.";
 
         scrollPane.vvalueProperty().bind(flowChat.heightProperty());
-        System.out.println("Disabling vote button");
         voteButton.setDisable(true);
         dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
         gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
@@ -144,8 +142,6 @@ public class ChatController implements Controller {
     void setNight(String message) {
 
         night = Boolean.parseBoolean(message);
-
-        System.out.println("Night: " + night);
 
         if (dayCSS == null) {
             nightCSS = getClass().getResource("css/night.css").toExternalForm();

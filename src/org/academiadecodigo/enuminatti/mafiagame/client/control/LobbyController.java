@@ -131,7 +131,6 @@ public class LobbyController implements Controller {
 
         Platform.runLater(
                 () -> {
-                    System.out.println(nameStats);
                     nameStats.setText(nickname);
                 }
         );

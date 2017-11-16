@@ -27,8 +27,6 @@ public class GameOverCheck implements Stage {
     @Override
     public void runStage(Set<String> activePlayersOnStage, Set<String> possibleTargets) {
 
-        System.out.println("checking if anyone won");
-
         List<String> thirdparties = gameMaster.getThirdParties();
         List<String> villagers = gameMaster.getVillagersNicks();
         List<String> mafias = gameMaster.getMafiosiNicks();
@@ -38,11 +36,9 @@ public class GameOverCheck implements Stage {
         String winningMessage = null;
         if ((winningPlayer = getWinningPlayer(thirdparties)) != null) {
             // a single third-party player won
-            System.out.println("single player victory");
             winningMessage = winningPlayer + " has won the game!";
         } else if ((winningFaction = getWinningFaction(mafias, villagers)) != null) {
             // a faction won
-            System.out.println("faction won");
             winningMessage = "The " + winningFaction + " have won the game!";
         }
 
@@ -67,7 +63,6 @@ public class GameOverCheck implements Stage {
     }
 
     private String getWinningPlayer(List<String> thirdparties) {
-        System.out.println("checking if single player won");
         Map<String, Player> allPlayers = gameMaster.getListOfPlayers();
 
         for (String nick : thirdparties) {
@@ -75,12 +70,10 @@ public class GameOverCheck implements Stage {
                 return nick;
             }
         }
-        System.out.println("no single player won");
         return null;
     }
 
     private String getWinningFaction(List<String> mafias, List<String> villagers) {
-        System.out.println("checking if faction won");
         // first check if the villagers won
         Player villagerPlayer = villagers.isEmpty() ? null :
                 gameMaster.getListOfPlayers().get(villagers.get(0));

@@ -152,7 +152,6 @@ public class LoginController implements Controller {
         host = InputOutput.parseIp(host);
 
         if (host == null) {
-            System.out.println("invalid ip");
             serverError.setVisible(true);
             return false;
         }

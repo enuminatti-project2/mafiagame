@@ -75,11 +75,4 @@ public class Client {
             receiveAndDecode();
         }
     }
-
-    public boolean isConnected(){
-        System.out.println(socket.toString());
-        return socket != null;
-    }
-
-
 }

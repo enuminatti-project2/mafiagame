@@ -1,6 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
-import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.MafiaStrategy;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.strategy.game.VillagerStrategy;
@@ -22,7 +21,6 @@ public class RoleFactory {
 
         int numberOfMafia = (int) Math.ceil(listOfPlayers.size() / 5.0); // always at least one mafia
 
-        System.out.println("Number of mafia is: " + numberOfMafia);
         List<String> players = new LinkedList<>(listOfPlayers.keySet());
 
         for (int i = 0; i < numberOfMafia; i++) {

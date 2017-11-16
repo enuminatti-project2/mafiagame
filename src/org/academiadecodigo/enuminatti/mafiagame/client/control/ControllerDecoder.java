@@ -1,13 +1,9 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
-import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
-
-import static org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode.ALLOW_TALK;
 
 /**
  * Created by Daniel Baeta on 11/11/17.
@@ -28,12 +24,9 @@ class ControllerDecoder {
      */
     static void loginControllerDecoder(LoginController loginController, String message) {
 
-        System.out.println(message + " on Login controller");
-
         String tempTag = EncodeDecode.getStartTag(message);
 
         if (tempTag == null) {
-            System.out.println("invalid message: " + message);
             return;
         }
 
@@ -116,7 +109,6 @@ class ControllerDecoder {
                 break;
             case ALLOW_TALK:
                 chatController.getSendButton().setDisable(false);
-                System.out.println("Enabling send button");
                 break;
             case ALLOW_VOTE:
                 chatController.getSendButton().setDisable(true);
@@ -135,7 +127,6 @@ class ControllerDecoder {
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
         if (tag == null) {
-            System.out.println(message);
             return;
         }
 
@@ -157,7 +148,6 @@ class ControllerDecoder {
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;
             case NICK:
-                System.out.println("Message" + message);
                 lobbyController.updateStats(EncodeDecode.NICK.decode(message));
                 break;
             case LOBBYNICKLIST:

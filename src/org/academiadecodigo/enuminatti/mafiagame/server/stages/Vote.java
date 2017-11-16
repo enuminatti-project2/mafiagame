@@ -5,7 +5,10 @@ import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -78,7 +81,6 @@ public class Vote implements Stage {
      */
     public void addVote(String nickname) {
         if (nickname == null || !voted.containsKey(nickname)) {
-            System.out.println("addVote: Invalid vote received for: " + nickname);
             return;
         }
 
@@ -109,9 +111,7 @@ public class Vote implements Stage {
         int mostVotes = Collections.max(voted.values());
 
         for (String player: voted.keySet()) {
-            System.out.println("checking if " + player + " has the most votes");
             if(voted.get(player).equals(mostVotes)) {
-                System.out.println(player + " has the most votes");
 
                 return player;
             }

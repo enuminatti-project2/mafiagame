@@ -115,7 +115,6 @@ public class GameMaster {
 
         Player newPlayer = new Player(serverWorker, nick, this);
         listOfLobby.put(nick, newPlayer);
-        System.out.println("Player added");
         Broadcaster.broadcastToPlayer(newPlayer, EncodeDecode.LOBBY,
                 "Welcome, " + nick + ". You have successfully logged in!");
 
@@ -129,7 +128,6 @@ public class GameMaster {
     private void canGameStart() {
 
 
-        System.out.println("On canGameStart with players in lobby " + listOfLobby.size());
         if (!gameHasStarted && listOfLobby.size() >= Constants.MIN_PLAYERS) {
 
             // Se o jogo ainda não começou, reset ao timer
@@ -167,8 +165,6 @@ public class GameMaster {
 
         if (playerRemoved != null) {
             listOfLobby.put(nickname, playerRemoved);
-            System.out.println(nickname + " was added on lobby, now has " + listOfLobby.size());
-            System.out.println("kicking player " + playerRemoved.getName());
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         }
@@ -185,7 +181,6 @@ public class GameMaster {
 
         if (playerRemoved != null) {
 
-            System.out.println("kicking player " + playerRemoved.getName());
             playerRemoved.disconnect();
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
 
@@ -201,7 +196,6 @@ public class GameMaster {
             return;
         }
 
-        System.out.println("Let the game Begin");
         gameHasStarted = true;
         Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.START, "begin");
         listOfPlayers.putAll(listOfLobby);
@@ -241,7 +235,6 @@ public class GameMaster {
         }
 
         if (currentStage != null) {
-            System.out.println("running stage " + currentGameStage);
 
             // pass active users on current stage <- relevant for Vote and Talk
             // and possible targets on current stage <- relevant for Vote
@@ -271,7 +264,6 @@ public class GameMaster {
     }
 
     String getNickListOfLobby() {
-        System.out.println(listOfLobby.size() + " is # players in lobby");
         return String.join(" ", listOfLobby.keySet());
     }
 

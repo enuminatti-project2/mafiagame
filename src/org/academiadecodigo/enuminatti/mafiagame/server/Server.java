@@ -120,9 +120,7 @@ public class Server {
         }
 
         void receiveMessage(String message) {
-            System.out.println("Receiving player message: " + message);
             player.getFromPlayer(message);
-            System.out.println("Server sent.");
         }
 
         public void sendMessage(String message) {
@@ -213,10 +211,8 @@ public class Server {
             try {
 
                 if (gameMaster.getListOfPlayers().containsKey(player.getName())) {
-                    System.out.println("disconnected player: " + player.getName());
                     gameMaster.kickPlayer(player.getName());
                 } else if (gameMaster.getListOfLobby().containsKey(player.getName())) {
-                    System.out.println("disconnected player from lobby: " + player.getName());
                     gameMaster.kickPlayerFromLobby(player.getName());
                 }
                 clientSocket.close();
