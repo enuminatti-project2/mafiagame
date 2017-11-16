@@ -6,7 +6,7 @@ package org.academiadecodigo.enuminatti.mafiagame.utils;
  */
 
 public class Constants {
-    public static final int PORT = 13338;
+    public static final int PORT= 13338;
     public static final int MAX_PLAYERS = 22;
 
     public static final int MIN_PLAYERS = 2; // Always at least 2 players, or the game breaks

@@ -9,9 +9,9 @@ import java.sql.SQLException;
  * Created by Samuel Laço on 15/11/17.
  */
 public class ConnectionManager {
-    private Connection connection = null;
+    static Connection connection = null;
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
 
         try {
             if (connection == null) {

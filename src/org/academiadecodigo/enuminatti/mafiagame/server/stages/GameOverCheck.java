@@ -1,6 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.stages;
 
 import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
+import org.academiadecodigo.enuminatti.mafiagame.server.game.ScoreCalculator;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
@@ -86,7 +87,8 @@ public class GameOverCheck implements Stage {
                 gameMaster.getListOfPlayers().get(villagers.get(0));
 
         if (villagerPlayer != null && villagerPlayer.checkWinCondition()) {
-            // villagers won
+            ScoreCalculator.pointsUpdateWin(villagers);
+            ScoreCalculator.pointsUpdateLose(mafias);
             return "villagers";
         }
 
@@ -95,7 +97,8 @@ public class GameOverCheck implements Stage {
                 gameMaster.getListOfPlayers().get(mafias.get(0));
 
         if (mafiaPlayer != null && mafiaPlayer.checkWinCondition()) {
-            // mafia won
+            ScoreCalculator.pointsUpdateWin(mafias);
+            ScoreCalculator.pointsUpdateLose(villagers);
             return "mafia";
         }
 

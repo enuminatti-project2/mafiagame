@@ -1,5 +1,7 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.game;
 
+import org.academiadecodigo.enuminatti.mafiagame.server.persistence.ConnectionManager;
+import org.academiadecodigo.enuminatti.mafiagame.server.persistence.JdbcScore;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -22,6 +24,7 @@ public class GameMasterDecoder {
     static void gameMasterDecoder(GameMaster gameMaster, String message, String nickname) {
 
         EncodeDecode enumTag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        JdbcScore jdbcScore = new JdbcScore(ConnectionManager.getConnection());
 
         Player sender;
         String messageDecoded;
@@ -65,6 +68,10 @@ public class GameMasterDecoder {
                         sender.getName(), sender.getRole());
                 sender.writeToPlayer(EncodeDecode.ROLE.encode(msg));
                 sender.writeToPlayer(EncodeDecode.ROLE.encode(sender.getDescriptionMessage()));
+                break;
+            case SCORE:
+                sender = gameMaster.getListOfLobby().get(nickname);
+                sender.writeToPlayer(EncodeDecode.SCORE.encode(jdbcScore.getPoints(sender.getName())));
                 break;
             default:
                 break;

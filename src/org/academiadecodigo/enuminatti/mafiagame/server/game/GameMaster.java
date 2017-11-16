@@ -101,7 +101,6 @@ public class GameMaster {
         Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.MESSAGE,
                 String.format("Player %s was sentenced to death. %s",
                         nickname, listOfPlayers.get(nickname).getStrategyMessage()));
-
         kickPlayer(nickname);
     }
 
@@ -295,6 +294,7 @@ public class GameMaster {
         listOfPlayers.clear();
 
         gameHasStarted = false;
+        ScoreCalculator.resetCalculator();
         canGameStart();
 
     }

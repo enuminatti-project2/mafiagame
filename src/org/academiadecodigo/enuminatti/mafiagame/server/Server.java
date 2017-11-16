@@ -10,7 +10,6 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -27,7 +26,6 @@ public class Server {
     private ServerSocket server;
     private ExecutorService executorService;
     private Map<String, String> hostsMap;
-    private Connection connectionManager;
     private JdbcLogin jdbc;
 
     public static void main(String[] args) {
@@ -39,8 +37,7 @@ public class Server {
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
-        this.connectionManager = new ConnectionManager().getConnection();
-        jdbc = new JdbcLogin(connectionManager);
+        jdbc = new JdbcLogin(ConnectionManager.getConnection());
     }
 
     private void closeServer() {
@@ -122,10 +119,12 @@ public class Server {
         void receiveMessage(String message) {
             System.out.println("Receiving player message: " + message);
             player.getFromPlayer(message);
-            System.out.println("Server sent.");
+            System.out.println("finished receiving player message");
+
         }
 
         public void sendMessage(String message) {
+            System.out.println("Server sent. " + message);
             out.println(message);
         }
 
@@ -182,7 +181,7 @@ public class Server {
 
             if (player == null) {
 
-                if (connectionManager == null) {
+                if (ConnectionManager.getConnection() == null) {
                     System.out.println("Database is down, using Local Storage");
                     if (!tryRegister(splitUserPass[0])) {
                         sendMessage(EncodeDecode.NICKOK.encode("false"));

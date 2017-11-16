@@ -83,6 +83,8 @@ public class LobbyController implements Controller {
     @FXML
     void showStats(ActionEvent event) {
 
+        client.encodeAndSend(EncodeDecode.SCORE,null);
+
         if (statsWindow.isVisible()) {
             statsWindow.setVisible(false);
             return;
@@ -127,15 +129,30 @@ public class LobbyController implements Controller {
 
     }
 
-    void updateStats(String nickname) {
+    void getStats(String stats) {
 
+        String[] statsplit = stats.split("\\s+");
+
+        if(statsplit.length != 5){
+            System.out.println("Wrong length of stats: " +  statsplit.length);
+            return;
+        }
+        updateStats(statsplit);
+
+    }
+
+
+    void updateStats(String[] mystats){
         Platform.runLater(
                 () -> {
                     System.out.println(nameStats);
-                    nameStats.setText(nickname);
+                    nameStats.setText(mystats[0]);
+                    gamesWon.setText(mystats[1]);
+                    gamesLost.setText(mystats[2]);
+                    turnsSurvived.setText(mystats[3]);
+                    totalPoints.setText(mystats[4]);
                 }
         );
-
     }
 
     void updateNickList(String message) {

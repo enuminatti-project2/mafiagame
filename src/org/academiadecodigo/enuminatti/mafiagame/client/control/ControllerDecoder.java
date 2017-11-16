@@ -144,6 +144,7 @@ class ControllerDecoder {
     static void lobbyControllerDecoder(LobbyController lobbyController, String message) {
 
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
+        System.out.println("Lobby message: " + message);
 
         if (tag == null) {
             System.out.println(message);
@@ -167,13 +168,15 @@ class ControllerDecoder {
             case LOBBYMESSAGE:
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
                 break;
-            case NICK:
-                System.out.println("Message" + message);
-                lobbyController.updateStats(EncodeDecode.NICK.decode(message));
-                break;
             case LOBBYNICKLIST:
                 message = EncodeDecode.LOBBYNICKLIST.decode(message);
                 lobbyController.updateNickList(message);
+                break;
+            case SCORE:
+
+                message = EncodeDecode.SCORE.decode(message);
+                System.out.println("Message in lobby stats: " +  message);
+                lobbyController.getStats(message);
                 break;
         }
     }
