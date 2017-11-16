@@ -34,11 +34,12 @@
                </font>
             </Label>
             <ComboBox fx:id="serversCombo" layoutX="146.0" layoutY="1.0" prefHeight="27.0" prefWidth="167.0" />
-            <ComboBox fx:id="nicksCombo" layoutX="146.0" layoutY="62.0" prefHeight="27.0" prefWidth="167.0"/>
-            <PasswordField fx:id="pwdField" layoutX="146.0" layoutY="122.0"/>
-            <Button fx:id="joinButton" defaultButton="true" layoutX="146.0" layoutY="176.0" mnemonicParsing="false"
-                    onAction="#connectToServer" text="Join the family"/>
-            <Label fx:id="nickError" layoutX="362.0" layoutY="62.0" prefHeight="27.0" prefWidth="189.0" text="Nick in use" textFill="RED" visible="false">
+             <ComboBox fx:id="nicksCombo" layoutX="146.0" layoutY="62.0" prefHeight="27.0" prefWidth="167.0"/>
+             <PasswordField fx:id="pwdField" layoutX="146.0" layoutY="122.0"/>
+             <Button fx:id="joinButton" defaultButton="true" layoutX="146.0" layoutY="176.0" mnemonicParsing="false"
+                     onAction="#connectToServer" text="Join the family"/>
+             <Label fx:id="nickError" layoutX="362.0" layoutY="62.0" prefHeight="87.0" prefWidth="206.0"
+                    text="Nick in use" textFill="RED" visible="false" wrapText="true">
                <font>
                   <Font name="Lantinghei SC Demibold" size="13.0" />
                </font>
@@ -50,7 +51,7 @@
             <Font name="Krungthep" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="guestButton" cancelButton="true" layoutX="384.0" layoutY="643.0" mnemonicParsing="false"
-              onAction="#playAsGuest" text="Play as guest"/>
+       <Button fx:id="guestButton" cancelButton="true" layoutX="384.0" layoutY="643.0" mnemonicParsing="false"
+               onAction="#playAsGuest" text="Play as guest"/>
    </children>
 </Pane>
