@@ -14,12 +14,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.Decoder;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.LobbyDecoder;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 public class LobbyController implements Controller {
 
     private Client client;
+
+    private Decoder decoder;
 
     @FXML
     private Pane pane;
@@ -60,6 +64,11 @@ public class LobbyController implements Controller {
     @FXML
     private Button logoutButton;
 
+
+    public LobbyController() {
+        decoder = new LobbyDecoder();
+    }
+
     @FXML
     void logout(ActionEvent event) {
         SceneNavigator.getInstance().back();
@@ -99,7 +108,7 @@ public class LobbyController implements Controller {
     }
 
     public void getMessage(String message) {
-        ControllerDecoder.lobbyControllerDecoder(this, message);
+        decoder.controllerDecoder(this, message);
     }
 
     @Override
@@ -109,7 +118,7 @@ public class LobbyController implements Controller {
         }
     }
 
-    void writeNewLine(String message) {
+    public void writeNewLine(String message) {
 
         Platform.runLater(
                 () -> {
@@ -121,7 +130,7 @@ public class LobbyController implements Controller {
 
     }
 
-    void updateStats(String nickname) {
+    public void updateStats(String nickname) {
 
         Platform.runLater(
                 () -> {

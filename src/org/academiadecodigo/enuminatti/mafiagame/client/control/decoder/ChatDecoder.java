@@ -1,68 +1,31 @@
-package org.academiadecodigo.enuminatti.mafiagame.client.control;
+package org.academiadecodigo.enuminatti.mafiagame.client.control.decoder;
+
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.ChatController;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.Controller;
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 /**
- * Created by Daniel Baeta on 11/11/17.
+ * Created by codecadet on 16/11/17.
  */
+public class ChatDecoder implements Decoder {
 
-/**
- * A support utilitary class for JavaFX views' controllers to have messages decoded.
- */
-class ControllerDecoder {
-
-    //Make a decode(Controller controller, String message) to choose which method?
-
-
-    /**
-     * Decodes messages sent to a LoginController instance.
-     * Will perform the changes on the UI's elements associated with the LoginController scene.
-     *
-     * @param loginController The instance of LoginController
-     * @param message         The tagged message to be decoded
-     */
- /*   static void loginControllerDecoder(LoginController loginController, String message) {
-
-        System.out.println(message + " on Login controller");
-
-        String tempTag = EncodeDecode.getStartTag(message);
-
-        if (tempTag == null) {
-            System.out.println("invalid message: " + message);
-            return;
-        }
-
-        EncodeDecode tag = EncodeDecode.getEnum(tempTag);
-
-        switch (tag) {
-            case LOBBY:
-                loginController.saveLists();
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("Lobby");
-                    SceneNavigator.getInstance().<LobbyController>getController("Lobby")
-                            .setClient(loginController.getClient());
-                });
-                break;
-            case NICKOK:
-                loginController.nickInUse();
-                break;
-            case PWDERROR:
-                loginController.wrongPWD();
-                break;
-            case HOSTSLIST:
-                loginController.updateHostList(message);
-            default:
-        }
-    }
-*/
     /**
      * Decodes messages sent to a ChatController instance.
      * Will perform the changes on the UI's elements associated with the ChatController scene.
      *
-     * @param chatController The instance of ChatController
+     * @param controller The instance of controller
      * @param message        The tagged message to be decoded
      */
 
-/*    static void chatControllerDecoder(ChatController chatController, String message) {
+    @Override
+    public void controllerDecoder(Controller controller, String message) {
 
+        ChatController chatController = (ChatController) controller;
         EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
         System.out.println(message + " on chat");
 
@@ -128,40 +91,9 @@ class ControllerDecoder {
                 chatController.writeNewLine(message, Color.BLUE);
                 System.out.println("Deu merda");
         }
-    }*/
 
-/*
-    static void lobbyControllerDecoder(LobbyController lobbyController, String message) {
+    }
 
-        EncodeDecode tag = EncodeDecode.getEnum(EncodeDecode.getStartTag(message));
 
-        if (tag == null) {
-            System.out.println(message);
-            return;
-        }
-
-        switch (tag) {
-            case START:
-                Platform.runLater(() -> {
-                    SceneNavigator.getInstance().loadScreen("ClientView");
-                    SceneNavigator.getInstance().<ChatController>getController("ClientView")
-                            .setClient(lobbyController.getClient());
-                });
-            case LOBBYMESSAGE:
-                lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
-                break;
-            case NICK:
-                System.out.println("Message" + message);
-                lobbyController.updateStats(EncodeDecode.NICK.decode(message));
-                break;
-            case LOBBYNICKLIST:
-                message = EncodeDecode.LOBBYNICKLIST.decode(message);
-                lobbyController.updateNickList(message);
-                break;
-            case TIMER:
-                lobbyController.writeNewLine(message);
-                break;
-
-        }
-    }*/
 }
+

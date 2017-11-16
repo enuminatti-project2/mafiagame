@@ -6,13 +6,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.ChatDecoder;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.Decoder;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.Sound;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
@@ -24,6 +29,7 @@ public class ChatController implements Controller {
     private String dayCSS;
     private boolean night;
     private Sound gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
+    private Decoder decoder;
 
     @FXML
     private TextFlow flowChat;
@@ -48,6 +54,10 @@ public class ChatController implements Controller {
 
     @FXML
     private ImageView endImage;
+
+    public ChatController(){
+        decoder = new ChatDecoder();
+    }
 
     @FXML
     void initialize() {
@@ -89,8 +99,7 @@ public class ChatController implements Controller {
     }
 
     public void getMessage(String message) {
-
-        ControllerDecoder.chatControllerDecoder(this, message);
+        decoder.controllerDecoder(this, message);
     }
 
     @Override
@@ -100,7 +109,7 @@ public class ChatController implements Controller {
         }
     }
 
-    void setClient(Client client) {
+    public void setClient(Client client) {
         this.client = client;
         this.client.setController(this);
         client.encodeAndSend(EncodeDecode.NICKLIST, "que sa foda este encode");
@@ -108,14 +117,14 @@ public class ChatController implements Controller {
         setNight("false");
     }
 
-    void updateNickList(String message) {
+    public void updateNickList(String message) {
         String allnick[] = message.split(" ");
         ObservableList<String> names = FXCollections.observableArrayList(allnick);
         Platform.runLater(() -> usersList.setItems(names));
     }
 
 
-    void setNight(String message) {
+    public void setNight(String message) {
 
         night = Boolean.parseBoolean(message);
 
@@ -136,7 +145,7 @@ public class ChatController implements Controller {
 
     }
 
-    void writeNewLine(String message, Color color) {
+    public void writeNewLine(String message, Color color) {
 
         final String finalMessage = (message == null ? "" : message);
         final Color textColor;
@@ -160,23 +169,23 @@ public class ChatController implements Controller {
 
     }
 
-    Button getSendButton() {
+    public Button getSendButton() {
         return sendButton;
     }
 
-    Button getVoteButton() {
+    public Button getVoteButton() {
         return voteButton;
     }
 
-    ImageView getEndImage() {
+    public ImageView getEndImage() {
         return endImage;
     }
 
-    Sound getGunShotSound() {
+    public Sound getGunShotSound() {
         return gunShotSound;
     }
 
-    boolean isNight() {
+    public boolean isNight() {
         return night;
     }
 }

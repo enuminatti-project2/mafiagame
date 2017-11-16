@@ -1,21 +1,29 @@
 package org.academiadecodigo.enuminatti.mafiagame.client.control;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.Decoder;
+import org.academiadecodigo.enuminatti.mafiagame.client.control.decoder.LoginDecoder;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
-import sun.net.util.IPAddressUtil;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 
 public class LoginController implements Controller {
+
+    Decoder decoder ;
 
     @FXML
     private ResourceBundle resources;
@@ -52,6 +60,11 @@ public class LoginController implements Controller {
     private Map<String, String> hostsMap;
 
     private Set<String> nicksList;
+
+
+    public LoginController(){
+        decoder = new LoginDecoder();
+    }
 
     @FXML
     void connectToServer(ActionEvent event) {
@@ -161,7 +174,7 @@ public class LoginController implements Controller {
 
     @Override
     public void getMessage(String message) {
-        ControllerDecoder.loginControllerDecoder(this, message);
+        decoder.controllerDecoder(this, message);
     }
 
     public Client getClient() {
@@ -191,16 +204,16 @@ public class LoginController implements Controller {
         nicksCombo.setEditable(true);
     }
 
-    void nickInUse() {
+    public void nickInUse() {
         nickError.setText("Nick already in use");
         nickError.setVisible(true);
     }
 
-    void wrongPWD() {
+    public void wrongPWD() {
         pwdError.setVisible(true);
     }
 
-    void updateHostList(String message) {
+    public void updateHostList(String message) {
         String[] tempHost = message.split(",");
 
         for (String hostToSplit : tempHost) {
