@@ -75,7 +75,6 @@ public class JdbcLogin {
         // create a query
         String query = "SELECT * FROM " + table + " WHERE username = ?";
 
-
         try {
 
             PreparedStatement pStatement = dbConnection.prepareStatement(query);

@@ -7,6 +7,8 @@ import org.academiadecodigo.enuminatti.mafiagame.client.utils.SceneNavigator;
 import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
+import static org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode.ALLOW_TALK;
+
 /**
  * Created by Daniel Baeta on 11/11/17.
  *
@@ -89,17 +91,7 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
-                if (!chatController.isNight()) {
-                    chatController.getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
-                    chatController.getEndImage().setFitWidth(240.0);
-                    chatController.getEndImage().setFitHeight(400.0);
-                    chatController.getEndImage().setY(-100.0);
-                }
-                chatController.getEndImage().setVisible(true);
-                chatController.getGunShotSound().play(true);
-                //chatController.getVoteButton().setDisable(true);
-                chatController.getSendButton().setDisable(false);
-                Platform.runLater(() -> chatController.getSendButton().setText("Back"));
+                chatController.killed();
             case NICKOK:
                 break;
             case TIMER:
@@ -120,7 +112,7 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
-                Platform.runLater(() -> SceneNavigator.getInstance().back());
+                chatController.backToLobby();
                 break;
             case ALLOW_TALK:
                 chatController.getSendButton().setDisable(false);
@@ -134,9 +126,6 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.SCORE.decode(message), Color.BLUEVIOLET);
                 //Will receive a String "points rounds" to be split
                 break;
-            default:
-                chatController.writeNewLine(message, Color.BLUE);
-                System.out.println("Deu merda");
         }
     }
 
