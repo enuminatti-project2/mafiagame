@@ -89,17 +89,7 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.MESSAGE.decode(message), Color.BLACK);
                 break;
             case KILL:
-                if (!chatController.isNight()) {
-                    chatController.getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
-                    chatController.getEndImage().setFitWidth(240.0);
-                    chatController.getEndImage().setFitHeight(400.0);
-                    chatController.getEndImage().setY(-100.0);
-                }
-                chatController.getEndImage().setVisible(true);
-                chatController.getGunShotSound().play(true);
-                //chatController.getVoteButton().setDisable(true);
-                chatController.getSendButton().setDisable(false);
-                Platform.runLater(() -> chatController.getSendButton().setText("Back"));
+                chatController.killed();
             case NICKOK:
                 break;
             case TIMER:
@@ -120,7 +110,7 @@ class ControllerDecoder {
                 chatController.writeNewLine(EncodeDecode.ROLE.decode(message), Color.ORANGERED);
                 break;
             case OVER:
-                Platform.runLater(() -> SceneNavigator.getInstance().back());
+                chatController.bye();
                 break;
             case ALLOW_TALK:
                 chatController.getSendButton().setDisable(false);

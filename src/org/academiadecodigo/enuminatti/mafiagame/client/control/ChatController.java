@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -22,6 +23,9 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ChatController implements Controller {
 
@@ -29,8 +33,9 @@ public class ChatController implements Controller {
     private String nightCSS;
     private String dayCSS;
     private boolean night;
-    private Sound gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
+    private Sound gunShotSound;
+    private SimpleDateFormat dateFormat;
+    private ScheduledExecutorService timerExecutor = null;
 
     @FXML
     private TextFlow flowChat;
@@ -56,6 +61,7 @@ public class ChatController implements Controller {
     @FXML
     private ImageView endImage;
 
+
     @FXML
     void initialize() {
         assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ClientView.fxml'.";
@@ -68,7 +74,9 @@ public class ChatController implements Controller {
         scrollPane.vvalueProperty().bind(flowChat.heightProperty());
         System.out.println("Disabling vote button");
         voteButton.setDisable(true);
-        //sendButton.setDisable(true);
+        timerExecutor = null;
+        dateFormat = new SimpleDateFormat("[HH:mm:ss] ");
+        gunShotSound = new Sound(Constants.GUN_SHOT_SOUND_PATH);
     }
 
     @FXML
@@ -184,15 +192,33 @@ public class ChatController implements Controller {
         return voteButton;
     }
 
-    ImageView getEndImage() {
+    private ImageView getEndImage() {
         return endImage;
     }
 
-    Sound getGunShotSound() {
+    void killed(){
+        if (!isNight()) {
+            getEndImage().setImage(new Image(Constants.ROPE_IMAGE_PATH));
+            getEndImage().setFitWidth(240.0);
+            getEndImage().setFitHeight(400.0);
+            getEndImage().setY(-100.0);
+        }
+        getEndImage().setVisible(true);
+        getGunShotSound().play(true);
+        getSendButton().setDisable(false);
+        ScheduledFuture<?> schedule = timerExecutor.schedule(this::bye,
+                Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
+    }
+
+    void bye(){
+        Platform.runLater(() -> SceneNavigator.getInstance().back());
+    }
+
+    private Sound getGunShotSound() {
         return gunShotSound;
     }
 
-    boolean isNight() {
+    private boolean isNight() {
         return night;
     }
 }
