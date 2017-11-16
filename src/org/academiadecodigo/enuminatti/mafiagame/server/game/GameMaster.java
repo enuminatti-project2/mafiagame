@@ -116,9 +116,10 @@ public class GameMaster {
         Player newPlayer = new Player(serverWorker, nick, this);
         listOfLobby.put(nick, newPlayer);
         System.out.println("Player added");
-        Broadcaster.broadcastToPlayer(newPlayer ,EncodeDecode.LOBBY , nick + "You have sucessfuly logged in!" );
+        Broadcaster.broadcastToPlayer(newPlayer, EncodeDecode.LOBBY,
+                "Welcome, " + nick + ". You have successfully logged in!");
 
-        Broadcaster.broadcastToPlayers(listOfLobby,EncodeDecode.LOBBYNICKLIST,getNickListOfLobby());
+        Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
 
         canGameStart();
 

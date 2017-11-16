@@ -48,14 +48,16 @@ class ControllerDecoder {
                 SceneNavigator.getInstance().preLoadScreen("Lobby");
                 SceneNavigator.getInstance().<LobbyController>getController("Lobby")
                         .setClient(loginController.getClient());
+                SceneNavigator.getInstance().<LobbyController>getController("Lobby")
+                        .writeNewLine(tag.decode(message));
 
                 Platform.runLater(() -> SceneNavigator.getInstance().loadPreLoadedScreen());
                 break;
             case NICKOK:
-                loginController.nickInUse();
+                Platform.runLater(loginController::nickInUse);
                 break;
             case PWDERROR:
-                loginController.wrongPWD();
+                Platform.runLater(loginController::wrongPWD);
                 break;
             case HOSTSLIST:
                 loginController.updateHostList(message);
@@ -149,12 +151,14 @@ class ControllerDecoder {
 
         switch (tag) {
             case START:
-                lobbyController.clearChat();
                 SceneNavigator.getInstance().preLoadScreen("ClientView");
                 SceneNavigator.getInstance().<ChatController>getController("ClientView")
                         .setClient(lobbyController.getClient());
 
-                Platform.runLater(() -> SceneNavigator.getInstance().loadPreLoadedScreen());
+                Platform.runLater(() -> {
+                    lobbyController.clearChat();
+                    SceneNavigator.getInstance().loadPreLoadedScreen();
+                });
                 break;
             case LOBBYMESSAGE:
                 lobbyController.writeNewLine(EncodeDecode.LOBBYMESSAGE.decode(message));
