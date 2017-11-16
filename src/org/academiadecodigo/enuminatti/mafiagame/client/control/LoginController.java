@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import org.academiadecodigo.enuminatti.mafiagame.client.Client;
 import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
+import org.academiadecodigo.enuminatti.mafiagame.utils.Security;
 import sun.net.util.IPAddressUtil;
 
 
@@ -53,6 +54,8 @@ public class LoginController implements Controller {
 
     private Set<String> nicksList;
 
+    private boolean gone;
+
     @FXML
     void connectToServer(ActionEvent event) {
 
@@ -73,7 +76,6 @@ public class LoginController implements Controller {
             nickError.setVisible(false);
         }
 
-
         if (flag) {
             return;
         }
@@ -90,7 +92,7 @@ public class LoginController implements Controller {
         String nick = nicksCombo.getValue();
 
         InputOutput.addNick(nick);
-        client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + pwdField.getText().hashCode());
+        client.encodeAndSend(EncodeDecode.LOGIN, nick + "," + Security.getHash(pwdField.getText()));
     }
 
     private void sendHosts() {
@@ -110,7 +112,6 @@ public class LoginController implements Controller {
         assert nicksCombo != null : "fx:id=\"nicksCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
         assert serversCombo != null : "fx:id=\"serversCombo\" was not injected: check your FXML file 'LoginScreen.fxml'.";
         assert guestButton != null : "fx:id=\"guestButton\" was not injected: check your FXML file 'LoginScreen.fxml'.";
-
         populateHosts();
         populateNicks();
     }
@@ -124,6 +125,13 @@ public class LoginController implements Controller {
     }
 
     private boolean connect() {
+
+        if (gone) {
+            client.shutdown();
+            client = null;
+            gone = false;
+        }
+
         if (client != null) {
             return false;
         }
@@ -157,6 +165,7 @@ public class LoginController implements Controller {
         if (client != null) {
             client.shutdown();
         }
+        client = null;
     }
 
     @Override
@@ -194,10 +203,15 @@ public class LoginController implements Controller {
     void nickInUse() {
         nickError.setText("Nick already in use");
         nickError.setVisible(true);
+        client.shutdown();
+        //client = null;
+
     }
 
     void wrongPWD() {
         pwdError.setVisible(true);
+        client.shutdown();
+        //client = null;
     }
 
     void updateHostList(String message) {
@@ -214,5 +228,9 @@ public class LoginController implements Controller {
     public void saveLists() {
         InputOutput.addNick(nicksCombo.getEditor().getText());
         InputOutput.addHost(serversCombo.getEditor().getText());
+    }
+
+    public void setGone(boolean gone) {
+        this.gone = gone;
     }
 }

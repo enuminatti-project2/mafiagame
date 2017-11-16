@@ -73,5 +73,10 @@ public class Client {
         }
     }
 
+    public boolean isConnected(){
+        System.out.println(socket.toString());
+        return socket != null;
+    }
+
 
 }

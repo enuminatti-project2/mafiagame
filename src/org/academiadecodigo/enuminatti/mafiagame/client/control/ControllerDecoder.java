@@ -42,6 +42,7 @@ class ControllerDecoder {
         switch (tag) {
             case LOBBY:
                 loginController.saveLists();
+                loginController.setGone(true);
                 Platform.runLater(() -> {
                     SceneNavigator.getInstance().loadScreen("Lobby");
                     SceneNavigator.getInstance().<LobbyController>getController("Lobby")
