@@ -306,7 +306,7 @@ public class GameMaster {
         listOfPlayers.clear();
         gameHasStarted = false;
         ScoreCalculator.resetCalculator();
-        canGameStart();
+        //canGameStart();
 
         schedule = startGame.schedule(this::canGameStart,
                 Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);

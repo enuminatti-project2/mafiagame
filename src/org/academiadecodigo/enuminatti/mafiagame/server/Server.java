@@ -56,7 +56,6 @@ public class Server {
     }
 
     private void shutdownAllWorkers() {
-        System.out.println(serverWorkers.size());
         for (ServerWorker worker : serverWorkers) {
             worker.shutdown();
         }

@@ -45,7 +45,6 @@ public class JdbcScore {
 
     public void updatePoints(String username,int gameWon , int turnsSurvived ){
 
-        System.out.println("begin update");
         String query = "UPDATE points SET gamesWon = gamesWon + ? , gamesLost = gamesLost " +
                 "+ ? , turnSurvived = turnSurvived + ? , totalPoints = totalPoints + ? WHERE username = ? ;";
 

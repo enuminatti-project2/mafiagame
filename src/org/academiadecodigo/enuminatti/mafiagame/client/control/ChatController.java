@@ -209,7 +209,7 @@ public class ChatController implements Controller {
 
     void backToLobby(){
         die.schedule(this::bye,
-                Constants.SECONDS_ENDGAME, TimeUnit.SECONDS);
+                Constants.SECONDS_ENDGAME - 1, TimeUnit.SECONDS);
     }
 
     private void bye() {
