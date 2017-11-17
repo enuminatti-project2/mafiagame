@@ -4,7 +4,6 @@ import org.academiadecodigo.enuminatti.mafiagame.server.game.GameMaster;
 import org.academiadecodigo.enuminatti.mafiagame.server.game.ScoreCalculator;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.server.util.Broadcaster;
-import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class GameOverCheck implements Stage {
             winningMessage = "The " + winningFaction + " have won the game!";
         }
 
-        if (gameMaster.getListOfPlayers().size() < Constants.MIN_PLAYERS) {
+        if (gameMaster.getListOfPlayers().size() <= 2) {
             Broadcaster.broadcastToPlayers(gameMaster.getListOfPlayers(),
                     EncodeDecode.MESSAGE, "Not enough players to continue the game. Exiting the game");
             gameMaster.gameOver();

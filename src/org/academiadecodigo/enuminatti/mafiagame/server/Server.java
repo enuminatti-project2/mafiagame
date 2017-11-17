@@ -34,6 +34,7 @@ public class Server {
     }
 
     public Server() {
+        Constants.init();
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
