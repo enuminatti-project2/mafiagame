@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class JdbcScore {
 
-    Connection dbConnection ;
+    private Connection dbConnection;
 
     public JdbcScore(Connection dbConnection) {
         this.dbConnection = dbConnection;

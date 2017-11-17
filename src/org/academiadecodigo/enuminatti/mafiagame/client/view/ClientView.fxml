@@ -21,7 +21,8 @@
         <tabs>
             <Tab id="tabChat" fx:id="tabChat" text="Villagers">
                <content>
-                  <ScrollPane id="scrollPane" fx:id="scrollPane" hbarPolicy="NEVER" hmax="0.0" style="-fx-background: transparent;" vvalue="0.0">
+                  <ScrollPane id="scrollPane" fx:id="scrollPane" hbarPolicy="NEVER" hmax="0.0"
+                              style="-fx-background: transparent;">
                      <content>
                         <TextFlow id="flowChat" fx:id="flowChat" lineSpacing="0.8" prefHeight="500.0" prefWidth="604.0">
                            <padding>
@@ -37,7 +38,8 @@
       <ListView id="usersList" fx:id="usersList" focusTraversable="false" layoutX="785.0" layoutY="80.0" prefHeight="502.0" prefWidth="200.0" style="-fx-background-color: transparent;" />
       <Button fx:id="sendButton" defaultButton="true" layoutX="785.0" layoutY="609.0" mnemonicParsing="false" onAction="#sendMessageToClient" prefHeight="45.0" prefWidth="94.0" text="Send" />
       <Button fx:id="voteButton" disable="true" layoutX="891.0" layoutY="609.0" mnemonicParsing="false" onAction="#vote" prefHeight="45.0" prefWidth="94.0" text="Vote" />
-      <Label alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="785.0" layoutY="46.0" prefHeight="31.0" prefWidth="200.0" text="Users">
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="785.0" layoutY="46.0" prefHeight="31.0"
+             prefWidth="200.0" text="Users">
          <font>
             <Font name="Futura Condensed ExtraBold" size="28.0" />
          </font>

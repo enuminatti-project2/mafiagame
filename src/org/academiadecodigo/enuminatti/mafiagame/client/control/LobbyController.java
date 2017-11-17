@@ -141,7 +141,7 @@ public class LobbyController implements Controller {
     }
 
 
-    void updateStats(String[] mystats){
+    private void updateStats(String[] mystats) {
         Platform.runLater(
                 () -> {
                     nameStats.setText(mystats[0]);

@@ -12,7 +12,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
  * A support utilitary class for GameMaster to have messages decoded.
  */
 
-public class GameMasterDecoder {
+class GameMasterDecoder {
 
     /**
      * Decodes messages for GameMaster from a user, in order to perform the necessary operations.

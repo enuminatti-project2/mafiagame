@@ -1,7 +1,4 @@
-package org.academiadecodigo.enuminatti.mafiagame.utils;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 
 /**
  * Created by Samuel Laço on 07/11/17.

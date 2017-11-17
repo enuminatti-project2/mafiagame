@@ -1,6 +1,5 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.util;
 
-import org.academiadecodigo.enuminatti.mafiagame.server.Server;
 import org.academiadecodigo.enuminatti.mafiagame.server.player.Player;
 import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 

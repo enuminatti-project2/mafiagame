@@ -1,5 +1,4 @@
-package org.academiadecodigo.enuminatti.mafiagame.client.utils;
-
+import org.academiadecodigo.enuminatti.mafiagame.client.utils.InputOutput;
 
 public class TestIO {
     public static void main(String[] args) {

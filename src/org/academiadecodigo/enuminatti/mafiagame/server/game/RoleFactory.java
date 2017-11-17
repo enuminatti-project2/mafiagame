@@ -15,7 +15,7 @@ import java.util.Map;
  * (c) 2017 Ricardo Constantino
  */
 
-public class RoleFactory {
+class RoleFactory {
 
     public static void setRolesToAllPlayers(Map<String, Player> listOfPlayers,
                                             List<String> mafiaListOfPlayers, List<String> villagerListOfPlayers) {

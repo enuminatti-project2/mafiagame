@@ -14,7 +14,7 @@ public class Constants {
     public static final int PORT = 1337;
     public static int MAX_PLAYERS = 22;
 
-    public static int MIN_PLAYERS = 2; // Always at least 2 players, or the game breaks
+    public static int MIN_PLAYERS = 3; // Always at least 2 players, or the game breaks
 
     public static int SECONDS_TO_START_GAME = 20;
     public static int SECONDS_TO_TALK = 60;
@@ -63,15 +63,22 @@ public class Constants {
     }
 
     private static void setValues(String name, Integer value) {
+
         if (value == null) {
             return;
         }
+
+        value = Math.abs(value);
 
         switch (name) {
             case "MAX_PLAYERS":
                 MAX_PLAYERS = value;
                 break;
             case "MIN_PLAYERS":
+                if (value < 3) {
+                    MIN_PLAYERS = 3;
+                    break;
+                }
                 MIN_PLAYERS = value;
                 break;
             case "SECONDS_TO_START_GAME":

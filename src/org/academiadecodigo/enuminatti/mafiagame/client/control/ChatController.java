@@ -228,7 +228,7 @@ public class ChatController implements Controller {
         return night;
     }
 
-    public Client getClient() {
+    Client getClient() {
         return client;
     }
 }
