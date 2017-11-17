@@ -11,6 +11,9 @@ Project developed during the 10th and 11th week of Academia de Código's 11th bo
 ## Concepts used in the project
 Concurrency/Working with threads™ (not learned during the project, but heavily used)<br>
 Networking (we used only TCP sockets)<br>
+Strategy Design Pattern<br>
+Singleton Design Pattern<br>
+Factory Design Pattern<br>
 
 ## Concepts learned while and used in the project:
 
