@@ -28,6 +28,9 @@ public class Constants {
     public static void init() {
 
         File file = new File(CONFIG_FILE);
+        if (!file.exists()){
+            return;
+        }
 
         FileReader fReader = null;
         BufferedReader bReader = null;
