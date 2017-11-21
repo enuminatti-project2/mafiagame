@@ -23,7 +23,8 @@
       </Label>
       <Pane layoutX="164.0" layoutY="46.0" opacity="0.65" prefHeight="536.0" prefWidth="604.0">
          <children>
-            <ScrollPane id="scrollPane" hbarPolicy="NEVER" hmax="0.0" prefHeight="536.0" prefWidth="604.0" style="-fx-background: transparent;" vvalue="0.0">
+            <ScrollPane id="scrollPane" hbarPolicy="NEVER" hmax="0.0" prefHeight="536.0" prefWidth="604.0"
+                        style="-fx-background: transparent;">
                <content>
                   <TextFlow id="flowChat" fx:id="flowChat" lineSpacing="0.8" nodeOrientation="LEFT_TO_RIGHT" prefHeight="536.0" prefWidth="605.0" style="-fx-background-color: white;">
                      <padding>
@@ -55,19 +56,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ImageView fitHeight="108.0" fitWidth="90.0" layoutX="234.0" layoutY="419.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.columnSpan="2">
-               <image>
-                  <Image url="@blood1.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="136.0" fitWidth="134.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="9">
-               <image>
-                  <Image url="@Mafia.png" />
-               </image>
-               <GridPane.margin>
-                  <Insets bottom="18.0" />
-               </GridPane.margin>
-            </ImageView>
             <Label fx:id="nameStats" alignment="CENTER" contentDisplay="CENTER" prefHeight="63.0" prefWidth="198.0" text="Rodas198" textFill="WHITE" GridPane.columnIndex="1" GridPane.columnSpan="3">
                <font>
                   <Font name="Chalkduster" size="27.0" />

@@ -71,7 +71,7 @@ public class GameMaster {
 
     /**
      * This adds a vote to votesCount for the player specified in nickname parameter.
-     *
+     * <p>
      * If the nickname isn't a valid player, it doesn't do anything.
      *
      * @param nickname player to add a vote to
@@ -144,7 +144,7 @@ public class GameMaster {
 
     /**
      * Remove the player with this nickname from all lists and maps.
-     *
+     * <p>
      * At the end, it updates everyone's nicklist to reflect this change.
      *
      * @param nickname player to be kicked from the game
@@ -170,23 +170,6 @@ public class GameMaster {
 
     }
 
-    public void kickPlayerFromLobby(String nickname) {
-
-        if (nickname == null) {
-            return;
-        }
-
-        Player playerRemoved = listOfLobby.remove(nickname);
-
-        if (playerRemoved != null) {
-
-            playerRemoved.disconnect();
-            Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
-
-        }
-
-    }
-
     public void removePlayerFromLists(Player player) {
         String nickname = player.getName();
 
@@ -201,7 +184,6 @@ public class GameMaster {
             Broadcaster.broadcastToPlayers(listOfPlayers, EncodeDecode.NICKLIST, getNickList());
             Broadcaster.broadcastToPlayers(listOfLobby, EncodeDecode.LOBBYNICKLIST, getNickListOfLobby());
         }
-
     }
 
     private void startGame() {

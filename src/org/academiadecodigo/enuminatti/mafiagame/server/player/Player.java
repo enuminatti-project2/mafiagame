@@ -25,10 +25,6 @@ public class Player {
         this.readyToPlay = true;
     }
 
-    public boolean isReadyToPlay() {
-        return readyToPlay;
-    }
-
     public void writeToPlayer(String message) {
         serverWorker.sendMessage(message);
     }
@@ -92,7 +88,4 @@ public class Player {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

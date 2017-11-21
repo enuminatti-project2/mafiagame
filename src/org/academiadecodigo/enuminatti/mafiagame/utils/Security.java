@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Security {
 
-    public final static String ALGORITHM = "SHA";
+    private final static String ALGORITHM = "SHA";
 
     public static String getHash(String message) {
 
@@ -21,14 +21,14 @@ public class Security {
 
             // convert hash bytes into string
             BigInteger bigInt = new BigInteger(1, digest);
-            String hashtext = bigInt.toString(16);
+            StringBuilder hashtext = new StringBuilder(bigInt.toString(16));
 
             // zero pad the hash for the full 32 chars
             while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
+                hashtext.insert(0, "0");
             }
 
-            return hashtext;
+            return hashtext.toString();
 
         } catch (NoSuchAlgorithmException ex) {
             return message;

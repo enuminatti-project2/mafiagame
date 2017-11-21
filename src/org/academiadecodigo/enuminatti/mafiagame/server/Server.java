@@ -10,6 +10,7 @@ import org.academiadecodigo.enuminatti.mafiagame.utils.EncodeDecode;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,7 +34,8 @@ public class Server {
         server.start();
     }
 
-    public Server() {
+    private Server() {
+        Constants.init();
         this.gameMaster = new GameMaster();
         executorService = Executors.newFixedThreadPool(Constants.MAX_PLAYERS);
         hostsMap = new LinkedHashMap<>();
@@ -50,8 +52,11 @@ public class Server {
         executorService.shutdown();
         try {
             server.close();
+            ConnectionManager.getConnection().close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (SQLException e) {
+            System.err.println("Can't close MySQL connnection");
         }
     }
 

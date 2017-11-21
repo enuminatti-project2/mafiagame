@@ -1,6 +1,8 @@
 package org.academiadecodigo.enuminatti.mafiagame.server.persistence;
 
 
+import org.academiadecodigo.enuminatti.mafiagame.utils.Constants;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,15 +11,15 @@ import java.sql.SQLException;
  * Created by Samuel Laço on 15/11/17.
  */
 public class ConnectionManager {
-    static Connection connection = null;
+    private static Connection connection = null;
 
     public static Connection getConnection() {
 
         try {
             if (connection == null) {
-                String dbUrl = "jdbc:mysql://192.168.1.18/Mafia?useSSL=false";
-                String user = "mafiagame";
-                String pwd = "cenas";
+                String dbUrl = "jdbc:mysql://"+ Constants.SQL_ADDRESS +"/Mafia?useSSL=false";
+                String user = Constants.SQL_USERNAME;
+                String pwd = Constants.SQL_PASSWORD;
                 connection = DriverManager.getConnection(dbUrl, user, pwd);
             }
         } catch (SQLException ex) {
